@@ -26,8 +26,8 @@ AirCoupler::~AirCoupler()
  */
 int AirCoupler::GetStatus()
 {
+	if (ModelxOn) return 2;
     if (ModelOn) return 1;
-    if (ModelxOn) return 2;
     return 0;
 }
 
