@@ -23,6 +23,7 @@ http://mozilla.org/MPL/2.0/.
 // namespace Global {
 
 // parametry do użytku wewnętrznego
+nk_context Global::ctx;
 std::string Global::AppName{ "EU07" };
 std::string Global::asCurrentSceneryPath = "scenery/";
 std::string Global::asCurrentTexturePath = std::string(szTexturePath);

@@ -9,6 +9,9 @@ http://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#ifndef TEXTURE_MS_H
+#define TEXTURE_MS_H
+
 #include <istream>
 #include "winheaders.h"
 #include <string>
@@ -195,5 +198,7 @@ downsample( std::size_t const Width, std::size_t const Height, char *Imagedata )
         }
     }
 }
+
+#endif
 
 //---------------------------------------------------------------------------

@@ -7,6 +7,8 @@ obtain one at
 http://mozilla.org/MPL/2.0/.
 */
 #pragma once
+#ifndef PO_KEYS_H
+#define PO_KEYS_H
 
 #include <string>
 //---------------------------------------------------------------------------
@@ -36,3 +38,4 @@ class TPoKeys55
 	bool Update(bool pause);
 };
 //---------------------------------------------------------------------------
+#endif

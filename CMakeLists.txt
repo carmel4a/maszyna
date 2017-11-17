@@ -6,8 +6,8 @@ set(DEPS_DIR ${DEPS_DIR} "${CMAKE_SOURCE_DIR}/ref")
 project("eu07")
 
 set(CMAKE_CXX_STANDARD 14)
-include_directories("." "Console" "McZapkie")
-file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h")
+include_directories("." "Console" "McZapkie", "Nuklear")
+file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h", "Nuklear/*.h")
 
 set(SOURCES
 "Texture.cpp"

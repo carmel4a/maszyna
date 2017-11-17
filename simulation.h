@@ -9,6 +9,9 @@ http://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#ifndef SIMULATION_HFEFEF
+#define SIMULATION_HFEFEF
+
 #include "parser.h"
 #include "scene.h"
 #include "event.h"
@@ -93,5 +96,7 @@ extern lua Lua;
 extern scene::basic_region *Region;
 
 } // simulation
+
+#endif
 
 //---------------------------------------------------------------------------

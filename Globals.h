@@ -9,12 +9,32 @@ http://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#ifndef GLOBAL_MS
+#define GLOBAL_MS
+
+
 #include <string>
 //#include <Windows.h>
 #include "renderer.h"
 #include <GLFW/glfw3.h>
 #include <GL/glew.h>
 #include "dumb3d.h"
+
+//#ifndef NUKLEAR_DEFS
+
+   // #define NUKLEAR_DEFS
+
+#define NK_IMPLEMENTATION
+
+#define NK_INCLUDE_STANDARD_IO
+
+#define NK_ASSERT
+
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
+
+//#endif
+
+#include "nuklear.h"
 
 // definicje klawiszy
 const int k_IncMainCtrl = 0; //[Num+]
@@ -166,6 +186,7 @@ public:
 	static double Min0RSpeed(double vel1, double vel2);
 
 // members
+    static struct nk_context ctx;
     static int Keys[MaxKeys];
     static bool RealisticControlMode; // controls ability to steer the vehicle from outside views
     static Math3D::vector3 pCameraPosition; // pozycja kamery w świecie
@@ -351,3 +372,5 @@ public:
 	static soundstopmode_t soundstopmode;
 };
 //---------------------------------------------------------------------------
+
+#endif // !GLOBAL_MS

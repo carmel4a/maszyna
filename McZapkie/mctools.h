@@ -1,5 +1,4 @@
 #pragma once
-
 /*
 This Source Code Form is subject to the
 terms of the Mozilla Public License, v.
@@ -11,6 +10,8 @@ http://mozilla.org/MPL/2.0/.
 
 /*rozne takie duperele do operacji na stringach w paszczalu, pewnie w delfi sa lepsze*/
 /*konwersja zmiennych na stringi, funkcje matematyczne, logiczne, lancuchowe, I/O etc*/
+#ifndef MCTOOLS_H
+#define MCTOOLS_H
 
 #include <string>
 #include <fstream>
@@ -161,3 +162,5 @@ bool FileExists( std::string const &Filename );
 
 // returns time of last modification for specified file
 std::time_t last_modified( std::string const &Filename );
+
+#endif // !MCTOOLS_H
