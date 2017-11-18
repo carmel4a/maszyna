@@ -13,6 +13,9 @@ http://mozilla.org/MPL/2.0/.
 #include "renderer.h"
 #include "dumb3d.h"
 
+
+#include "nuklear.h"
+
 // definicje klawiszy
 const int k_IncMainCtrl = 0; //[Num+]
 const int k_IncMainCtrlFAST = 1; //[Num+] [Shift]
@@ -151,6 +154,7 @@ public:
 	static double Min0RSpeed(double vel1, double vel2);
 
 // members
+    static struct nk_context ctx;
     static int Keys[MaxKeys];
     static bool RealisticControlMode; // controls ability to steer the vehicle from outside views
     static Math3D::vector3 pCameraPosition; // pozycja kamery w świecie

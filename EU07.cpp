@@ -15,8 +15,24 @@ Authors:
 MarcinW, McZapkie, Shaxbee, ABu, nbmx, youBy, Ra, winger, mamut, Q424,
 Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
 */
+#ifndef NUKLEAR_DEFS
+
+    #define NUKLEAR_DEFS
+
+    #define NK_IMPLEMENTATION
+
+    #define NK_INCLUDE_STANDARD_IO
+
+    #define NK_ASSERT
+
+    #define NK_INCLUDE_DEFAULT_ALLOCATOR
+
+#endif
+
+#include "nuklear.h"
 
 #include "stdafx.h"
+
 #include <png.h>
 #include <thread>
 
@@ -124,7 +140,8 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 		return;
 
     input::Mouse.move( x, y );
-
+    nk_input_motion(&Global::ctx, (int)std::round(x), (int)std::round(y));
+    
     if( !Global::ControlPicking ) {
         glfwSetCursorPos( window, 0, 0 );
     }
@@ -392,16 +409,23 @@ int main(int argc, char *argv[])
 #endif
 
     try {
+        struct nk_context ctx = Global::ctx;
+        nk_init_default(&ctx, 0);
+        
         while( ( false == glfwWindowShouldClose( window ) )
             && ( true == World.Update() )
             && ( true == GfxRenderer.Render() ) ) {
             glfwPollEvents();
+            nk_input_begin(&ctx);
             input::Keyboard.poll();
             if (input::uart)
                 input::uart->poll();
             if( true == Global::InputMouse )   { input::Mouse.poll(); }
             if( true == Global::InputGamepad ) { input::Gamepad.poll(); }
+            nk_input_end(&ctx);
+            nk_clear(&ctx);
         }
+        nk_free(&ctx);
 	}
 	catch (std::runtime_error e)
     {
