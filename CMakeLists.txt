@@ -7,7 +7,7 @@ project("eu07")
 
 set(CMAKE_CXX_STANDARD 14)
 include_directories("." "Console" "McZapkie", "Nuklear")
-file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h", "Nuklear/*.h")
+file(GLOB HEADERS "*.h" "*.hpp" "Console/*.h" "McZapkie/*.h", "Nuklear/*.h")
 
 set(SOURCES
 "Texture.cpp"
@@ -77,6 +77,7 @@ set(SOURCES
 "vertex.cpp"
 "audio.cpp"
 "audiorenderer.cpp"
+"GUI.cpp"
 )
 
 set (PREFIX "")

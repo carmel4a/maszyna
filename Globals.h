@@ -12,9 +12,7 @@ http://mozilla.org/MPL/2.0/.
 #include <string>
 #include "renderer.h"
 #include "dumb3d.h"
-
-
-#include "nuklear.h"
+#include "GUI.hpp"
 
 // definicje klawiszy
 const int k_IncMainCtrl = 0; //[Num+]
@@ -154,6 +152,7 @@ public:
 	static double Min0RSpeed(double vel1, double vel2);
 
 // members
+    static GUI_ GUI;
     static struct nk_context ctx;
     static int Keys[MaxKeys];
     static bool RealisticControlMode; // controls ability to steer the vehicle from outside views

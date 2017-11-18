@@ -15,21 +15,7 @@ Authors:
 MarcinW, McZapkie, Shaxbee, ABu, nbmx, youBy, Ra, winger, mamut, Q424,
 Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
 */
-#ifndef NUKLEAR_DEFS
-
-    #define NUKLEAR_DEFS
-
-    #define NK_IMPLEMENTATION
-
-    #define NK_INCLUDE_STANDARD_IO
-
-    #define NK_ASSERT
-
-    #define NK_INCLUDE_DEFAULT_ALLOCATOR
-
-#endif
-
-#include "nuklear.h"
+#define __NO_INLINE__
 
 #include "stdafx.h"
 
@@ -47,6 +33,7 @@ Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
 #include "keyboardinput.h"
 #include "mouseinput.h"
 #include "gamepadinput.h"
+#include "GUI.hpp"
 #include "Console.h"
 #include "PyInt.h"
 #include "World.h"
@@ -140,7 +127,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 		return;
 
     input::Mouse.move( x, y );
-    nk_input_motion(&Global::ctx, (int)std::round(x), (int)std::round(y));
+    Global::GUI.input_mouse_motion(x, y);
     
     if( !Global::ControlPicking ) {
         glfwSetCursorPos( window, 0, 0 );
@@ -149,6 +136,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 
 void mouse_button_callback( GLFWwindow* window, int button, int action, int mods ) {
 
+    Global::GUI.input_mouse_button(window ,button, action, mods);
     if( ( button == GLFW_MOUSE_BUTTON_LEFT )
      || ( button == GLFW_MOUSE_BUTTON_RIGHT ) ) {
         // we don't care about other mouse buttons at the moment
@@ -157,9 +145,10 @@ void mouse_button_callback( GLFWwindow* window, int button, int action, int mods
 }
 
 void key_callback( GLFWwindow *window, int key, int scancode, int action, int mods ) {
-
+//robi coś
     input::Keyboard.key( key, action );
-
+    Global::GUI.input_key(key, scancode, action, mods);
+//zapis moda do globalsów
     Global::shiftState = ( mods & GLFW_MOD_SHIFT ) ? true : false;
     Global::ctrlState = ( mods & GLFW_MOD_CONTROL ) ? true : false;
 
@@ -221,6 +210,7 @@ void focus_callback( GLFWwindow *window, int focus )
 
 void scroll_callback( GLFWwindow* window, double xoffset, double yoffset ) {
 
+    Global::GUI.input_scroll(xoffset, yoffset);
     if( Global::ctrlState ) {
         // ctrl + scroll wheel adjusts fov in debug mode
         Global::FieldOfView = clamp( static_cast<float>(Global::FieldOfView - yoffset * 20.0 / Global::fFpsAverage), 15.0f, 75.0f );
@@ -334,12 +324,15 @@ int main(int argc, char *argv[])
     glfwSwapInterval(Global::VSync ? 1 : 0); //vsync
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); //capture cursor
     glfwSetCursorPos(window, 0.0, 0.0);
+
     glfwSetFramebufferSizeCallback(window, window_resize_callback);
     glfwSetCursorPosCallback(window, cursor_pos_callback);
     glfwSetMouseButtonCallback( window, mouse_button_callback );
     glfwSetKeyCallback(window, key_callback);
     glfwSetScrollCallback( window, scroll_callback );
     glfwSetWindowFocusCallback(window, focus_callback);
+    //glfwSetCursorEnterCallback
+    //glfwSetCharCallback
     {
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
@@ -409,23 +402,19 @@ int main(int argc, char *argv[])
 #endif
 
     try {
-        struct nk_context ctx = Global::ctx;
-        nk_init_default(&ctx, 0);
-        
         while( ( false == glfwWindowShouldClose( window ) )
             && ( true == World.Update() )
             && ( true == GfxRenderer.Render() ) ) {
             glfwPollEvents();
-            nk_input_begin(&ctx);
+            Global::GUI.start_loop();
             input::Keyboard.poll();
             if (input::uart)
                 input::uart->poll();
             if( true == Global::InputMouse )   { input::Mouse.poll(); }
             if( true == Global::InputGamepad ) { input::Gamepad.poll(); }
-            nk_input_end(&ctx);
-            nk_clear(&ctx);
+            Global::GUI.end_loop();
         }
-        nk_free(&ctx);
+        delete &Global::GUI;
 	}
 	catch (std::runtime_error e)
     {

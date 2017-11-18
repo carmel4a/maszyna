@@ -21,12 +21,11 @@ http://mozilla.org/MPL/2.0/.
 #include "PyInt.h"
 
 
-#include "nuklear.h"
+#include "GUI.hpp"
 
 // namespace Global {
 
 // parametry do użytku wewnętrznego
-nk_context Global::ctx;
 std::string Global::AppName{ "EU07" };
 std::string Global::asCurrentSceneryPath = "scenery/";
 std::string Global::asCurrentTexturePath = std::string(szTexturePath);
@@ -61,6 +60,7 @@ TWorld *Global::pWorld = NULL;
 TCamera *Global::pCamera = NULL; // parametry kamery
 TTranscripts Global::tranTexts; // obiekt obsługujący stenogramy dźwięków na ekranie
 float4 Global::UITextColor = float4( 225.0f / 255.0f, 225.0f / 255.0f, 225.0f / 255.0f, 1.0f );
+GUI_ Global::GUI;
 
 vector3 Global::pCameraPosition;
 vector3 Global::DebugCameraPosition;
