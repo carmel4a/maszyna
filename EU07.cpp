@@ -15,7 +15,6 @@ Authors:
 MarcinW, McZapkie, Shaxbee, ABu, nbmx, youBy, Ra, winger, mamut, Q424,
 Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
 */
-#define __NO_INLINE__
 
 #include "stdafx.h"
 
@@ -412,7 +411,7 @@ int main(int argc, char *argv[])
                 input::uart->poll();
             if( true == Global::InputMouse )   { input::Mouse.poll(); }
             if( true == Global::InputGamepad ) { input::Gamepad.poll(); }
-            Global::GUI.end_loop();
+            Global::GUI.end_loop(window);
         }
         delete &Global::GUI;
 	}
