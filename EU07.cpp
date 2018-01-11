@@ -1,19 +1,20 @@
 /*
-This Source Code Form is subject to the
-terms of the Mozilla Public License, v.
-2.0. If a copy of the MPL was not
-distributed with this file, You can
-obtain one at
-http://mozilla.org/MPL/2.0/.
+    This Source Code Form is subject to the
+    terms of the Mozilla Public License, v.
+    2.0. If a copy of the MPL was not
+    distributed with this file, You can
+    obtain one at
+    http://mozilla.org/MPL/2.0/.
 */
+
 /*
     MaSzyna EU07 locomotive simulator
     Copyright (C) 2001-2004  Marcin Wozniak, Maciej Czapkiewicz and others
 */
 /*
 Authors:
-MarcinW, McZapkie, Shaxbee, ABu, nbmx, youBy, Ra, winger, mamut, Q424,
-Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
+    MarcinW, McZapkie, Shaxbee, ABu, nbmx, youBy, Ra, winger, mamut, Q424,
+    Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
 */
 
 #include "stdafx.h"
@@ -57,16 +58,14 @@ Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
 TWorld World;
 
 namespace input {
-
-keyboard_input Keyboard;
-mouse_input Mouse;
-gamepad_input Gamepad;
-glm::dvec2 mouse_pickmodepos;  // stores last mouse position in control picking mode
-std::unique_ptr<uart_input> uart;
+    keyboard_input Keyboard;
+    mouse_input Mouse;
+    gamepad_input Gamepad;
+    glm::dvec2 mouse_pickmodepos;  // stores last mouse position in control picking mode
+    std::unique_ptr<uart_input> uart;
 }
 
-void screenshot_save_thread( char *img )
-{
+void screenshot_save_thread( char *img ){
 	png_image png;
 	memset(&png, 0, sizeof(png_image));
 	png.version = PNG_IMAGE_VERSION;
@@ -82,14 +81,13 @@ void screenshot_save_thread( char *img )
 	strftime(datetime, 64, "%Y-%m-%d_%H-%M-%S", tm_info);
 
 	uint64_t perf;
-#ifdef _WIN32
-	QueryPerformanceCounter((LARGE_INTEGER*)&perf);
-#elif __linux__
-	timespec ts;
-	clock_gettime(CLOCK_REALTIME, &ts);
-	perf = ts.tv_nsec;
-#endif
-
+    #ifdef _WIN32
+        QueryPerformanceCounter((LARGE_INTEGER*)&perf);
+    #elif __linux__
+        timespec ts;
+        clock_gettime(CLOCK_REALTIME, &ts);
+        perf = ts.tv_nsec;
+    #endif
 	std::string filename = "screenshots/" + std::string(datetime) +
 	                       "_" + std::to_string(perf) + ".png";
 
@@ -101,8 +99,8 @@ void screenshot_save_thread( char *img )
 	delete[] img;
 }
 
-void make_screenshot()
-{
+void make_screenshot(){
+
 	char *img = new char[Global::iWindowWidth * Global::iWindowHeight * 3];
 	glReadPixels(0, 0, Global::iWindowWidth, Global::iWindowHeight, GL_RGB, GL_UNSIGNED_BYTE, (GLvoid*)img);
 
@@ -120,8 +118,7 @@ void window_resize_callback(GLFWwindow *window, int w, int h)
 	glViewport(0, 0, w, h);
 }
 
-void cursor_pos_callback(GLFWwindow *window, double x, double y)
-{
+void cursor_pos_callback(GLFWwindow *window, double x, double y){
 	if (!window)
 		return;
 
@@ -144,10 +141,9 @@ void mouse_button_callback( GLFWwindow* window, int button, int action, int mods
 }
 
 void key_callback( GLFWwindow *window, int key, int scancode, int action, int mods ) {
-//robi coś
     input::Keyboard.key( key, action );
     Global::GUI.input_key(key, scancode, action, mods);
-//zapis moda do globalsów
+
     Global::shiftState = ( mods & GLFW_MOD_SHIFT ) ? true : false;
     Global::ctrlState = ( mods & GLFW_MOD_CONTROL ) ? true : false;
 
@@ -198,8 +194,7 @@ void key_callback( GLFWwindow *window, int key, int scancode, int action, int mo
     }
 }
 
-void focus_callback( GLFWwindow *window, int focus )
-{
+void focus_callback( GLFWwindow *window, int focus ){
     if( Global::bInactivePause ) // jeśli ma być pauzowanie okna w tle
         if( focus )
             Global::iPause &= ~4; // odpauzowanie, gdy jest na pierwszym planie
@@ -207,7 +202,7 @@ void focus_callback( GLFWwindow *window, int focus )
             Global::iPause |= 4; // włączenie pauzy, gdy nieaktywy
 }
 
-void scroll_callback( GLFWwindow* window, double xoffset, double yoffset ) {
+void scroll_callback( GLFWwindow* window, double xoffset, double yoffset ){
 
     Global::GUI.input_scroll(xoffset, yoffset);
     if( Global::ctrlState ) {
@@ -372,33 +367,31 @@ int main(int argc, char *argv[])
             return -1;
         }
     }
-    catch( std::bad_alloc const &Error )
-	{
+    catch( std::bad_alloc const &Error ){
         ErrorLog( "Critical error, memory allocation failure: " + std::string( Error.what() ) );
         return -1;
     }
-	catch (std::runtime_error e)
-	{
+	catch (std::runtime_error e){
         ErrorLog(e.what());
 		return -1;
 	}
 
-#ifdef _WIN32
-    Console *pConsole = new Console(); // Ra: nie wiem, czy ma to sens, ale jakoś zainicjowac trzeba
-#endif
-/*
-    if( !joyGetNumDevs() )
-        WriteLog( "No joystick" );
-*/
+    #ifdef _WIN32
+        Console *pConsole = new Console(); // Ra: nie wiem, czy ma to sens, ale jakoś zainicjowac trzeba
+    #endif
+    /*
+        if( !joyGetNumDevs() )
+            WriteLog( "No joystick" );
+    */
     if( Global::iConvertModels < 0 ) {
         Global::iConvertModels = -Global::iConvertModels;
         World.CreateE3D( "models/" ); // rekurencyjne przeglądanie katalogów
         World.CreateE3D( "dynamic/", true );
     } // po zrobieniu E3D odpalamy normalnie scenerię, by ją zobaczyć
 
-#ifdef _WIN32
-    Console::On(); // włączenie konsoli
-#endif
+    #ifdef _WIN32
+        Console::On(); // włączenie konsoli
+    #endif
 
     try {
         while( ( false == glfwWindowShouldClose( window ) )
@@ -415,12 +408,11 @@ int main(int argc, char *argv[])
         }
         delete &Global::GUI;
 	}
-	catch (std::runtime_error e)
-    {
+	catch (std::runtime_error e){
     	ErrorLog(e.what());
 		return -1;
 	}
-	catch( std::bad_alloc const &Error ) {
+	catch( std::bad_alloc const &Error ){
 		ErrorLog( "Critical error, memory allocation failure: " + std::string( Error.what() ) );
 		return -1;
 	}
@@ -428,10 +420,10 @@ int main(int argc, char *argv[])
 
 	TPythonInterpreter::killInstance();
 
-#ifdef _WIN32
-    Console::Off(); // wyłączenie konsoli (komunikacji zwrotnej)
-	SafeDelete( pConsole );
-#endif
+    #ifdef _WIN32
+        Console::Off(); // wyłączenie konsoli (komunikacji zwrotnej)
+        SafeDelete( pConsole );
+    #endif
 
     SafeDelete( simulation::Region );
 

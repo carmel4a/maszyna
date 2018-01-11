@@ -153,7 +153,7 @@ public:
 
 // members
     static GUI_ GUI;
-    static struct nk_context ctx;
+
     static int Keys[MaxKeys];
     static bool RealisticControlMode; // controls ability to steer the vehicle from outside views
     static Math3D::vector3 pCameraPosition; // pozycja kamery w świecie

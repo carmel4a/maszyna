@@ -31,9 +31,10 @@ http://mozilla.org/MPL/2.0/.
     #define NK_INCLUDE_FONT_BAKING
     // Add ProggyClean.ttf.
     #define NK_INCLUDE_DEFAULT_FONT
-    /*
+    
     // ? shaders in widgets Don'no know what's that.
     #define NK_INCLUDE_COMMAND_USERDATA
+    /*    
     // ?change buttons behaviour
     #define NK_BUTTON_TRIGGER_ON_RELEASE
     */
@@ -50,14 +51,20 @@ http://mozilla.org/MPL/2.0/.
 #include <GLFW/glfw3.h>
 #include <string>
 #include "Logs.h"
-
 #include <iostream>
+
+////////////
+// Consts //
+////////////
 
 /////////////
 // Members //
 /////////////
 
 GUI_::GUI_(){
+
+    int FONT_ATLAS_SIZE_X = 256;
+    int FONT_ATLAS_SIZE_Y = 256;
 
     this->font_atlas_ptr = new struct nk_font_atlas;
     this->u_font_ptr = new struct nk_user_font;
@@ -68,12 +75,16 @@ GUI_::GUI_(){
     nk_font *font = nk_font_atlas_add_from_file(this->font_atlas_ptr, "ref/fonts/cour.ttf", 13, 0);
     this->prepare_font_handler(font);
     //nk_font *font2 = nk_font_atlas_add_from_file(&atlas_, "Path/To/Your/TTF_Font2.ttf", 16, 0);
-    int h = 100;
-    int w = 100;
-    const void *img = nk_font_atlas_bake(this->font_atlas_ptr, &h, &w, NK_FONT_ATLAS_RGBA32);
+    const void *img = nk_font_atlas_bake(
+            this->font_atlas_ptr,
+            &FONT_ATLAS_SIZE_X,
+            &FONT_ATLAS_SIZE_Y,
+            NK_FONT_ATLAS_RGBA32
+            );
     //nk_font_atlas_end(&atlas, nk_handle_id(texture), 0);
-    nk_font_atlas_end(this->font_atlas_ptr, nk_handle_id(NULL), 0);
-    nk_init_default(this->ctx_ptr, this->u_font_ptr);
+    nk_font_atlas_end(this->font_atlas_ptr, nk_handle_id(0), NULL);
+    
+    assert(nk_init_default(this->ctx_ptr, this->u_font_ptr) == 1);
 };
 
 GUI_::~GUI_(){
@@ -98,6 +109,7 @@ void GUI_::end_loop(GLFWwindow* window){
     this->draw(window);
     nk_clear(this->ctx_ptr);
 };
+
 float _text_width_calculation(nk_handle handle, float height, const char *text, int len){
 
     return 10;
@@ -107,6 +119,7 @@ float _text_width_calculation(nk_handle handle, float height, const char *text, 
     //float text_width = ...;
     //return text_width;
 };
+
 void GUI_::prepare_font_handler(struct nk_font* unno){
 
     //&this->font.userdata.ptr = &your_font_class_or_struct;
@@ -120,7 +133,9 @@ void GUI_::prepare_font_handler(struct nk_font* unno){
 };
 
 void GUI_::draw(GLFWwindow* window){
+    
     WriteLog("start_draw_ui");
+    const struct nk_command *cmd = 0;
     int x_, y_, w_, h_;
     struct nk_rect size;
     WriteLog("here");
@@ -157,15 +172,64 @@ void GUI_::draw(GLFWwindow* window){
     }
     nk_end(this->ctx_ptr);
 
-    const struct nk_command *cmd = 0;
     // That's a for loop... I <3 macros.
     nk_foreach(cmd, this->ctx_ptr){
         switch (cmd->type) {
-            case NK_COMMAND_LINE:
-                //your_draw_line_function(...)
+            case NK_COMMAND_NOP:
+                break;
+            case NK_COMMAND_SCISSOR:{
+                const struct nk_command_scissor *s = (nk_command_scissor *)cmd;
+                GLint x = (GLint)s->x;
+                GLint y = (GLint)s->y;
+                GLsizei width = (GLsizei)s->w;
+                GLsizei height = (GLsizei)s->h;
+                glScissor(x, y, width, height);
+                break;
+            }
+            case NK_COMMAND_LINE:{
+                const struct nk_command_line *l = (nk_command_line *)cmd;
+                if (l->line_thickness <= 0): return;
+                glLineWidth(l->line_thickness/10);
+                glColor3f(l->color->r, l->color->g, l->color->b);
+                glBegin(GL_LINES);
+                glVertex3f(0.0, 0.0, 0.0);
+                glVertex3f(15, 0, 0);
+                glEnd();
+                break;
+            }
+            case NK_COMMAND_CURVE:
                 break;
             case NK_COMMAND_RECT:
-                //your_draw_rect_function(...)
+                break;
+            case NK_COMMAND_RECT_FILLED:
+                break;
+            case NK_COMMAND_RECT_MULTI_COLOR:
+                break;
+            case NK_COMMAND_CIRCLE:
+                break;
+            case NK_COMMAND_CIRCLE_FILLED:
+                break;
+            case NK_COMMAND_ARC:
+                break;
+            case NK_COMMAND_ARC_FILLED:
+                break;
+            case NK_COMMAND_TRIANGLE:
+                break;
+            case NK_COMMAND_TRIANGLE_FILLED:
+                break;
+            case NK_COMMAND_POLYGON:
+                break;
+            case NK_COMMAND_POLYGON_FILLED:
+                break;
+            case NK_COMMAND_POLYLINE:
+                break;
+            case NK_COMMAND_TEXT:
+                break;
+            case NK_COMMAND_IMAGE:
+                break;
+            case NK_COMMAND_CUSTOM:
+                break;
+            default:
                 break;
         }
     }
@@ -177,6 +241,7 @@ void GUI_::input_mouse_motion(double x, double y){
 };
 
 void GUI_::input_key(int key, int scancode, int action, int mods){
+
     int action_;
     nk_keys key_ = NK_KEY_NONE;
     // 0 - released, 1 - pressed, 2 - echo
@@ -356,7 +421,6 @@ void GUI_::input_mouse_button(GLFWwindow* window, int button, int action, int mo
         case GLFW_MOUSE_BUTTON_MIDDLE: button_ = NK_BUTTON_MIDDLE; break;
         case GLFW_MOUSE_BUTTON_RIGHT: button_ = NK_BUTTON_RIGHT; break;
         default:
-            //break;
             return;
     }
     nk_input_button(this->ctx_ptr, button_, (int)std::round(x), (int)std::round(y), action_);

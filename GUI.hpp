@@ -7,8 +7,6 @@ distributed with this file, You can
 obtain one at
 http://mozilla.org/MPL/2.0/.
 */
-
-#pragma once
 #ifndef GUI_MS_INCLUDED
     #define GUI_MS_INCLUDED
 
@@ -33,7 +31,7 @@ http://mozilla.org/MPL/2.0/.
         struct nk_context *ctx_ptr; // gui state
         struct nk_font_atlas *font_atlas_ptr;
         struct nk_user_font *u_font_ptr;
-    
+
     private:
         void prepare_font_handler(struct nk_font*);
     };
