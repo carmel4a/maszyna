@@ -23,6 +23,7 @@ struct global_settings {
     // data items
     // TODO: take these out of the settings
     GLFWwindow *window{ nullptr };
+
     bool shiftState{ false }; //m7todo: brzydko
     bool ctrlState{ false };
     std::mt19937 random_engine{ std::mt19937( static_cast<unsigned int>( std::time( NULL ) ) ) };

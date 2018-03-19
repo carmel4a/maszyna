@@ -114,14 +114,14 @@ void make_screenshot()
 }
 void char_callback(GLFWwindow *window,  unsigned int codepoint)
 {
-    GUI.screen->charCallbackEvent(codepoint);
+    GUI.get_screen()->charCallbackEvent(codepoint);
 }
 
 void window_resize_callback(GLFWwindow *window, int w, int h)
 {
     // NOTE: we have two variables which basically do the same thing as we don't have dynamic fullscreen toggle
     // TBD, TODO: merge them?
-    GUI.screen->resizeCallbackEvent(w, h);
+    GUI.get_screen()->resizeCallbackEvent(w, h);
 	Global.iWindowWidth = w;
 	Global.iWindowHeight = h;
     Global.fDistanceFactor = std::max( 0.5f, h / 768.0f ); // not sure if this is really something we want to use
@@ -134,7 +134,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 		return;
 
     input::Mouse.move( x, y );
-    GUI.screen->cursorPosCallbackEvent( x, y );
+    GUI.get_screen()->cursorPosCallbackEvent( x, y );
 
     if( !Global.ControlPicking ) {
         glfwSetCursorPos( window, 0, 0 );
@@ -143,7 +143,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 
 void mouse_button_callback( GLFWwindow* window, int button, int action, int mods ) {
 
-    GUI.screen->mouseButtonCallbackEvent(button, action, mods);
+    GUI.get_screen()->mouseButtonCallbackEvent(button, action, mods);
 
     if( ( button == GLFW_MOUSE_BUTTON_LEFT )
      || ( button == GLFW_MOUSE_BUTTON_RIGHT ) ) {
@@ -155,7 +155,7 @@ void mouse_button_callback( GLFWwindow* window, int button, int action, int mods
 void key_callback( GLFWwindow *window, int key, int scancode, int action, int mods ) {
 
     input::Keyboard.key( key, action );
-    GUI.screen->keyCallbackEvent(key, scancode, action, mods);
+    GUI.get_screen()->keyCallbackEvent(key, scancode, action, mods);
 
     Global.shiftState = ( mods & GLFW_MOD_SHIFT ) ? true : false;
     Global.ctrlState = ( mods & GLFW_MOD_CONTROL ) ? true : false;
@@ -223,7 +223,7 @@ void focus_callback( GLFWwindow *window, int focus )
 
 void scroll_callback( GLFWwindow* window, double xoffset, double yoffset ) {
 
-    GUI.screen->scrollCallbackEvent(xoffset, yoffset);
+    GUI.get_screen()->scrollCallbackEvent(xoffset, yoffset);
     if( Global.ctrlState ) {
         // ctrl + scroll wheel adjusts fov in debug mode
         Global.FieldOfView = clamp( static_cast<float>(Global.FieldOfView - yoffset * 20.0 / Global.fFpsAverage), 15.0f, 75.0f );
@@ -391,6 +391,7 @@ int main(int argc, char *argv[])
             ErrorLog( "Simulation setup failed" );
             return -1;
         }
+        GUI.init(window);
     }
     catch( std::bad_alloc const &Error )
 	{
@@ -428,8 +429,6 @@ int main(int argc, char *argv[])
 
     try {
 
-        GUI.init(window);
-
         glfwSetFramebufferSizeCallback(window, window_resize_callback);
         glfwSetCursorPosCallback(window, cursor_pos_callback);
         glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -444,7 +443,7 @@ int main(int argc, char *argv[])
         }
         glfwSetDropCallback(window,
             [](GLFWwindow *, int count, const char **filenames) {
-                GUI.screen->dropCallbackEvent(count, filenames);
+                GUI.get_screen()->dropCallbackEvent(count, filenames);
             }
         );
 
