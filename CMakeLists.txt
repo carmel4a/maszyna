@@ -82,6 +82,7 @@ set(SOURCES
 "uitranscripts.cpp"
 "station.cpp"
 "GUI.cpp"
+"CustomWidget.cpp"
 )
 
 set (PREFIX "")
