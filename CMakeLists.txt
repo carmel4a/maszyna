@@ -6,8 +6,8 @@ set(DEPS_DIR ${DEPS_DIR} "${CMAKE_SOURCE_DIR}/ref")
 project("eu07")
 
 set(CMAKE_CXX_STANDARD 14)
-include_directories("." "Console" "McZapkie")
-file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h")
+include_directories("." "Console" "McZapkie" "ref/coro" "ref/nanovg/src")
+file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h"  "ref/coro/*.h"  "ref/nanovg/src/*.h")
 
 set(SOURCES
 "Texture.cpp"
@@ -81,6 +81,7 @@ set(SOURCES
 "light.cpp"
 "uitranscripts.cpp"
 "station.cpp"
+"GUI.cpp"
 )
 
 set (PREFIX "")
@@ -101,6 +102,7 @@ if (WIN32)
 	set(LUAJIT_INCLUDE_DIR ${LUAJIT_INCLUDE_DIR} "${DEPS_DIR}/luajit/include")
 	set(PYTHON_INCLUDE_DIR ${PYTHON_INCLUDE_DIR} "${DEPS_DIR}/python/include")
 	set(libserialport_INCLUDE_DIR ${LIBSERIALPORT_INCLUDE_DIR} "${DEPS_DIR}/libserialport/include")
+	set(NANOGUI_INCLUDE_DIR ${NANOGUI_INCLUDE_DIR} "${DEPS_DIR}/nanogui/include")
 	
 	if(${CMAKE_EXE_LINKER_FLAGS} STREQUAL "/machine:x64")
 		set (ARCH "x64")
@@ -195,6 +197,13 @@ target_link_libraries(${PROJECT_NAME} ${LUAJIT_LIBRARIES})
 find_package(libserialport REQUIRED)
 include_directories(${libserialport_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} ${libserialport_LIBRARY})
+
+find_package(libnanogui REQUIRED)
+include_directories(${NANOGUI_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} ${NANOGUI_LIBRARY})
+
+find_package(libeigen REQUIRED)
+include_directories(${EIGEN_INCLUDE_DIR})
 
 if (WIN32)
 	target_link_libraries(${PROJECT_NAME} ws2_32)

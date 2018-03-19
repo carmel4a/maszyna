@@ -16,11 +16,13 @@ MarcinW, McZapkie, Shaxbee, ABu, nbmx, youBy, Ra, winger, mamut, Q424,
 Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
 */
 
+
 #include "stdafx.h"
 #include <png.h>
 #include <thread>
 
 #include "World.h"
+#include "GUI.h"
 #include "simulation.h"
 #include "Globals.h"
 #include "Timer.h"
@@ -83,13 +85,13 @@ void screenshot_save_thread( char *img )
 	strftime(datetime, 64, "%Y-%m-%d_%H-%M-%S", tm_info);
 
 	uint64_t perf;
-#ifdef _WIN32
-	QueryPerformanceCounter((LARGE_INTEGER*)&perf);
-#elif __linux__
-	timespec ts;
-	clock_gettime(CLOCK_REALTIME, &ts);
-	perf = ts.tv_nsec;
-#endif
+    #ifdef _WIN32
+	    QueryPerformanceCounter((LARGE_INTEGER*)&perf);
+    #elif __linux__
+	    timespec ts;
+	    clock_gettime(CLOCK_REALTIME, &ts);
+	    perf = ts.tv_nsec;
+    #endif
 
 	std::string filename = Global.screenshot_dir + "/" + std::string(datetime) +
 	                       "_" + std::to_string(perf) + ".png";
@@ -110,11 +112,16 @@ void make_screenshot()
 	std::thread t(screenshot_save_thread, img);
 	t.detach();
 }
+void char_callback(GLFWwindow *window,  unsigned int codepoint)
+{
+    GUI.screen->charCallbackEvent(codepoint);
+}
 
 void window_resize_callback(GLFWwindow *window, int w, int h)
 {
     // NOTE: we have two variables which basically do the same thing as we don't have dynamic fullscreen toggle
     // TBD, TODO: merge them?
+    GUI.screen->resizeCallbackEvent(w, h);
 	Global.iWindowWidth = w;
 	Global.iWindowHeight = h;
     Global.fDistanceFactor = std::max( 0.5f, h / 768.0f ); // not sure if this is really something we want to use
@@ -127,6 +134,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 		return;
 
     input::Mouse.move( x, y );
+    GUI.screen->cursorPosCallbackEvent( x, y );
 
     if( !Global.ControlPicking ) {
         glfwSetCursorPos( window, 0, 0 );
@@ -134,6 +142,8 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 }
 
 void mouse_button_callback( GLFWwindow* window, int button, int action, int mods ) {
+
+    GUI.screen->mouseButtonCallbackEvent(button, action, mods);
 
     if( ( button == GLFW_MOUSE_BUTTON_LEFT )
      || ( button == GLFW_MOUSE_BUTTON_RIGHT ) ) {
@@ -143,6 +153,9 @@ void mouse_button_callback( GLFWwindow* window, int button, int action, int mods
 }
 
 void key_callback( GLFWwindow *window, int key, int scancode, int action, int mods ) {
+
+    input::Keyboard.key( key, action );
+    GUI.screen->keyCallbackEvent(key, scancode, action, mods);
 
     Global.shiftState = ( mods & GLFW_MOD_SHIFT ) ? true : false;
     Global.ctrlState = ( mods & GLFW_MOD_CONTROL ) ? true : false;
@@ -210,6 +223,7 @@ void focus_callback( GLFWwindow *window, int focus )
 
 void scroll_callback( GLFWwindow* window, double xoffset, double yoffset ) {
 
+    GUI.screen->scrollCallbackEvent(xoffset, yoffset);
     if( Global.ctrlState ) {
         // ctrl + scroll wheel adjusts fov in debug mode
         Global.FieldOfView = clamp( static_cast<float>(Global.FieldOfView - yoffset * 20.0 / Global.fFpsAverage), 15.0f, 75.0f );
@@ -299,7 +313,9 @@ int main(int argc, char *argv[])
     // fullwindow creation when resolution is the same
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *vmode = glfwGetVideoMode(monitor);
-
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
     glfwWindowHint(GLFW_RED_BITS, vmode->redBits);
     glfwWindowHint(GLFW_GREEN_BITS, vmode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, vmode->blueBits);
@@ -335,17 +351,6 @@ int main(int argc, char *argv[])
     glfwMakeContextCurrent(window);
     glfwSwapInterval(Global.VSync ? 1 : 0); //vsync
     glfwSetCursorPos(window, 0.0, 0.0);
-    glfwSetFramebufferSizeCallback(window, window_resize_callback);
-    glfwSetCursorPosCallback(window, cursor_pos_callback);
-    glfwSetMouseButtonCallback( window, mouse_button_callback );
-    glfwSetKeyCallback(window, key_callback);
-    glfwSetScrollCallback( window, scroll_callback );
-    glfwSetWindowFocusCallback(window, focus_callback);
-    {
-        int width, height;
-        glfwGetFramebufferSize(window, &width, &height);
-        window_resize_callback(window, width, height);
-    }
 
     if (glewInit() != GLEW_OK)
 	{
@@ -422,6 +427,29 @@ int main(int argc, char *argv[])
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); //capture cursor
 
     try {
+
+        GUI.init(window);
+
+        glfwSetFramebufferSizeCallback(window, window_resize_callback);
+        glfwSetCursorPosCallback(window, cursor_pos_callback);
+        glfwSetMouseButtonCallback(window, mouse_button_callback);
+        glfwSetKeyCallback(window, key_callback);
+        glfwSetCharCallback(window, char_callback);
+        glfwSetScrollCallback(window, scroll_callback);
+        glfwSetWindowFocusCallback(window, focus_callback);
+        {
+            int width, height;
+            glfwGetFramebufferSize(window, &width, &height);
+            window_resize_callback(window, width, height);
+        }
+        glfwSetDropCallback(window,
+            [](GLFWwindow *, int count, const char **filenames) {
+                GUI.screen->dropCallbackEvent(count, filenames);
+            }
+        );
+
+
+
         while( ( false == glfwWindowShouldClose( window ) )
             && ( true == World.Update() )
             && ( true == GfxRenderer.Render() ) ) {
@@ -448,10 +476,10 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-#ifdef _WIN32
-    Console::Off(); // wyłączenie konsoli (komunikacji zwrotnej)
-    SafeDelete( pConsole );
-#endif    
+    #ifdef _WIN32
+        Console::Off(); // wyłączenie konsoli (komunikacji zwrotnej)
+        SafeDelete( pConsole );
+    #endif    
     SafeDelete( simulation::Region );
 
 	glfwDestroyWindow(window);

@@ -8,7 +8,8 @@ http://mozilla.org/MPL/2.0/.
 */
 
 #pragma once
-
+#ifndef _MS_UTILITIES_
+#define _MS_UTILITIES_
 #include "stdafx.h"
 
 #include <string>
@@ -50,20 +51,20 @@ inline double Sign(double x)
 
 inline long Round(double const f)
 {
-	return (long)(f + 0.5);
-	//return lround(f);
+    return (long)(f + 0.5);
+    //return lround(f);
 }
 
 double Random(double a, double b);
 
 inline double Random()
 {
-	return Random(0.0,1.0);
+    return Random(0.0,1.0);
 }
 
 inline double Random(double b)
 {
-	return Random(0.0, b);
+    return Random(0.0, b);
 }
 
 inline double BorlandTime()
@@ -110,7 +111,7 @@ std::string to_hex_str( int const _Val, int const width = 4 );
 
 inline std::string to_string(bool _Val) {
 
-	return _Val == true ? "true" : "false";
+    return _Val == true ? "true" : "false";
 }
 
 template <typename Type_, glm::precision Precision_ = glm::defaultp>
@@ -303,3 +304,6 @@ nearest_segment_point( VecType_ const &Segmentstart, VecType_ const &Segmentend,
 
 class cParser;
 glm::dvec3 LoadPoint( cParser &Input );
+
+#endif //!_MS_UTILITIES_
+//---------------------------------------------------------------------------

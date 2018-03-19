@@ -8,6 +8,8 @@ http://mozilla.org/MPL/2.0/.
 */
 
 #pragma once
+#ifndef _VERTEX_MS_
+#define _VERTEX_MS_
 
 #include <glm/glm.hpp>
 #include "utilities.h"
@@ -86,4 +88,5 @@ template <>
 world_vertex &
 world_vertex::operator*=( world_vertex const &Right );
 
+#endif //!_VERTEX_MS_
 //---------------------------------------------------------------------------

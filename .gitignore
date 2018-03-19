@@ -78,3 +78,15 @@ CMakeLists.txt.user
 *.vcxproj
 
 *.sln
+
+# Visual Studio Code
+.vscode
+
+# Res
+nanogui/
+Nuklear/
+
+# Others
+
+errors.txt
+log.txt
