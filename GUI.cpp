@@ -89,7 +89,7 @@ void GUI_::draw_gui(){
 void GUI_::focus_helper_on( Window& window ){
     
     GUI.get_helper()->setWindow( &window );
-}
+};
 
 void GUI_::add_widget(                 std::string name,
                        const shared_custom_widget& s_ptr_custom_widget,

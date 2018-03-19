@@ -37,4 +37,16 @@ class CustomWidget{
         nanogui::ref<Widget> widget;
 };
 
+class TestWidget : public CustomWidget{
+    
+    public:
+        TestWidget( std::string text, nanogui::ref<Widget> parent );
+        ~TestWidget(){};
+        virtual void init_layout();
+        virtual void make();
+        
+        nanogui::ref<Widget> parent;
+        std::string test = "aaa";
+};
+
 #endif // !_CUSTOM_WIDGET_
