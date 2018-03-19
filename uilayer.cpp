@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "uilayer.h"
 #include "uitranscripts.h"
-
+#include "GUI.h"
 #include "Globals.h"
 #include "translation.h"
 #include "simulation.h"
@@ -18,18 +18,18 @@
 ui_layer UILayer;
 
 #ifdef _WIN32
-extern "C"
-{
-	GLFWAPI HWND glfwGetWin32Window( GLFWwindow* window );
-}
+    extern "C"
+    {
+        GLFWAPI HWND glfwGetWin32Window( GLFWwindow* window );
+    }
 #endif
 
 ui_layer::~ui_layer() {
-/*
-// this should be invoked manually, or we risk trying to delete the lists after the context is gone
-    if( m_fontbase != -1 )
-        ::glDeleteLists( m_fontbase, 96 );
-*/
+    /*
+    // this should be invoked manually, or we risk trying to delete the lists after the context is gone
+        if( m_fontbase != -1 )
+            ::glDeleteLists( m_fontbase, 96 );
+    */
 }
 
 bool
@@ -53,9 +53,9 @@ ui_layer::init( GLFWwindow *Window ) {
 	    ui_log->enabled = false;
     m_window = Window;
 
-#ifndef _WIN32
-	Global.bGlutFont = true;
-#endif
+    #ifndef _WIN32
+        Global.bGlutFont = true;
+    #endif
 
 	if (Global.bGlutFont)
 	{
@@ -68,38 +68,38 @@ ui_layer::init( GLFWwindow *Window ) {
 		return true;
 	}
 
-#ifdef _WIN32
-    HFONT font; // Windows Font ID
-    m_fontbase = ::glGenLists(96); // storage for 96 characters
-    HDC hDC = ::GetDC( glfwGetWin32Window( m_window ) );
-    font = ::CreateFont( -MulDiv( 10, ::GetDeviceCaps( hDC, LOGPIXELSY ), 72 ), // height of font
-                        0, // width of font
-                        0, // angle of escapement
-                        0, // orientation angle
-                        FW_MEDIUM, // font weight
-                        FALSE, // italic
-                        FALSE, // underline
-                        FALSE, // strikeout
-                        DEFAULT_CHARSET, // character set identifier
-                        OUT_DEFAULT_PRECIS, // output precision
-                        CLIP_DEFAULT_PRECIS, // clipping precision
-                        CLEARTYPE_QUALITY, // output quality
-                        DEFAULT_PITCH | FF_DONTCARE, // family and pitch
-                        "Lucida Console"); // font name
-    ::SelectObject(hDC, font); // selects the font we want
-    if( TRUE == ::wglUseFontBitmaps( hDC, 32, 96, m_fontbase ) ) {
-        // builds 96 characters starting at character 32
-        WriteLog( "Display Lists font used" ); //+AnsiString(glGetError())
-        WriteLog( "Font init OK" ); //+AnsiString(glGetError())
-        Global.DLFont = true;
-        return true;
-    }
-    else {
-        ErrorLog( "Font init failed" );
-        Global.DLFont = false;
-        return true;
-    }
-#endif
+    #ifdef _WIN32
+        HFONT font; // Windows Font ID
+        m_fontbase = ::glGenLists(96); // storage for 96 characters
+        HDC hDC = ::GetDC( glfwGetWin32Window( m_window ) );
+        font = ::CreateFont( -MulDiv( 10, ::GetDeviceCaps( hDC, LOGPIXELSY ), 72 ), // height of font
+                            0, // width of font
+                            0, // angle of escapement
+                            0, // orientation angle
+                            FW_MEDIUM, // font weight
+                            FALSE, // italic
+                            FALSE, // underline
+                            FALSE, // strikeout
+                            DEFAULT_CHARSET, // character set identifier
+                            OUT_DEFAULT_PRECIS, // output precision
+                            CLIP_DEFAULT_PRECIS, // clipping precision
+                            CLEARTYPE_QUALITY, // output quality
+                            DEFAULT_PITCH | FF_DONTCARE, // family and pitch
+                            "Lucida Console"); // font name
+        ::SelectObject(hDC, font); // selects the font we want
+        if( TRUE == ::wglUseFontBitmaps( hDC, 32, 96, m_fontbase ) ) {
+            // builds 96 characters starting at character 32
+            WriteLog( "Display Lists font used" ); //+AnsiString(glGetError())
+            WriteLog( "Font init OK" ); //+AnsiString(glGetError())
+            Global.DLFont = true;
+            return true;
+        }
+        else {
+            ErrorLog( "Font init failed" );
+            Global.DLFont = false;
+            return true;
+        }
+    #endif
 }
 
 // potentially processes provided input key. returns: true if key was processed, false otherwise
@@ -933,19 +933,18 @@ ui_layer::render() {
 
     render_panels();
     render_tooltip();
+    GUI.draw_gui();
 
-	glPopAttrib();
+    glPopAttrib();
 }
 
-void
-ui_layer::set_progress( float const Progress, float const Subtaskprogress ) {
+void ui_layer::set_progress( float const Progress, float const Subtaskprogress ) {
 
     m_progress = Progress * 0.01f;
     m_subtaskprogress = Subtaskprogress * 0.01f;
 }
 
-void
-ui_layer::set_background( std::string const &Filename ) {
+void ui_layer::set_background( std::string const &Filename ) {
 
     if( false == Filename.empty() ) {
         m_background = GfxRenderer.Fetch_Texture( Filename );
@@ -959,8 +958,7 @@ ui_layer::set_background( std::string const &Filename ) {
     }
 }
 
-void
-ui_layer::render_progress() {
+void ui_layer::render_progress() {
 
 	if( (m_progress == 0.0f) && (m_subtaskprogress == 0.0f) ) return;
 
@@ -974,7 +972,9 @@ ui_layer::render_progress() {
         size   = glm::vec2{ 320.0f, 16.0f };
     }
 
-    quad( glm::vec4( origin.x, origin.y, origin.x + size.x, origin.y + size.y ), glm::vec4(0.0f, 0.0f, 0.0f, 0.25f) );
+    quad(
+        glm::vec4( origin.x, origin.y, origin.x + size.x, origin.y + size.y ),
+        glm::vec4(0.0f, 0.0f, 0.0f, 0.25f) );
     // secondary bar
     if( m_subtaskprogress ) {
         quad(
