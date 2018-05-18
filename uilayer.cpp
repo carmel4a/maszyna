@@ -966,6 +966,7 @@ ui_layer::update() {
 
 void
 ui_layer::render() {
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho( 0, std::max( 1, Global.iWindowWidth ), std::max( 1, Global.iWindowHeight ), 0, -1, 1 );

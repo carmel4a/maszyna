@@ -23,7 +23,7 @@ GUI_ GUI;
 
 GUI_::GUI_(){
 
-    screen = std::make_shared< Screen >();
+    screen = std::make_shared< InputScreen >();
     // Create a gui helper. Creating windows, widgets, etc.
     helper = std::make_shared< FormHelper >( get_screen() );
     WriteLog( "GUI created." );
@@ -31,6 +31,7 @@ GUI_::GUI_(){
 
 GUI_::~GUI_(){
 
+    nanogui::shutdown();
     WriteLog("GUI deleted.");
 };
 
@@ -38,29 +39,9 @@ GUI_::~GUI_(){
 void GUI_::init( GLFWwindow* window ){
 
     get_screen()->initialize( window, true );
-    get_screen()->setLayout( new BoxLayout( Orientation::Vertical ) );
+    
+    
 
-    const shared_custom_widget& _ref =
-            std::make_shared< TestWidget >( "llalla", get_screen() );
-    add_widget("a",
-             _ref,
-              widgets
-             );
-    
-    const shared_custom_widget& _ref1 =
-            std::make_shared< TestWidget >( "test2", widgets["a"]->get_widget_ref() );
-    add_widget("b",
-              _ref1,
-               widgets
-             );
-    
-    const shared_custom_widget& _ref2 =
-            std::make_shared< TestWidget >( "test2", widgets["a"]->get_widget_ref() );
-    add_widget("c",
-        _ref2,
-        widgets
-             );
-    remove_widget( "b", widgets );
     get_screen()->setVisible( true );
     // Mark gui as ready to be drawn.
     is_ready = true;
@@ -94,6 +75,7 @@ void GUI_::focus_helper_on( Window& window ){
 void GUI_::add_widget(                 std::string name,
                        const shared_custom_widget& s_ptr_custom_widget,
                                        widget_map& where                ){
+    s_ptr_custom_widget->init();
     where[name] = s_ptr_custom_widget;
     s_ptr_custom_widget->init_layout();
     s_ptr_custom_widget->make();
@@ -101,7 +83,7 @@ void GUI_::add_widget(                 std::string name,
 };
 
 void GUI_::update_layout( Widget* of ){
-
+    
     of->performLayout( get_screen()->nvgContext() );
     of->parent()->performLayout( get_screen()->nvgContext() );
     get_screen()->performLayout( get_screen()->nvgContext() );
@@ -118,6 +100,17 @@ void GUI_::remove_widget( std::string name,
 void GUI_::update_all_vars(){
     
     helper->refresh();
+};
+
+bool InputScreen::keyboardEvent(int key, int scancode, int action, int modifiers){
+
+    if (mFocusPath.size() > 0) {
+        for (auto it = mFocusPath.rbegin() + 1; it != mFocusPath.rend(); ++it)
+            if ((*it)->focused() && (*it)->keyboardEvent(key, scancode, action, modifiers))
+                return true;
+    }
+    
+    return false;
 };
 
 /*

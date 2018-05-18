@@ -6,6 +6,7 @@
     obtain one at
     http://mozilla.org/MPL/2.0/.
 */
+
 #pragma once
 
 #ifndef _MAIN_GUI_
@@ -47,28 +48,34 @@ class GUI_{
         
         /*! nanogui::Screen class, handles GLFW window. Represent an glfw window.
         It should be an singleton, untill MaSzyna will have one main window.
-        It may change eg. when mp module will be implemented.*/
+        It may change eg. when mp module will be implemented. */
         Screen* get_screen();
         FormHelper* get_helper();
-
+        
         void add_widget(                 std::string name,
-                        const shared_custom_widget& sptr_custom,
-                                        widget_map& where        );
+                         const shared_custom_widget& sptr_custom,
+                                         widget_map& where       );
         
         void remove_widget( std::string name,
-                                 widget_map& from  );
+                            widget_map& from );
         
-        widget_map& get_widgets_map( CustomWidget& widget ); // not implemented // outdated
         void update_layout( Widget* of );
         void focus_helper_on( Window& window );
+        widget_map widgets;
     
     private:
         std::shared_ptr< Screen > screen;
         std::shared_ptr< FormHelper > helper;
-        widget_map widgets;
         bool is_ready = false; // dono if it'll be necesary.
 };
-
+    
 extern GUI_ GUI;
+
+class InputScreen : public nanogui::Screen {
+    public:
+        InputScreen() = default;
+        virtual ~InputScreen() = default;
+        bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
+};
 
 #endif //!_MAIN_GUI_
