@@ -2,6 +2,7 @@
 #include "uilayer.h"
 #include "uitranscripts.h"
 #include "GUI.h"
+#include "PopupExit.h"
 #include "Globals.h"
 #include "translation.h"
 #include "simulation.h"
@@ -115,8 +116,6 @@ ui_layer::on_key( int const Key, int const Action ) {
         case GLFW_KEY_F3:
         case GLFW_KEY_F8:
         case GLFW_KEY_F9:
-        case GLFW_KEY_F10:
-        case GLFW_KEY_F11:
         case GLFW_KEY_F12: { // ui mode selectors
 
             if( ( true == Global.ctrlState )
@@ -189,41 +188,22 @@ ui_layer::on_key( int const Key, int const Action ) {
             return true;
         }
 
-        case GLFW_KEY_F10: {
-            // quit
-            if( Global.iTextMode == Key ) {
-                Global.iTextMode =
-                    ( Global.iPause && ( Key != GLFW_KEY_F1 ) ?
-                        GLFW_KEY_F1 :
-                        0 ); // wyłączenie napisów, chyba że pauza
-            }
-            else {
-                Global.iTextMode = Key;
-            }
-            return true;
-        }
-
         case GLFW_KEY_F11: {
             // scenario inspector
             Global.iTextMode = Key;
             return true;
         }
+		case GLFW_KEY_F11: {
+			if (Action == GLFW_PRESS)
+				ui_log->enabled = !ui_log->enabled;
+			break;
+		}
 
         case GLFW_KEY_F12: {
 			if (Action == GLFW_PRESS)
 				ui_log->enabled = !ui_log->enabled;
             // coś tam jeszcze
             Global.iTextMode = Key;
-            return true;
-        }
-
-        case GLFW_KEY_Y: {
-            // potentially quit
-            if( Global.iTextMode != GLFW_KEY_F10 ) { return false; } // not in quit mode
-
-            if( Action == GLFW_RELEASE ) { return true; } // recognized, but ignored
-
-            glfwSetWindowShouldClose( m_window, 1 );
             return true;
         }
 
@@ -689,13 +669,6 @@ ui_layer::update() {
             uitextline3 =
                   "vehicles: " + to_string( Timer::subsystem.sim_dynamics.average(), 2 ) + " msec"
                 + " update total: " + to_string( Timer::subsystem.sim_total.average(), 2 ) + " msec";
-
-            break;
-        }
-
-        case( GLFW_KEY_F10 ) : {
-
-            uitextline1 = "Press [Y] key to quit / Aby zakonczyc program, przycisnij klawisz [Y].";
 
             break;
         }

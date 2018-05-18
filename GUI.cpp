@@ -16,8 +16,10 @@
 #include "Logs.h"
 #include "Globals.h"
 #include "CustomWidget.h"
+#include "PopupExit.h"
 
 using namespace nanogui;
+class PopupExit;
 
 GUI_ GUI;
 
@@ -40,6 +42,11 @@ void GUI_::init( GLFWwindow* window ){
 
     get_screen()->initialize( window, true );
     
+    const auto& exit_popup_ref = std::make_shared< PopupExit >();
+    add_widget("exit_popup",
+                exit_popup_ref,
+                widgets
+            );
     
 
     get_screen()->setVisible( true );
@@ -103,6 +110,19 @@ void GUI_::update_all_vars(){
 };
 
 bool InputScreen::keyboardEvent(int key, int scancode, int action, int modifiers){
+    
+    if( key == GLFW_KEY_F10 ){
+        const auto& popup = dynamic_cast< PopupExit* >( GUI.widgets["exit_popup"].get() );
+        if( popup->may_quit && action == GLFW_PRESS ){
+            if( popup->get_widget()->visible() ){
+                popup->hide();
+            }
+            else{
+                popup->show();
+            }
+            return true;
+        }
+    }
 
     if (mFocusPath.size() > 0) {
         for (auto it = mFocusPath.rbegin() + 1; it != mFocusPath.rend(); ++it)
