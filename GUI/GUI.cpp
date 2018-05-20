@@ -41,6 +41,11 @@ GUI_::~GUI_(){
 void GUI_::init( GLFWwindow* window ){
 
     get_screen()->initialize( window, true );
+    /*
+    nanogui::ref< Window > win = new Window(get_screen(), "test errora");
+    win->setLayout( new BoxLayout( Orientation::Vertical ) );
+    win->setVisible(true);
+    */
     
     const auto& exit_popup_ref = std::make_shared< PopupExit >();
     add_widget("exit_popup",

@@ -22,6 +22,11 @@ class CustomWidget;
 typedef std::shared_ptr< CustomWidget > shared_custom_widget;
 typedef std::unordered_map< std::string, shared_custom_widget > widget_map;
 
+/*! A Base class to create own widgets. It is meant as container for nanogui::ref to 
+ * widget. It doesn't implement own logic, as creating widget, so in overrided
+ * constructor, and virtual methods user must include manually assign nanogui::Widget
+ * to nanogui::ref.
+ */
 class CustomWidget{
     
     public:
@@ -32,7 +37,7 @@ class CustomWidget{
         virtual void init() = 0;
         virtual void init_layout() = 0;
         virtual void make() = 0;
-        widget_map widgets;
+        widget_map widgets; //pls don't use it on top-level widgets.
     
     protected:
         nanogui::ref<Widget> widget;

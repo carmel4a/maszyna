@@ -6,8 +6,8 @@ set(DEPS_DIR ${DEPS_DIR} "${CMAKE_SOURCE_DIR}/ref")
 project("eu07")
 
 set(CMAKE_CXX_STANDARD 14)
-include_directories("." "Console" "McZapkie" "ref/coro" "ref/nanovg/src")
-file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h"  "ref/coro/*.h"  "ref/nanovg/src/*.h")
+include_directories("." "Console" "McZapkie" "ref/coro" "ref/nanovg/src" "GUI")
+file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h"  "ref/coro/*.h"  "ref/nanovg/src/*.h" "GUI/*.h")
 
 set(SOURCES
 "Texture.cpp"
@@ -81,8 +81,8 @@ set(SOURCES
 "light.cpp"
 "uitranscripts.cpp"
 "station.cpp"
-"GUI.cpp"
-"PopupExit.cpp"
+"GUI/GUI.cpp"
+"GUI/PopupExit.cpp"
 )
 
 set (PREFIX "")
