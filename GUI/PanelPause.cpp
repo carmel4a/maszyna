@@ -33,7 +33,7 @@ void PanelPause::init(){
 };
 
 void PanelPause::make(){
-    
+
     ref< BoxLayout > top_layout = new BoxLayout( Orientation::Horizontal );
 
     widget_->setLayout( top_layout.get() );
@@ -44,7 +44,7 @@ void PanelPause::make(){
     panel->setTheme( default_theme );
     panel->theme()->mWindowHeaderHeight = 0;
 
-
+    
     nanogui::ref< Label > label = new Label( panel.get(), "PAUSED" );
     GUI.update_layout( panel.get() );
     GUI.update_layout( widget_.get() );

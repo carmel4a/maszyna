@@ -20,6 +20,7 @@
 #include "Popup_CA_SHP.h"
 #include "PanelPause.h"
 
+
 using namespace nanogui;
 class PopupExit;
 
@@ -45,11 +46,6 @@ void GUI_::init( GLFWwindow* window ){
     get_screen()->initialize( window, true );
     nanogui::ref< Theme > default_theme = new DefaultTheme( get_screen()->nvgContext() );
     get_screen()->setTheme( default_theme );
-    /*
-    nanogui::ref< Window > win = new Window(get_screen(), "test errora");
-    win->setLayout( new BoxLayout( Orientation::Vertical ) );
-    win->setVisible(true);
-    */
     
     const auto& exit_popup_ref = std::make_shared< PopupExit >();
     add_widget("exit_popup",
@@ -74,6 +70,7 @@ void GUI_::init( GLFWwindow* window ){
     get_screen()->setVisible( true );
     // Mark gui as ready to be drawn.
     is_ready = true;
+
     WriteLog( "GUI prepared." );
 };
 
@@ -88,6 +85,7 @@ FormHelper* GUI_::get_helper(){
     return helper.get();
 };
 
+// call on each frame
 void GUI_::draw_gui(){
 
     if( is_ready ){
@@ -96,6 +94,7 @@ void GUI_::draw_gui(){
     }
 };
 
+[[deprecated]]
 void GUI_::focus_helper_on( Window& window ){
     
     GUI.get_helper()->setWindow( &window );
@@ -112,10 +111,8 @@ void GUI_::add_widget(                 std::string name,
 
 void GUI_::update_layout( Widget* of ){
     
-    of->performLayout( get_screen()->nvgContext() );
     of->parent()->performLayout( get_screen()->nvgContext() );
-    get_screen()->performLayout( get_screen()->nvgContext() );
-}
+};
 
 void GUI_::remove_widget( std::string name,
                           widget_map& from  ){
@@ -262,7 +259,6 @@ InputScreen::InputScreen(){
 };
 
 void InputScreen::resize( nanogui::Vector2i v ){
-    WriteLog( std::to_string(v.x()) + " " + std::to_string(v.y()) );
     for( auto const& [key, val] : GUI.widgets )
     {
         val->resize( v );

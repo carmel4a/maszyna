@@ -160,6 +160,7 @@ void key_callback( GLFWwindow *window, int key, int scancode, int action, int mo
     // give the ui first shot at the input processing...
     if( GUI.get_screen()->keyCallbackEvent(key, scancode, action, mods)
     ) return;
+
     if( true == UILayer.on_key( key, action ) ) { return; }
     // ...if the input is left untouched, pass it on
     input::Keyboard.key( key, action );

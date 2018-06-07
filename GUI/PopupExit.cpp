@@ -17,6 +17,8 @@
 #include "Globals.h"
 
 using namespace nanogui;
+
+
 class GUI_; class CustomWidget; class PopupExitPanel;
 
 void assign_grid_layout(Widget* to, const nanogui::Orientation orientation, const std::vector< Alignment > alignment);
