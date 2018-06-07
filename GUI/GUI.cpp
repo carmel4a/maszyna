@@ -42,6 +42,8 @@ GUI_::~GUI_(){
 void GUI_::init( GLFWwindow* window ){
 
     get_screen()->initialize( window, true );
+    nanogui::ref< Theme > default_theme = new DefaultTheme( get_screen()->nvgContext() );
+    get_screen()->setTheme( default_theme );
     /*
     nanogui::ref< Window > win = new Window(get_screen(), "test errora");
     win->setLayout( new BoxLayout( Orientation::Vertical ) );
@@ -246,9 +248,12 @@ bool InputScreen::keyboardEvent(int key, int scancode, int action, int modifiers
     return false;
 };
 
-/*
-Vector2i to_glob_pos(Vector2f rel_pos, Vector2i start_pos=Eigen::Vector2i(), Vector2i end_pos){
-
+#define FONT_SCALE 2
+DefaultTheme::DefaultTheme( NVGcontext *ctx ):
+    Theme( ctx ){
+    mStandardFontSize = 16 * FONT_SCALE;
+    mButtonFontSize = 20 * FONT_SCALE;
+    mTextBoxFontSize = 20 * FONT_SCALE;
 };
-Vector2f to_rel_pos(Vector2f glob_pos){};
-*/
+
+DefaultTheme::~DefaultTheme(){};
