@@ -36,7 +36,9 @@ class CustomWidget{
         nanogui::ref<Widget> get_widget_ref(){ return widget; };
         virtual void init() = 0;
         virtual void init_layout() = 0;
-        virtual void make() = 0;
+        
+        virtual void show(){};
+        virtual void hide(){};
         widget_map widgets; //pls don't use it on top-level widgets.
     
     protected:
