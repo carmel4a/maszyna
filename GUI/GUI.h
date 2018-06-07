@@ -15,10 +15,10 @@
 #include <memory.h>
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 #include "GL/glew.h"
 #include "nanogui/nanogui.h"
-#include "CustomWidget.h"
 
 using namespace nanogui;
 
@@ -33,17 +33,12 @@ class GUI_{
         GUI_();
         ~GUI_();
 
-        /*
-            //Vector2i to_glob_pos(Vector2f rel_pos); // TODO
-            //Vector2f to_rel_pos(Vector2f glob_pos); // TODO
-        */
-        
         /*! Call after succesfull init of glfw window. */
         void init(GLFWwindow* window);
         
         /*! Call it every frame. */
         void draw_gui();
-        
+        [[deprecated]]
         void update_all_vars();
         
         /*! nanogui::Screen class, handles GLFW window. Represent an glfw window.
@@ -60,10 +55,104 @@ class GUI_{
                             widget_map& from );
         
         void update_layout( Widget* of );
+        [[deprecated]]
         void focus_helper_on( Window& window );
         widget_map widgets;
-    
+        void register_widget( Widget& widget);
+        template< class T >
+        T* get( std::string name );
+
+        enum Alignment : short{
+            Begin,
+            Centered,
+            End,
+            Fill
+        };
+
+        // Vector2i Vector2f Vector2d
+        template< typename T = Vector2i >
+        struct Rect2{
+            T pos;
+            T size;
+
+            // false rel Position in px from top left to botton right.
+            //           Size - in px from Position in the same dir.
+            // true rel  Position in % of parent (scren/widget) from top
+            // left to botton right.
+            //           Size - in px from parent in the same dir.
+            /////////////////////////////////////////////////////////
+            //   |
+            // --+############ -> x+
+            //   #...........#   Pos ( 1/13, 3/7 )
+            //   #..####### .#   Size ( 6/13, 3/7 )
+            //   #..#,,,,,# .#   
+            //   #..####### .#   + - origin
+            //   #...........#
+            //   #############
+            //   v 
+            //   y+
+            bool rel = false;
+        };
+        // begin: up to down, left to right
+        // end: down to up, right to left
+        struct Anchor{
+            Anchor( Alignment mode = Alignment::Begin ) :
+            mode{mode} {};
+            bool is_rect_rel = true;
+            Vector2i start = Vector2i( 0, 0);
+            Vector2i end = Vector2i( 1, 1 );
+            bool is_margin_rel = true;
+            int margin = 0;
+            float margin_rel = 0;
+            Alignment mode;
+        };
+        
+        // left, top, right, botton
+        void x_rel_pos( Widget& widget, float n );
+        void x_rel_pos( Widget& widget, float n, Widget& to );
+        void y_rel_pos( Widget& widget, float n );
+        void y_rel_pos( Widget& widget, float n, Widget& to );
+
+
+        // PASS ONLY `false` OR GUI_::Anchor
+        // unless you wanna see dragons.
+        
+        void set_x_anchor( 
+                Widget* what,
+                Widget* to,
+                GUI_::Anchor anchor_x
+        );
+        
+        void set_y_anchor( 
+                Widget* what,
+                Widget* to,
+                GUI_::Anchor anchor_y
+        );
+
     private:
+        int Alignment_to_px( GUI_::Alignment, int from, int to );
+        void _set_axis_anchor( 
+                Widget& what,
+                Widget& to,
+                GUI_::Anchor anchor,
+                short axis
+        );
+            
+        template< typename T = Vector2i >
+        auto _get_axis( T t, int i ){
+            return i == 0 ? t.x() : t.y();
+        };
+        template< typename T = Vector2i >
+        T _get_rel_to_axis( T v1, T v2 , int axis ){
+            return (axis == 0) ?
+                T(
+                    _get_axis( v1, axis ),
+                    _get_axis( v2, !axis ) ) :
+                T(
+                    _get_axis( v2, !axis ),
+                    _get_axis( v1, axis ) );
+        };
+        
         std::shared_ptr< Screen > screen;
         std::shared_ptr< FormHelper > helper;
         bool is_ready = false; // dono if it'll be necesary.
@@ -73,9 +162,16 @@ extern GUI_ GUI;
 
 class InputScreen : public nanogui::Screen {
     public:
-        InputScreen() = default;
+        InputScreen();
         virtual ~InputScreen() = default;
         bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
+        void resize( const nanogui::Vector2i v );
+};
+
+class DefaultTheme : public Theme{
+    public:
+        DefaultTheme( NVGcontext *ctx );
+        ~DefaultTheme();
 };
 
 #endif //!_MAIN_GUI_
