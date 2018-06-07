@@ -17,6 +17,7 @@
 #include "Globals.h"
 #include "CustomWidget.h"
 #include "PopupExit.h"
+#include "Popup_CA_SHP.h"
 #include "PanelPause.h"
 
 using namespace nanogui;
@@ -61,8 +62,15 @@ void GUI_::init( GLFWwindow* window ){
                 pause_panel_ref,
                 widgets
             );
-
+    
+    const auto& ca_shp_ref = std::make_shared< Popup_CA_SHP >();
+    add_widget("ca_shp",
+                ca_shp_ref,
+                widgets
+            );
+    get< Popup_CA_SHP >( "ca_shp" )->show();
     get< PanelPause >( "pause_popup" )->show();
+    
     get_screen()->setVisible( true );
     // Mark gui as ready to be drawn.
     is_ready = true;
@@ -242,10 +250,6 @@ void GUI_::_set_axis_anchor(
             break;
         }
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> 612d1e... Resize and other stuff.
 };
 
 InputScreen::InputScreen(){

@@ -84,6 +84,7 @@ set(SOURCES
 "GUI/GUI.cpp"
 "GUI/PopupExit.cpp"
 "GUI/PanelPause.cpp"
+"GUI/Popup_CA_SHP.cpp"
 )
 
 set (PREFIX "")
