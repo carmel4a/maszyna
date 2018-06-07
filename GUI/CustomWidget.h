@@ -13,6 +13,7 @@
 
 #include <string>
 
+#include "GUI.h"
 #include "nanogui/nanogui.h"
 
 using namespace nanogui;
