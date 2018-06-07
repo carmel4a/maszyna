@@ -28,46 +28,40 @@ PanelPause::~PanelPause(){};
 
 void PanelPause::init(){
 
-    widget = new Widget( GUI.get_screen() );
-    panel = new Window( widget, "" );
-    /*
-    GUI.register_widget( *widget );
-    */
+    widget_ = new Widget( GUI.get_screen() );
+    panel = new Window( widget_, "" );
 };
 
-void PanelPause::init_layout(){
+void PanelPause::make(){
     
     ref< BoxLayout > top_layout = new BoxLayout( Orientation::Horizontal );
 
-    widget->setLayout( top_layout.get() );
+    widget_->setLayout( top_layout.get() );
     
     nanogui::ref< BoxLayout > layout = new BoxLayout( nanogui::Orientation::Vertical );
     panel->setLayout( layout.get() );
     nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.get_screen()->nvgContext() );
     panel->setTheme( default_theme );
     panel->theme()->mWindowHeaderHeight = 0;
-};
 
-void PanelPause::make(){
 
     nanogui::ref< Label > label = new Label( panel.get(), "PAUSED" );
-  //  dynamic_cast< AdvancedGridLayout* >( GUI.get_screen()->layout() )->setAnchor( widget.get(), default_anchor() );
     GUI.update_layout( panel.get() );
-    GUI.update_layout( widget.get() );
+    GUI.update_layout( widget_.get() );
 
     resize( Vector2i( Global.iWindowWidth, Global.iWindowHeight ) );
 };
 
 void PanelPause::show(){
 
-    widget->setVisible( true );
-    GUI.update_layout( widget.get() );
+    widget_->setVisible( true );
+    GUI.update_layout( widget_.get() );
 };
 
 void PanelPause::hide(){
     
-    widget->setVisible( false );
-    GUI.update_layout( widget.get() );
+    widget_->setVisible( false );
+    GUI.update_layout( widget_.get() );
 };
 
 void PanelPause::resize( Vector2i v ){
@@ -75,13 +69,13 @@ void PanelPause::resize( Vector2i v ){
     anchor.is_margin_rel = false;
     anchor.margin = 10;
     GUI.set_x_anchor(
-        widget.get(),
+        widget_.get(),
         GUI.get_screen(),
         anchor
     );
     anchor.mode = GUI.Alignment::Begin;
     GUI.set_y_anchor(
-        widget.get(),
+        widget_.get(),
         GUI.get_screen(),
         anchor
     );

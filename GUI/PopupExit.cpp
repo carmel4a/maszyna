@@ -27,26 +27,24 @@ PopupExit::~PopupExit(){};
 
 void PopupExit::init(){
 
-    widget = new PopupExitPanel( GUI.get_screen(), shared_from_this() );
-};
-
-void PopupExit::init_layout(){
-
-    const std::vector< Alignment > alignment_vector {
-        nanogui::Alignment::Minimum,
-        nanogui::Alignment::Middle
-    };
-    assign_grid_layout(
-            widget.get(),
-            nanogui::Orientation::Vertical,
-            alignment_vector );
+    widget_ = new PopupExitPanel( GUI.get_screen(), shared_from_this() );
 };
 
 void PopupExit::make(){
 
-    nanogui::ref< Label > text = new Label( widget.get(), "Exit Maszyna?" );
-    nanogui::ref< Widget > buttons_group = new Widget( widget.get() );
-    const std::vector< Alignment > alignment_vector {
+    std::vector< Alignment > alignment_vector {
+        nanogui::Alignment::Minimum,
+        nanogui::Alignment::Middle
+    };
+    assign_grid_layout(
+            widget_.get(),
+            nanogui::Orientation::Vertical,
+            alignment_vector );
+
+
+    nanogui::ref< Label > text = new Label( widget_.get(), "Exit Maszyna?" );
+    nanogui::ref< Widget > buttons_group = new Widget( widget_.get() );
+    alignment_vector = {
         nanogui::Alignment::Minimum,
         nanogui::Alignment::Minimum
     };
@@ -65,7 +63,7 @@ void PopupExit::make(){
     );
 
     GUI.update_layout(buttons_group.get());
-    GUI.update_layout(widget.get());
+    GUI.update_layout(widget_.get());
     
     resize( Vector2i( Global.iWindowWidth, Global.iWindowHeight ) );
 };
@@ -86,16 +84,16 @@ void assign_grid_layout(                       Widget* to,
 
 void PopupExit::show(){
 
-    widget->setVisible( true );
-    widget->requestFocus();
-    GUI.update_layout( widget.get() );
+    widget_->setVisible( true );
+    widget_->requestFocus();
+    GUI.update_layout( widget_.get() );
 };
 
 void PopupExit::hide(){
     
-    widget->setVisible( false );
+    widget_->setVisible( false );
     GUI.get_screen()->requestFocus();
-    GUI.update_layout( widget.get() );
+    GUI.update_layout( widget_.get() );
 };
 
 void PopupExit::exit(){
@@ -133,7 +131,7 @@ void PopupExit::resize(Vector2i v){
         
     auto anchor = GUI_::Anchor( GUI.Alignment::Centered );
     GUI.set_x_anchor(
-        widget.get(),
+        widget_.get(),
         GUI.get_screen(),
         anchor
     );
@@ -141,7 +139,7 @@ void PopupExit::resize(Vector2i v){
     anchor.is_margin_rel = false;
     anchor.margin = 10;
     GUI.set_y_anchor(
-        widget.get(),
+        widget_.get(),
         GUI.get_screen(),
         anchor
     );

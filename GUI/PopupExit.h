@@ -25,13 +25,12 @@ class PopupExit:
     public:
         PopupExit();
         virtual ~PopupExit();
-        void init();
-        void init_layout();
-        void make();
+        void init() override;
+        void make() override;
         
-        void show();
-        void hide();
-        void resize( Vector2i v );
+        void show() override;
+        void hide() override;
+        void resize( Vector2i v ) override;
 
         bool may_quit = true;
 
@@ -43,7 +42,7 @@ class PopupExit:
 class PopupExitPanel : public Window {
     
     public:
-        PopupExitPanel( Widget* widget, std::shared_ptr< PopupExit > _root );
+        PopupExitPanel( Widget* widget_, std::shared_ptr< PopupExit > _root );
         virtual ~PopupExitPanel();
         bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
 

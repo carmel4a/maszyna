@@ -20,12 +20,11 @@ class PanelPause:
     public:
         PanelPause();
         virtual ~PanelPause();
-        void init();
-        void init_layout();
-        void make();
+        void init() override;
+        void make() override;
         
-        void show();
-        void hide();
+        void show() override;
+        void hide() override;
         void resize( Vector2i v );
     private:
         nanogui::ref< Window > panel;

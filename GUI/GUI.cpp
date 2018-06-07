@@ -98,9 +98,8 @@ void GUI_::add_widget(                 std::string name,
                                        widget_map& where                ){
     s_ptr_custom_widget->init();
     where[name] = s_ptr_custom_widget;
-    s_ptr_custom_widget->init_layout();
     s_ptr_custom_widget->make();
-    update_layout( s_ptr_custom_widget->get_widget() );
+    update_layout( s_ptr_custom_widget->widget() );
 };
 
 void GUI_::update_layout( Widget* of ){
@@ -112,8 +111,8 @@ void GUI_::update_layout( Widget* of ){
 
 void GUI_::remove_widget( std::string name,
                           widget_map& from  ){
-        auto* parent = from[name].get()->get_widget()->parent();
-        parent->removeChild( from[name].get()->get_widget() );
+        auto* parent = from[name].get()->widget()->parent();
+        parent->removeChild( from[name].get()->widget() );
         from.erase( name );
         update_layout( parent );
 };
@@ -271,7 +270,7 @@ bool InputScreen::keyboardEvent(int key, int scancode, int action, int modifiers
     if( key == GLFW_KEY_F10 ){
         const auto& popup = dynamic_cast< PopupExit* >( GUI.widgets["exit_popup"].get() );
         if( popup->may_quit && action == GLFW_PRESS ){
-            if( popup->get_widget()->visible() ){
+            if( popup->widget()->visible() ){
                 popup->hide();
             }
             else{

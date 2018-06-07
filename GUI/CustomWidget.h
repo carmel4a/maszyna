@@ -12,7 +12,7 @@
 #define _CUSTOM_WIDGET_
 
 #include <string>
-
+#include <memory.h>
 #include "GUI.h"
 #include "nanogui/nanogui.h"
 
@@ -33,23 +33,31 @@ class CustomWidget{
     public:
         CustomWidget(){};
         virtual ~CustomWidget(){};
-        Widget* get_widget(){ return widget.get(); };
-        nanogui::ref<Widget> get_widget_ref(){ return widget; };
+        Widget* widget(){ return widget_.get(); };
+        nanogui::ref<Widget> widget_ref(){ return widget_; };
+        // Called before adding to `GUI::widget` map.
         virtual void init() = 0;
-        virtual void init_layout() = 0;
         virtual void make() = 0;
-        
-        // Top screen widgets must override this method
-        virtual AdvancedGridLayout::Anchor default_anchor(){ return( nanogui::AdvancedGridLayout::Anchor( 0, 0 ) ); };
+
         virtual void show(){};
         virtual void hide(){};
+        // Except init, you don't want to call this directly.
         virtual void resize( Vector2i v ){};
-        widget_map widgets; //pls don't use it on top-level widgets.
+
+        const widget_map* owner;
+        // To print name of widget.
+        operator std::string(){
+            for( auto const& x : *owner ) {
+                if( x.second.get() == this ) return( x.first );
+            }
+            std::string s = "No *CustomWidget fund in owner!";
+            throw s;
+        };
         
     protected:
         GUI_::Anchor x_anchor;
         GUI_::Anchor y_anchor;
-        nanogui::ref<Widget> widget;
+        nanogui::ref<Widget> widget_;
 };
 
 #endif // !_CUSTOM_WIDGET_
