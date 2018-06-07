@@ -17,6 +17,7 @@
 #include "Globals.h"
 #include "CustomWidget.h"
 #include "PopupExit.h"
+#include "PanelPause.h"
 
 using namespace nanogui;
 class PopupExit;
@@ -53,7 +54,13 @@ void GUI_::init( GLFWwindow* window ){
                 widgets
             );
     
+    const auto& pause_panel_ref = std::make_shared< PanelPause >();
+    add_widget("pause_popup",
+                pause_panel_ref,
+                widgets
+            );
 
+    get< PanelPause >( "pause_popup" )->show();
     get_screen()->setVisible( true );
     // Mark gui as ready to be drawn.
     is_ready = true;
