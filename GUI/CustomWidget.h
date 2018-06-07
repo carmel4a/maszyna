@@ -38,12 +38,12 @@ class CustomWidget{
         virtual void init() = 0;
         virtual void init_layout() = 0;
         virtual void make() = 0;
-        //virtual void resize() = 0;
         
         // Top screen widgets must override this method
         virtual AdvancedGridLayout::Anchor default_anchor(){ return( nanogui::AdvancedGridLayout::Anchor( 0, 0 ) ); };
         virtual void show(){};
         virtual void hide(){};
+        virtual void resize( Vector2i v ){};
         widget_map widgets; //pls don't use it on top-level widgets.
         
     protected:

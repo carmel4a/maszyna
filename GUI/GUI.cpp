@@ -123,6 +123,28 @@ void GUI_::update_all_vars(){
     helper->refresh();
 };
 
+void GUI_::register_widget( Widget& widget ){
+
+    //dynamic_cast<AdvancedGridLayout*>( get_screen()->layout() )->setAnchor( &widget, AdvancedGridLayout::Anchor( 0, 0, Alignment::Maximum, Alignment::Maximum ) );
+};
+
+
+/*
+            ,     \    /      ,
+           / \    )\__/(     / \   
+          /   \  (_\  /_)   /   \                
+  _______/_____\__\@  @/___/_____\_______
+  |               |\../|                |
+  |                \VV/                 |
+  |                                     |
+  |     Jeśli działa - nie ruszaj       |
+  | Jeśli nie działa - sorry            |
+  |_____________________________________|
+      |    /\ /      \\       \ /\    |
+      |  /   V        ))       V   \  |
+      |/     `       //        '     \|
+      `              V
+*/
 template< class T >
 T* GUI_::get( std::string name ){
             return dynamic_cast< T* >( widgets[name].get() );
@@ -221,8 +243,28 @@ void GUI_::_set_axis_anchor(
             break;
         }
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 612d1e... Resize and other stuff.
 };
 
+InputScreen::InputScreen(){
+    setResizeCallback(
+        [this]( Vector2i v )->void{
+            resize( v ); 
+        }
+    );
+    //setResizeCallback( std::bind( &InputScreen::resize(), this, std::placeholders::_1 ) );
+};
+
+void InputScreen::resize( nanogui::Vector2i v ){
+    WriteLog( std::to_string(v.x()) + " " + std::to_string(v.y()) );
+    for( auto const& [key, val] : GUI.widgets )
+    {
+        val->resize( v );
+    }
+};
 
 bool InputScreen::keyboardEvent(int key, int scancode, int action, int modifiers){
     

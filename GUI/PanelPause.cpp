@@ -55,6 +55,22 @@ void PanelPause::make(){
     GUI.update_layout( panel.get() );
     GUI.update_layout( widget.get() );
 
+    resize( Vector2i( Global.iWindowWidth, Global.iWindowHeight ) );
+};
+
+void PanelPause::show(){
+
+    widget->setVisible( true );
+    GUI.update_layout( widget.get() );
+};
+
+void PanelPause::hide(){
+    
+    widget->setVisible( false );
+    GUI.update_layout( widget.get() );
+};
+
+void PanelPause::resize( Vector2i v ){
     auto anchor = GUI_::Anchor( GUI.Alignment::End );
     anchor.is_margin_rel = false;
     anchor.margin = 10;
@@ -69,16 +85,4 @@ void PanelPause::make(){
         GUI.get_screen(),
         anchor
     );
-};
-
-void PanelPause::show(){
-
-    widget->setVisible( true );
-    GUI.update_layout( widget.get() );
-};
-
-void PanelPause::hide(){
-    
-    widget->setVisible( false );
-    GUI.update_layout( widget.get() );
-};
+}

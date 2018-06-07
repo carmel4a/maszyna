@@ -31,6 +31,7 @@ class PopupExit:
         
         void show();
         void hide();
+        void resize( Vector2i v );
 
         bool may_quit = true;
 

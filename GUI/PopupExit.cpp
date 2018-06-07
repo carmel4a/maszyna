@@ -67,20 +67,7 @@ void PopupExit::make(){
     GUI.update_layout(buttons_group.get());
     GUI.update_layout(widget.get());
     
-    auto anchor = GUI_::Anchor( GUI.Alignment::Centered );
-    GUI.set_x_anchor(
-        widget.get(),
-        GUI.get_screen(),
-        anchor
-    );
-    anchor.mode = GUI.Alignment::Begin;
-    anchor.is_margin_rel = false;
-    anchor.margin = 10;
-    GUI.set_y_anchor(
-        widget.get(),
-        GUI.get_screen(),
-        anchor
-    );
+    resize( Vector2i( Global.iWindowWidth, Global.iWindowHeight ) );
 };
 
 void assign_grid_layout(                       Widget* to,
@@ -141,3 +128,21 @@ bool PopupExitPanel::keyboardEvent( int key, int scancode, int action, int modif
     }
     return false;
 };
+
+void PopupExit::resize(Vector2i v){
+        
+    auto anchor = GUI_::Anchor( GUI.Alignment::Centered );
+    GUI.set_x_anchor(
+        widget.get(),
+        GUI.get_screen(),
+        anchor
+    );
+    anchor.mode = GUI.Alignment::Begin;
+    anchor.is_margin_rel = false;
+    anchor.margin = 10;
+    GUI.set_y_anchor(
+        widget.get(),
+        GUI.get_screen(),
+        anchor
+    );
+}

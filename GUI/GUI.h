@@ -107,16 +107,6 @@ class GUI_{
             Alignment mode;
         };
         
-        // left, top, right, botton
-        void x_rel_pos( Widget& widget, float n );
-        void x_rel_pos( Widget& widget, float n, Widget& to );
-        void y_rel_pos( Widget& widget, float n );
-        void y_rel_pos( Widget& widget, float n, Widget& to );
-
-
-        // PASS ONLY `false` OR GUI_::Anchor
-        // unless you wanna see dragons.
-        
         void set_x_anchor( 
                 Widget* what,
                 Widget* to,
@@ -130,7 +120,6 @@ class GUI_{
         );
 
     private:
-        int Alignment_to_px( GUI_::Alignment, int from, int to );
         void _set_axis_anchor( 
                 Widget& what,
                 Widget& to,
@@ -157,7 +146,7 @@ class GUI_{
         std::shared_ptr< FormHelper > helper;
         bool is_ready = false; // dono if it'll be necesary.
 };
-    
+
 extern GUI_ GUI;
 
 class InputScreen : public nanogui::Screen {

@@ -26,6 +26,7 @@ class PanelPause:
         
         void show();
         void hide();
+        void resize( Vector2i v );
     private:
         nanogui::ref< Window > panel;
 };
