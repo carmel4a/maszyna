@@ -31,7 +31,7 @@ void PopupExit::init(){
 };
 
 void PopupExit::init_layout(){
-    
+
     const std::vector< Alignment > alignment_vector {
         nanogui::Alignment::Minimum,
         nanogui::Alignment::Middle
@@ -65,9 +65,22 @@ void PopupExit::make(){
     );
 
     GUI.update_layout(buttons_group.get());
-
-    int _x_pos = Global.iWindowWidth / 2 - (int)(widget.get()->size().x()) / 2;
-    widget->setPosition( Vector2i( _x_pos, 10 ) );
+    GUI.update_layout(widget.get());
+    
+    auto anchor = GUI_::Anchor( GUI.Alignment::Centered );
+    GUI.set_x_anchor(
+        widget.get(),
+        GUI.get_screen(),
+        anchor
+    );
+    anchor.mode = GUI.Alignment::Begin;
+    anchor.is_margin_rel = false;
+    anchor.margin = 10;
+    GUI.set_y_anchor(
+        widget.get(),
+        GUI.get_screen(),
+        anchor
+    );
 };
 
 void assign_grid_layout(                       Widget* to,

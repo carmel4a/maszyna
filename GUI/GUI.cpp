@@ -114,6 +114,107 @@ void GUI_::update_all_vars(){
     helper->refresh();
 };
 
+template< class T >
+T* GUI_::get( std::string name ){
+            return dynamic_cast< T* >( widgets[name].get() );
+};
+
+void GUI_::set_x_anchor( 
+        Widget* what,
+        Widget* to,
+        GUI_::Anchor anchor_x
+        ){
+    _set_axis_anchor( *what, *to, anchor_x, 0 );
+};
+
+void GUI_::set_y_anchor( 
+        Widget* what,
+        Widget* to,
+        GUI_::Anchor anchor_y
+        ){
+    _set_axis_anchor( *what, *to, anchor_y, 1 );
+};
+
+void GUI_::_set_axis_anchor( 
+        Widget& what,
+        Widget& to,
+        GUI_::Anchor anchor,
+        short axis ){
+
+    switch( anchor.mode ){
+        case GUI_::Alignment::Begin:{
+
+            what.setPosition(
+                    _get_rel_to_axis<Vector2i>(
+                            ( anchor.is_margin_rel ) ? Vector2i(
+                                to.absolutePosition()
+                                - what.parent()->absolutePosition()
+                                + (anchor.margin_rel * to.size().cast<float>()).cast<int>()
+                            ) : Vector2i(
+                                to.absolutePosition() 
+                                - what.parent()->absolutePosition()
+                                + Vector2i( anchor.margin, anchor.margin )
+                            ),
+                            what.absolutePosition(),
+                            axis )
+            );
+            update_layout( &what );
+            break;
+        }
+        case GUI_::Alignment::Centered:{
+            what.setPosition(
+                    _get_rel_to_axis<Vector2i>(
+                            to.absolutePosition() 
+                            - what.parent()->absolutePosition() 
+                            + ( 0.5F * to.size().cast<float>() ).cast<int>()
+                            - ( 0.5F * what.size().cast<float>() ).cast<int>(),
+                            what.absolutePosition(),
+                            axis )
+            );
+            update_layout( &what );
+            break;
+        }
+        case GUI_::Alignment::End:{
+
+            what.setPosition(
+                    _get_rel_to_axis<Vector2i>(
+                            ( anchor.is_margin_rel ) ? Vector2i(
+                                to.absolutePosition()
+                                - what.parent()->absolutePosition()
+                                + to.size()
+                                - what.size()
+                                - (anchor.margin_rel * to.size().cast<float>()).cast<int>()
+                            ) : Vector2i(
+                                to.absolutePosition() 
+                                - what.parent()->absolutePosition()
+                                + to.size()
+                                - what.size()
+                                - Vector2i( anchor.margin, anchor.margin )
+                            ),
+                            what.absolutePosition(),
+                            axis )
+            );
+            update_layout( &what );
+            break;
+        }
+        case GUI_::Alignment::Fill:{
+            what.setPosition(
+                    _get_rel_to_axis<Vector2i>( to.absolutePosition() - what.parent()->absolutePosition(),
+                            what.absolutePosition(),
+                            axis )
+            );
+            what.setFixedSize( 
+                    _get_rel_to_axis( to.size(),
+                            what.size(),
+                            axis )
+            );
+            update_layout( &what );
+            break;
+        }
+    }
+};
+
+
 bool InputScreen::keyboardEvent(int key, int scancode, int action, int modifiers){
     
     if( key == GLFW_KEY_F10 ){
