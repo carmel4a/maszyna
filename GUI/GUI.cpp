@@ -64,8 +64,6 @@ void GUI_::init( GLFWwindow* window ){
                 ca_shp_ref,
                 widgets
             );
-    get< Popup_CA_SHP >( "ca_shp" )->show();
-    get< PanelPause >( "pause_popup" )->show();
     
     get_screen()->setVisible( true );
     // Mark gui as ready to be drawn.
@@ -89,6 +87,7 @@ FormHelper* GUI_::get_helper(){
 void GUI_::draw_gui(){
 
     if( is_ready ){
+        update_vars();
         get_screen()->drawContents();
         get_screen()->drawWidgets();
     }
@@ -125,6 +124,14 @@ void GUI_::remove_widget( std::string name,
 void GUI_::update_all_vars(){
     
     helper->refresh();
+};
+
+void GUI_::update_vars(){
+    for( auto const& x : widgets ){
+        if( x.second->may_update ){
+            x.second->update();
+        }
+    }
 };
 
 /*

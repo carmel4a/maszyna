@@ -39,12 +39,14 @@ class CustomWidget{
         virtual void init() = 0;
         virtual void make() = 0;
 
-        virtual void show(){};
-        virtual void hide(){};
+        virtual void show(){ may_update = true; }
+        virtual void hide(){ may_update = false; }
         // Except init, you don't want to call this directly.
         virtual void resize( Vector2i v ){};
+        virtual void update(){};
 
         const widget_map* owner;
+        bool may_update = false;
         // To print name of widget.
         operator std::string(){
             for( auto const& x : *owner ) {

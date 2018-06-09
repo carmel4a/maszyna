@@ -30,6 +30,7 @@ void PanelPause::init(){
 
     widget_ = new Widget( GUI.get_screen() );
     panel = new Window( widget_, "" );
+    may_update = true;
 };
 
 void PanelPause::make(){
@@ -80,3 +81,9 @@ void PanelPause::resize( Vector2i v ){
         anchor
     );
 }
+
+void PanelPause::update(){
+
+    if( Global.iPause > 0 ) show();
+    else hide();
+};

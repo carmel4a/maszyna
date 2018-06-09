@@ -53,7 +53,7 @@ class GUI_{
         
         void remove_widget( std::string name,
                             widget_map& from );
-        
+        void update_vars();
         void update_layout( Widget* of );
         [[deprecated]]
         void focus_helper_on( Window& window );

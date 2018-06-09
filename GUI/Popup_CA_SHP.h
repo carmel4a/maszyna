@@ -21,6 +21,7 @@ class Popup_CA_SHP:
         void init() override;
         void make() override;
         
+        void update() override;
         void show() override;
         void hide() override;
         void resize( Vector2i v );

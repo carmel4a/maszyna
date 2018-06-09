@@ -16,11 +16,17 @@
 #include "Popup_CA_SHP.h"
 #include "Globals.h"
 
+#include "World.h"
+#include "DynObj.h"
+#include "Driver.h"
+
 using namespace nanogui;
 
 class GUI_; class CustomWidget;
 
-Popup_CA_SHP::Popup_CA_SHP(){};
+Popup_CA_SHP::Popup_CA_SHP(){
+    may_update = true;
+};
 
 Popup_CA_SHP::~Popup_CA_SHP(){};
 
@@ -45,6 +51,7 @@ void Popup_CA_SHP::make(){
     GUI.update_layout( widget_.get() );
 
     resize( Vector2i( Global.iWindowWidth, Global.iWindowHeight ) );
+    hide();
 };
 
 void Popup_CA_SHP::show(){
@@ -71,4 +78,19 @@ void Popup_CA_SHP::resize( Vector2i v ){
         GUI.get_screen(),
         anchor
     );
+};
+
+void Popup_CA_SHP::update(){
+
+    auto const *controlled { ( Global.pWorld ? Global.pWorld->controlled() : nullptr ) };
+    if( ( controlled != nullptr ) 
+     && ( controlled->Mechanik != nullptr ) ) {
+        auto const &mover = controlled->MoverParameters;
+        if( TestFlag(mover->SecuritySystem.Status, s_aware)
+        || TestFlag(mover->SecuritySystem.Status, s_active) ){
+            show();
+        } else {
+            hide();
+        }
+    }
 };
