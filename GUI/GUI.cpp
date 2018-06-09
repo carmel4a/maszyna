@@ -127,12 +127,6 @@ void GUI_::update_all_vars(){
     helper->refresh();
 };
 
-void GUI_::register_widget( Widget& widget ){
-
-    //dynamic_cast<AdvancedGridLayout*>( get_screen()->layout() )->setAnchor( &widget, AdvancedGridLayout::Anchor( 0, 0, Alignment::Maximum, Alignment::Maximum ) );
-};
-
-
 /*
             ,     \    /      ,
            / \    )\__/(     / \   

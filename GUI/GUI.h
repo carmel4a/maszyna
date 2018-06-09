@@ -58,7 +58,6 @@ class GUI_{
         [[deprecated]]
         void focus_helper_on( Window& window );
         widget_map widgets;
-        void register_widget( Widget& widget);
         template< class T >
         T* get( std::string name );
 
