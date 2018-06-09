@@ -7,9 +7,6 @@
     http://mozilla.org/MPL/2.0/.
 */
 
-#include <vector>
-#include <functional>
-#include <memory>
 
 #include "GUI.h"
 #include "CustomWidget.h"
@@ -66,6 +63,7 @@ void PanelPause::hide(){
 };
 
 void PanelPause::resize( Vector2i v ){
+
     auto anchor = GUI_::Anchor( GUI.Alignment::End );
     anchor.is_margin_rel = false;
     anchor.margin = 10;
