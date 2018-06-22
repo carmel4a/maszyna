@@ -54,7 +54,7 @@ void GUI_::init( GLFWwindow* window ){
             );
     
     const auto& pause_panel_ref = std::make_shared< PanelPause >();
-    add_widget("pause_popup",
+    add_widget("pause_panel",
                 pause_panel_ref,
                 widgets
             );
