@@ -67,7 +67,7 @@ void GUI_::init( GLFWwindow* window ){
     
     get_screen()->setVisible( true );
     // Mark gui as ready to be drawn.
-    is_ready = true;
+    may_render = true;
 
     WriteLog( "GUI prepared." );
 };
@@ -86,7 +86,7 @@ FormHelper* GUI_::get_helper(){
 // call on each frame
 void GUI_::draw_gui(){
 
-    if( is_ready ){
+    if( may_render ){
         update_vars();
         get_screen()->drawContents();
         get_screen()->drawWidgets();

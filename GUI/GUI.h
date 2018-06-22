@@ -143,7 +143,7 @@ class GUI_{
         
         std::shared_ptr< Screen > screen;
         std::shared_ptr< FormHelper > helper;
-        bool is_ready = false; // dono if it'll be necesary.
+    bool may_render = false; // dono if it'll be necesary.
 };
 
 extern GUI_ GUI;
