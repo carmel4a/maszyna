@@ -386,12 +386,12 @@ int main(int argc, char *argv[])
 		if (Global.motiontelemetry_conf.enable)
 			input::motiontelemetry = std::make_unique<motiontelemetry>();
 
+        GUI.init(window);
 		Global.pWorld = &World;
 		if( false == World.Init( window ) ) {
             ErrorLog( "Simulation setup failed" );
             return -1;
         }
-        GUI.init(window);
     }
     catch( std::bad_alloc const &Error )
 	{
