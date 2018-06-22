@@ -26,7 +26,12 @@ class Popup_CA_SHP:
         void hide() override;
         void resize( Vector2i v );
     private:
-        nanogui::ref< Label > widget;
+        void show_CA();
+        void hide_CA();
+        void show_SHP();
+        void hide_SHP();
+        nanogui::ref< Label > ca;
+        nanogui::ref< Label > shp;
 };
 
 #endif /* !_POPUP_CA_SHP_ */
