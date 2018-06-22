@@ -42,23 +42,26 @@ void Popup_CA_SHP::init(){
 };
 
 void Popup_CA_SHP::make(){
+
     ca = new Label( widget_.get(), "CA" );
     shp = new Label( widget_.get(), "SHP" );
-
+    
     ref< BoxLayout > top_layout = new BoxLayout( Orientation::Horizontal );
     widget_->setLayout( top_layout.get() );
-    ca->setLayout( top_layout.get() );
-    shp->setLayout( top_layout.get() );
 
     nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.get_screen()->nvgContext() );
     widget_->setTheme( default_theme.get() );
     widget_->theme()->mWindowHeaderHeight = 0;
-    dynamic_cast< Label* >(ca.get())->setFont("sans-bold");
-    dynamic_cast< Label* >(ca.get())->setColor( Color( Vector3i( Popup_CA_SHP_FONT_COLOR ) ) );
-    dynamic_cast< Label* >(shp.get())->setFont("sans-bold");
-    dynamic_cast< Label* >(shp.get())->setColor( Color( Vector3i( Popup_CA_SHP_FONT_COLOR ) ) );
-    dynamic_cast< Label* >(ca.get())->setFontSize(Popup_CA_SHP_FONT_SIZE);
-    dynamic_cast< Label* >(shp.get())->setFontSize(Popup_CA_SHP_FONT_SIZE);
+    auto _temp_v = std::vector<Widget*>{
+        ca.get(),
+        shp.get()
+    };
+    for(auto const& _v: _temp_v) {
+        _v->setLayout( top_layout.get() );
+        dynamic_cast< Label* >(_v)->setFont("sans-bold");
+        dynamic_cast< Label* >(_v)->setColor( Color( Vector3i( Popup_CA_SHP_FONT_COLOR ) ) );
+        dynamic_cast< Label* >(_v)->setFontSize(Popup_CA_SHP_FONT_SIZE);
+    }
     GUI.update_layout( widget_.get() );
 
     resize( Vector2i( Global.iWindowWidth, Global.iWindowHeight ) );
