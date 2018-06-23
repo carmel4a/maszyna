@@ -23,6 +23,7 @@ Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
 
 #include "World.h"
 #include "GUI.h"
+#include "FSM.h"
 #include "simulation.h"
 #include "Globals.h"
 #include "Timer.h"
@@ -265,6 +266,7 @@ int main(int argc, char *argv[])
     DeleteFile( "errors.txt" );
     CreateDirectory("logs", NULL);
 #endif
+    FSM.start_fsm_list();
     Global.LoadIniFile("eu07.ini");
 
 #ifdef _WIN32
@@ -385,13 +387,14 @@ int main(int argc, char *argv[])
             input::uart = std::make_unique<uart_input>();
 		if (Global.motiontelemetry_conf.enable)
 			input::motiontelemetry = std::make_unique<motiontelemetry>();
-
-        GUI.init(window);
+        GUI.set_main_window( window );
+        FSM.send_event( GUI_::GUI_Init() );
 		Global.pWorld = &World;
 		if( false == World.Init( window ) ) {
             ErrorLog( "Simulation setup failed" );
             return -1;
         }
+        FSM.send_event( GUI_::SceneLoaded() );
     }
     catch( std::bad_alloc const &Error )
 	{

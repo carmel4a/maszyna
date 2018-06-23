@@ -13,6 +13,7 @@
 #include <typeinfo>
 
 #include "GUI.h"
+#include "FSM.h"
 #include "Logs.h"
 #include "Globals.h"
 #include "CustomWidget.h"
@@ -38,38 +39,6 @@ GUI_::~GUI_(){
 
     nanogui::shutdown();
     WriteLog("GUI deleted.");
-};
-
-// Init must be called AFTER set callbacks in EU07.cpp
-void GUI_::init( GLFWwindow* window ){
-
-    get_screen()->initialize( window, true );
-    nanogui::ref< Theme > default_theme = new DefaultTheme( get_screen()->nvgContext() );
-    get_screen()->setTheme( default_theme );
-    
-    const auto& exit_popup_ref = std::make_shared< PopupExit >();
-    add_widget("exit_popup",
-                exit_popup_ref,
-                widgets
-            );
-    
-    const auto& pause_panel_ref = std::make_shared< PanelPause >();
-    add_widget("pause_panel",
-                pause_panel_ref,
-                widgets
-            );
-    
-    const auto& ca_shp_ref = std::make_shared< Popup_CA_SHP >();
-    add_widget("ca_shp",
-                ca_shp_ref,
-                widgets
-            );
-    
-    get_screen()->setVisible( true );
-    // Mark gui as ready to be drawn.
-    may_render = true;
-
-    WriteLog( "GUI prepared." );
 };
 
 //getters. .get() should return raw pointer.
@@ -299,3 +268,46 @@ DefaultTheme::DefaultTheme( NVGcontext *ctx ):
 };
 
 DefaultTheme::~DefaultTheme(){};
+                    exit_popup_ref,
+                    GUI.widgets
+    );
+    
+    const auto& pause_panel_ref = std::make_shared< PanelPause >();
+    GUI.add_widget("pause_panel",
+                    pause_panel_ref,
+                    GUI.widgets
+    );
+    
+    const auto& ca_shp_ref = std::make_shared< Popup_CA_SHP >();
+    GUI.add_widget("ca_shp",
+                    ca_shp_ref,
+                    GUI.widgets
+    );
+    /*
+    const auto& log_widget_ref = std::make_shared< LabelArray >(
+            true,     // transparent = true,
+            "opcja 1", //std::string Name = "Label Array",
+            10,        // Size = 10,
+            500        // int fixed_w = -1,
+                       //std::string Def_text = ""
+    );
+    add_widget("log_widget",
+                log_widget_ref,
+                widgets
+    );
+    */
+    const auto& log_widget_ref2 = std::make_shared< LabelArray >(
+            false,     // transparent = true,
+            "opcja 1", //std::string Name = "Label Array",
+            10,        // Size = 10,
+            500        // int fixed_w = -1,
+                       //std::string Def_text = ""
+    );
+    GUI.add_widget("log_widget2",
+                    log_widget_ref2,
+                    GUI.widgets
+    );
+};
+
+FSM_INITIAL_STATE(GUI_::GUI_FSM, GUI_::Start)
+

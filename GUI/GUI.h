@@ -17,8 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "GL/glew.h"
-#include "nanogui/nanogui.h"
+#include "tinyfsm.hpp"
 
 using namespace nanogui;
 
@@ -116,7 +115,40 @@ class GUI_{
                 Widget* what,
                 Widget* to,
                 GUI_::Anchor anchor_y
-        );
+
+    /////////
+    // FSM //
+    /////////
+
+    struct GUI_Init : public tinyfsm::Event {};
+    struct SceneLoaded : public tinyfsm::Event {};
+    
+    struct GUI_FSM : public tinyfsm::Fsm<GUI_FSM>{
+            
+        //virtual void react(tinyfsm::Event const &) { };
+        virtual void react( GUI_Init const & ) {  };
+        virtual void react( SceneLoaded const & ) {  };
+
+        virtual void entry(void) { };
+        virtual void exit(void)  { };
+    };
+
+    struct Start : GUI_FSM{
+        void react( GUI_Init const & ) override;
+        void entry() override;
+        void exit() override;
+    };
+
+    struct LoadingScreen : GUI_FSM{
+        void react( SceneLoaded const & ) override;
+        void entry() override;
+        //void exit() override;
+    };
+
+    struct Simulation : GUI_FSM{
+        //void react( JakisEvent const & ) override;
+        void entry() override;
+    };
 
     private:
         void _set_axis_anchor( 
@@ -130,6 +162,7 @@ class GUI_{
         auto _get_axis( T t, int i ){
             return i == 0 ? t.x() : t.y();
         };
+
         template< typename T = Vector2i >
         T _get_rel_to_axis( T v1, T v2 , int axis ){
             return (axis == 0) ?
