@@ -20,10 +20,12 @@
 #include "PopupExit.h"
 #include "Popup_CA_SHP.h"
 #include "PanelPause.h"
+#include "LabelArray.h"
 
 
 using namespace nanogui;
-class PopupExit;
+class PopupExit; class LabelArray; class LoadingLog;
+struct GUI_FSM; struct On;
 
 GUI_ GUI;
 
@@ -300,7 +302,7 @@ DefaultTheme::~DefaultTheme(){};
             false,     // transparent = true,
             "opcja 1", //std::string Name = "Label Array",
             10,        // Size = 10,
-            500        // int fixed_w = -1,
+            -1        // int fixed_w = -1,
                        //std::string Def_text = ""
     );
     GUI.add_widget("log_widget2",

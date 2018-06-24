@@ -1,0 +1,71 @@
+/*
+    This Source Code Form is subject to the
+    terms of the Mozilla Public License, v.
+    2.0. If a copy of the MPL was not
+    distributed with this file, You can
+    obtain one at
+    http://mozilla.org/MPL/2.0/.
+*/
+#pragma once
+
+#ifndef _LABEL_ARRAY_WIDGET_
+#define _LABEL_ARRAY_WIDGET_
+
+#include "CustomWidget.h"
+#include <string> // std::string
+#include <vector> // std::vector
+
+class LabelArray:
+        public CustomWidget{
+  public:
+    LabelArray(
+            bool transparent = true,
+            std::string Name = "Label Array",
+            int Size = 10,
+            int FixedW = 500,
+            int FixedH = -1,
+            std::string Def_text = ""
+    );
+    virtual ~LabelArray();
+    void init() override;
+    void make() override;
+    
+    void update() override;
+    void show() override;
+    void hide() override;
+    void resize( Vector2i v );
+
+    int fixed_w;
+    int fixed_h;
+    int init_size;
+    std::string name;
+    std::string def_text;
+    bool transparent;
+  protected:
+    ref<VScrollPanel> scroll_panel;
+    ref<Widget> group;
+    std::deque< ref<Label> > label_array;
+    void push_line( std::string text );
+    void pop(){};       // UNIMPLEMENTED
+    void clear();
+};
+
+
+class LoadingLog:
+    public LabelArray {
+  public:
+    LoadingLog(
+        bool transparent = true,
+        std::string Name = "Label Array",
+        int Size = 10,
+        int fixed_w = -1,
+        std::string Def_text = ""
+    );
+    virtual ~LoadingLog();
+    void init();
+    void make();
+        
+    void update();
+};
+
+#endif /* !_LABEL_ARRAY_WIDGET_ */
