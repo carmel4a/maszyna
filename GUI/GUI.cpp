@@ -49,11 +49,6 @@ Screen* GUI_::get_screen(){
     return screen.get();
 };
 
-FormHelper* GUI_::get_helper(){
-
-    return helper.get();
-};
-
 // call on each frame
 void GUI_::draw_gui(){
 
@@ -63,12 +58,6 @@ void GUI_::draw_gui(){
         get_screen()->drawWidgets();
     }
 };
-
-[[deprecated]]
-void GUI_::focus_helper_on( Window& window ){
-    
-    GUI.get_helper()->setWindow( &window );
-}
 
 void GUI_::add_widget(                 std::string name,
                        const shared_custom_widget& s_ptr_custom_widget,
@@ -90,11 +79,6 @@ void GUI_::remove_widget( std::string name,
         parent->removeChild( from[name].get()->widget() );
         from.erase( name );
         update_layout( parent );
-};
-
-void GUI_::update_all_vars(){
-    
-    helper->refresh();
 };
 
 void GUI_::update_vars(){
@@ -124,22 +108,6 @@ void GUI_::update_vars(){
 template< class T >
 T* GUI_::get( std::string name ){
             return dynamic_cast< T* >( widgets[name].get() );
-};
-
-void GUI_::set_x_anchor( 
-        Widget* what,
-        Widget* to,
-        GUI_::Anchor anchor_x
-        ){
-    _set_axis_anchor( *what, *to, anchor_x, 0 );
-};
-
-void GUI_::set_y_anchor( 
-        Widget* what,
-        Widget* to,
-        GUI_::Anchor anchor_y
-        ){
-    _set_axis_anchor( *what, *to, anchor_y, 1 );
 };
 
 void GUI_::_set_axis_anchor( 
@@ -196,7 +164,7 @@ void GUI_::_set_axis_anchor(
                                 - what.parent()->absolutePosition()
                                 + to.size()
                                 - what.size()
-                                - Vector2i( anchor.margin, anchor.margin )
+                                + Vector2i( -anchor.margin, -anchor.margin )
                             ),
                             what.absolutePosition(),
                             axis )
@@ -270,6 +238,35 @@ DefaultTheme::DefaultTheme( NVGcontext *ctx ):
 };
 
 DefaultTheme::~DefaultTheme(){};
+
+void GUI_::Start::react( GUI_Init const & ) {
+
+    transit<GUI_::LoadingScreen>();
+};
+void GUI_::Start::entry() { };
+void GUI_::Start::exit() {
+
+    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.get_screen()->nvgContext() );
+    GUI.get_screen()->setTheme( default_theme );
+
+    //const auto& loading_log_ref = std::make_shared< LoadingLog >();
+    GUI.get_screen()->setVisible( true );
+    // Mark gui as ready to be drawn.
+    GUI.may_render = true;
+
+    WriteLog( "GUI prepared." );
+};
+
+
+void GUI_::LoadingScreen::react( SceneLoaded const & ) { transit<GUI_::Simulation>(); };
+void GUI_::LoadingScreen::entry() { WriteLog("LoadingSceneState."); };
+
+//void GUI_::LoadingScreen::react( SceneLoaded const & ) { transit<Simulation>(); };
+void GUI_::Simulation::entry() {
+    WriteLog("SimulationState.");
+
+    const auto& exit_popup_ref = std::make_shared< PopupExit >();
+    GUI.add_widget("exit_popup",
                     exit_popup_ref,
                     GUI.widgets
     );

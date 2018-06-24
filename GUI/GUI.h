@@ -12,109 +12,109 @@
 #ifndef _MAIN_GUI_
 #define _MAIN_GUI_
 
-#include <memory.h>
-#include <unordered_map>
-#include <string>
-#include <vector>
+#include <memory.h> // std::shared_pt
+#include <unordered_map> // unordered_map
+#include <string> // std::string
 
 #include "tinyfsm.hpp"
 
+#include "nanogui/nanogui.h"
+#include "Logs.h" //debug
 using namespace nanogui;
 
 class CustomWidget;
+struct GLFWwindow;
 
-typedef std::shared_ptr< CustomWidget > shared_custom_widget;
-typedef std::unordered_map< std::string, shared_custom_widget > widget_map;
+typedef std::shared_ptr< CustomWidget > sh_CW;
+typedef std::unordered_map< std::string, sh_CW > widget_map;
 
+
+/// Enter point to user interface.
+/**
+ * There mustn't be more than one instance of this class.
+ * Object of this class (named `GUI`) is made by 'itself' so you don't want create it
+ * by hand.
+ */
 class GUI_{
 
-    public:
-        GUI_();
-        ~GUI_();
+  public:
+    GUI_();
+    ~GUI_();
 
-        /*! Call after succesfull init of glfw window. */
-        void init(GLFWwindow* window);
-        
-        /*! Call it every frame. */
-        void draw_gui();
-        [[deprecated]]
-        void update_all_vars();
-        
-        /*! nanogui::Screen class, handles GLFW window. Represent an glfw window.
-        It should be an singleton, untill MaSzyna will have one main window.
-        It may change eg. when mp module will be implemented. */
-        Screen* get_screen();
-        FormHelper* get_helper();
-        
-        void add_widget(                 std::string name,
-                         const shared_custom_widget& sptr_custom,
-                                         widget_map& where       );
-        
-        void remove_widget( std::string name,
-                            widget_map& from );
-        void update_vars();
-        void update_layout( Widget* of );
-        [[deprecated]]
-        void focus_helper_on( Window& window );
-        widget_map widgets;
-        template< class T >
-        T* get( std::string name );
+    /// Post constructor.
+    /** %Call after succesfull init of glfw window. */
+    //void init(GLFWwindow* window);
+    inline void set_main_window( GLFWwindow* window ){
+        get_screen()->initialize( window, true );
+    };
+    /// Draw gui.
+    /** %Call it every frame. It updates content of widgets. */
+    void draw_gui();
+    
+    /// Return nanogui::Screen. Synonym to nanogui::Widget::screen. 
+    /** nanogui::Screen class, handles GLFW window. Represent an glfw window.
+     *  It should be an singleton, untill MaSzyna will have one main window.
+     *  It may change eg. when mp module will be implemented.
+     */
+    Screen* get_screen();
+    
+    /// Register widget in GUI_.
+    /** It only adds CustomWidget to widget array, and calls
+     *  make/init methods. Before use you must create object derivering
+     *  CustomWidget in `std::shared_ptr` .
+     */
+    void add_widget(
+             std::string name,        ///< System name in widget map.
+            const sh_CW& sptr_custom, ///< std::shared_ptr with previously
+                                      ///< created CustomWidget.
+             widget_map& where        ///< For now it should be GUI_::widgets .
+    );
+    
+    /// Unregister widget in GUI_, and delete it.
+    /** It deletes widget from it's parent, then deletes CustomWidget. */
+    void remove_widget(
+            std::string name, ///< System name of CustomWidget.
+            widget_map& from  ///< Widget map where widget is registered. Usually Widgets.
+    );
+    void update_vars();
+    void update_layout( Widget* of );
 
-        enum Alignment : short{
-            Begin,
-            Centered,
-            End,
-            Fill
-        };
+    widget_map widgets; ///< Widget map containing names and shared pointers to CustomWidget s.
 
-        // Vector2i Vector2f Vector2d
-        template< typename T = Vector2i >
-        struct Rect2{
-            T pos;
-            T size;
+    /// Shortcut to call no virtual methods on objects derivered from CustomWidget .
+    /** Usage: `GUI.get<DerivedClass>("name")->method();`
+     *  If you are creating own widget consider add new virtual method to CustomWidget .
+     */
+    template< class T >
+    T* get( std::string name );
+    
+    enum Alignment : short{
+        Begin,    ///< up to down, left to right
+        Centered, ///< centered, prefered size
+        End,      ///< down to up, right to left
+        Fill      ///< fill this axis
+    };
 
-            // false rel Position in px from top left to botton right.
-            //           Size - in px from Position in the same dir.
-            // true rel  Position in % of parent (scren/widget) from top
-            // left to botton right.
-            //           Size - in px from parent in the same dir.
-            /////////////////////////////////////////////////////////
-            //   |
-            // --+############ -> x+
-            //   #...........#   Pos ( 1/13, 3/7 )
-            //   #..####### .#   Size ( 6/13, 3/7 )
-            //   #..#,,,,,# .#   
-            //   #..####### .#   + - origin
-            //   #...........#
-            //   #############
-            //   v 
-            //   y+
-            bool rel = false;
-        };
-        // begin: up to down, left to right
-        // end: down to up, right to left
-        struct Anchor{
-            Anchor( Alignment mode = Alignment::Begin ) :
-            mode{mode} {};
-            bool is_rect_rel = true;
-            Vector2i start = Vector2i( 0, 0);
-            Vector2i end = Vector2i( 1, 1 );
-            bool is_margin_rel = true;
-            int margin = 0;
-            float margin_rel = 0;
-            Alignment mode;
-        };
-        
-        void set_x_anchor( 
-                Widget* what,
-                Widget* to,
-                GUI_::Anchor anchor_x
-        );
-        
-        void set_y_anchor( 
-                Widget* what,
-                Widget* to,
-                GUI_::Anchor anchor_y
+    struct Anchor{
+        Anchor( Alignment mode = Alignment::Begin ) :
+        mode{mode} {};
+        bool is_margin_rel = true;
+        int margin = 0;
+        float margin_rel = 0;
+        Alignment mode;
+    };
+    
+    inline void set_x_anchor( 
+            Widget* what,
+            Widget* to,
+            GUI_::Anchor anchor_x
+    ){ _set_axis_anchor( *what, *to, anchor_x, 0 ); };
+    
+    inline void set_y_anchor( 
+            Widget* what,
+            Widget* to,
+            GUI_::Anchor anchor_y
+    ){ _set_axis_anchor( *what, *to, anchor_y, 1 ); };
 
     /////////
     // FSM //
@@ -150,32 +150,32 @@ class GUI_{
         void entry() override;
     };
 
-    private:
-        void _set_axis_anchor( 
-                Widget& what,
-                Widget& to,
-                GUI_::Anchor anchor,
-                short axis
-        );
-            
-        template< typename T = Vector2i >
-        auto _get_axis( T t, int i ){
-            return i == 0 ? t.x() : t.y();
-        };
-
-        template< typename T = Vector2i >
-        T _get_rel_to_axis( T v1, T v2 , int axis ){
-            return (axis == 0) ?
-                T(
-                    _get_axis( v1, axis ),
-                    _get_axis( v2, !axis ) ) :
-                T(
-                    _get_axis( v2, !axis ),
-                    _get_axis( v1, axis ) );
-        };
+  private:
+    void _set_axis_anchor( 
+            Widget& what,
+            Widget& to,
+            GUI_::Anchor anchor,
+            short axis
+    );
         
-        std::shared_ptr< Screen > screen;
-        std::shared_ptr< FormHelper > helper;
+    template< typename T = Vector2i >
+    inline auto _get_axis( T t, int i ){
+        return i == 0 ? t.x() : t.y();
+    };
+
+    template< typename T = Vector2i >
+    inline T _get_rel_to_axis( T v1, T v2 , int axis ){
+        return (axis == 0) ?
+            T(
+               _get_axis( v1, axis ),
+               _get_axis( v2, !axis ) ) :
+            T(
+               _get_axis( v2, !axis ),
+               _get_axis( v1, axis ) );
+    };
+    
+    std::shared_ptr< Screen > screen;
+    std::shared_ptr< FormHelper > helper;
     bool may_render = false; // dono if it'll be necesary.
 };
 
