@@ -6,7 +6,9 @@
     obtain one at
     http://mozilla.org/MPL/2.0/.
 */
-
+#pragma once
+#ifndef _FSM_HANDLER_
+#define _FSM_HANDLER_
 #include "tinyfsm.hpp"
 #include "GUI.h"
 
@@ -26,4 +28,6 @@ struct FSM_{
     }
 };
 
-extern FSM_ FSM;
+extern FSM_ FSM ;
+
+#endif /* !_FSM_HANDLER_ */
