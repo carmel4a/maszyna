@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "uilayer.h"
 #include "uitranscripts.h"
 #include "GUI.h"
@@ -49,9 +49,6 @@ ui_layer::init( GLFWwindow *Window ) {
     push_back( UIHeader );
     push_back( UITable );
     push_back( UITranscripts );
-    push_back( ui_log );
-	if (!Global.loading_log)
-	    ui_log->enabled = false;
     m_window = Window;
 
     #ifndef _WIN32

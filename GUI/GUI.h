@@ -20,10 +20,12 @@
 
 #include "nanogui/nanogui.h"
 #include "Logs.h" //debug
+#include "LabelArray.h"
+
 using namespace nanogui;
 
-class CustomWidget;
-struct GLFWwindow;
+class CustomWidget; class LabelArray;
+struct GLFWwindow; struct PrintLine;
 
 typedef std::shared_ptr< CustomWidget > sh_CW;
 typedef std::unordered_map< std::string, sh_CW > widget_map;
@@ -127,6 +129,7 @@ class GUI_{
             
         //virtual void react(tinyfsm::Event const &) { };
         virtual void react( GUI_Init const & ) {  };
+        virtual void react( PrintLine const & ) {  };
         virtual void react( SceneLoaded const & ) {  };
 
         virtual void entry(void) { };
@@ -140,16 +143,16 @@ class GUI_{
     };
 
     struct LoadingScreen : GUI_FSM{
+        void react( PrintLine const & e ) override;
         void react( SceneLoaded const & ) override;
         void entry() override;
-        //void exit() override;
+        void exit() override;
     };
 
     struct Simulation : GUI_FSM{
-        //void react( JakisEvent const & ) override;
         void entry() override;
     };
-
+    bool is_ready(){ return may_render; };
   private:
     void _set_axis_anchor( 
             Widget& what,

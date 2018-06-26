@@ -12,6 +12,7 @@
 #define _LABEL_ARRAY_WIDGET_
 
 #include "CustomWidget.h"
+#include "tinyfsm.hpp"
 #include <string> // std::string
 #include <vector> // std::vector
 
@@ -41,15 +42,26 @@ class LabelArray:
     std::string name;
     std::string def_text;
     bool transparent;
+
+    void push_line( std::string text );
+    enum Mode : short{
+        LIMITED,
+        UNLIMITED
+    };
+    std::bitset<2> mode;
   protected:
     ref<VScrollPanel> scroll_panel;
     ref<Widget> group;
     std::deque< ref<Label> > label_array;
-    void push_line( std::string text );
     void pop(){};       // UNIMPLEMENTED
     void clear();
 };
 
+struct PrintLine : public tinyfsm::Event {
+    PrintLine(std::string Text = "\n"): text{Text} {};
+    virtual ~PrintLine(){};
+    std::string text;
+};
 
 class LoadingLog:
     public LabelArray {

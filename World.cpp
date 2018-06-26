@@ -246,7 +246,7 @@ bool TWorld::Init( GLFWwindow *Window ) {
     UILayer.set_progress( "Loading scenery / Wczytywanie scenerii" );
 
     GfxRenderer.Render();
-
+    
     WriteLog( "World setup..." );
     if( false == simulation::State.deserialize( Global.SceneryFile ) ) { return false; }
 
@@ -320,7 +320,6 @@ bool TWorld::Init( GLFWwindow *Window ) {
     UILayer.set_progress();
     UILayer.set_progress( "" );
     UILayer.set_background( "" );
-	ui_log->enabled = false;
 
     Timer::ResetTimers();
 

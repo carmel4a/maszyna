@@ -25,7 +25,7 @@
 
 using namespace nanogui;
 class PopupExit; class LabelArray; class LoadingLog;
-struct GUI_FSM; struct On;
+struct GUI_FSM; struct On; struct PrintLine;
 
 GUI_ GUI;
 
@@ -257,9 +257,33 @@ void GUI_::Start::exit() {
     WriteLog( "GUI prepared." );
 };
 
-
+void GUI_::LoadingScreen::react( PrintLine const & e ) { 
+    if( Global.loading_log ){
+        GUI.get<LabelArray>("loading_log")->push_line( e.text );
+    }
+ };
 void GUI_::LoadingScreen::react( SceneLoaded const & ) { transit<GUI_::Simulation>(); };
-void GUI_::LoadingScreen::entry() { WriteLog("LoadingSceneState."); };
+void GUI_::LoadingScreen::entry() { 
+    
+    if( Global.loading_log ){
+        const auto& log_widget_ref2 = std::make_shared< LabelArray >(
+            false,     // transparent = true,
+            "Log",     //std::string Name = "Label Array",
+            15,        // Size = 10,
+            -1         // int fixed_w = -1,
+                       //std::string Def_text = ""
+        );
+        GUI.add_widget("loading_log",
+                        log_widget_ref2,
+                        GUI.widgets
+        );
+    }
+ };
+
+void GUI_::LoadingScreen::exit(){
+
+    GUI.widgets["loading_log"]->hide();
+}; 
 
 //void GUI_::LoadingScreen::react( SceneLoaded const & ) { transit<Simulation>(); };
 void GUI_::Simulation::entry() {
