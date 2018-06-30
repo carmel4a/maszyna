@@ -15,6 +15,9 @@
 #include "tinyfsm.hpp"
 #include <string> // std::string
 #include <vector> // std::vector
+#include <nanogui/nanogui.h>
+
+using namespace nanogui;
 
 class LabelArray:
         public CustomWidget{

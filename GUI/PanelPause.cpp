@@ -12,6 +12,7 @@
 #include "CustomWidget.h"
 #include "PanelPause.h"
 #include "Globals.h"
+#include "Yoga.h"
 
 using namespace nanogui;
 

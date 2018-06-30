@@ -46,18 +46,18 @@ GUI_::~GUI_(){
 };
 
 //getters. .get() should return raw pointer.
-Screen* GUI_::get_screen(){
+Screen* GUI_::screen(){
 
-    return screen.get();
+    return screen_.get();
 };
 
 // call on each frame
-void GUI_::draw_gui(){
+void GUI_::render(){
 
     if( may_render ){
         update_vars();
-        get_screen()->drawContents();
-        get_screen()->drawWidgets();
+        screen_->drawContents();
+        screen_->drawWidgets();
     }
 };
 
@@ -77,7 +77,7 @@ void GUI_::update_layout( Widget* of ){
 
 void GUI_::remove_widget( std::string name,
                           widget_map& from  ){
-        auto* parent = from[name].get()->widget()->parent();
+        Widget* parent = from[name].get()->widget()->parent();
         parent->removeChild( from[name].get()->widget() );
         from.erase( name );
         update_layout( parent );
@@ -235,8 +235,8 @@ bool InputScreen::keyboardEvent(int key, int scancode, int action, int modifiers
 DefaultTheme::DefaultTheme( NVGcontext *ctx ):
     Theme( ctx ){
     mStandardFontSize = 16 * FONT_SCALE;
-    mButtonFontSize = 20 * FONT_SCALE;
-    mTextBoxFontSize = 20 * FONT_SCALE;
+    mButtonFontSize   = 20 * FONT_SCALE;
+    mTextBoxFontSize  = 20 * FONT_SCALE;
 };
 
 DefaultTheme::~DefaultTheme(){};

@@ -46,20 +46,8 @@ void LabelArray::init(){
     : widget_ = new Window( GUI.screen(), name );
     scroll_panel = new VScrollPanel( widget_ );
     group = new Widget( scroll_panel );
-    ref< Label > _temp;
-    #ifdef DEBUG
-        def_text = "test";
-        init_size = 20;
-    #endif /* !DEBUG */
-    for(int i = 0; i < init_size; i++){
-        char _temp_s[70];
-        random_str(_temp_s, 70);
-        const std::string _final_text = std::string( def_text + " " + (std::string)_temp_s );
-        push_line( _final_text );
-        #ifdef DEBUG
-            WriteLog( _final_text );
-        #endif /* !DEBUG */
-    }
+    scroll_panel->setScroll( 1.0F );
+
     may_update = true;
 };
 
@@ -133,6 +121,13 @@ void LabelArray::push_line( std::string text ){
     label_array.back()->setFixedWidth( scroll_panel->size().x() - 10 - 10 );    
     
     if( init_size < group->children().size() ){
+        /*
+        group->removeChild( 
+            group->childIndex( 
+                label_array.front().get()
+             )
+            );
+        */
         if( mode.test( Mode::LIMITED ) ){
             group->removeChild( 0 );
             label_array.front() = nullptr;

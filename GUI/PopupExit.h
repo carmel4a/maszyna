@@ -45,7 +45,6 @@ class PopupExitPanel : public Window {
         PopupExitPanel( Widget* widget_, std::shared_ptr< PopupExit > _root );
         virtual ~PopupExitPanel();
         bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
-
         std::shared_ptr< PopupExit > root;
 };
 

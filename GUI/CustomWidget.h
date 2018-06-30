@@ -31,7 +31,6 @@ typedef std::unordered_map< std::string, shared_customwidget_ptr > widget_map;
  *  must manually assign nanogui::Widget to nanogui::ref.  
  */
 class CustomWidget{
-    
   public:
     CustomWidget();
     virtual ~CustomWidget() = default;
