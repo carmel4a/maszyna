@@ -82,6 +82,7 @@ set(SOURCES
 "uitranscripts.cpp"
 "station.cpp"
 "GUI/GUI.cpp"
+"GUI/CustomWidget.cpp"
 "GUI/PopupExit.cpp"
 "GUI/PanelPause.cpp"
 "GUI/LabelArray.cpp"

@@ -12,40 +12,58 @@
 #define _CUSTOM_WIDGET_
 
 #include <string> // std::string
-#include <memory.h> // std::shared_pt
+#include <memory> // std::shared_pt
 #include <unordered_map> // std::unordered_map
 
-#include "GUI.h"
+#include "Yoga.h"
 #include "nanogui/nanogui.h"
 
 using namespace nanogui;
 
-class GUI_; class CustomWidget;
+class CustomWidget;
 
-typedef std::shared_ptr< CustomWidget > shared_custom_widget;
-typedef std::unordered_map< std::string, shared_custom_widget > widget_map;
+typedef std::shared_ptr< CustomWidget > shared_customwidget_ptr;
+typedef std::unordered_map< std::string, shared_customwidget_ptr > widget_map;
 
 /// A Base class to create own widgets.
-/**
-  It is meant as container for nanogui::ref to 
-  widget. It doesn't implement own logic, as creating widget, so in overrided
-  constructor, and virtual methods user must include manually assign nanogui::Widget
-  to nanogui::ref.
-*/
+/** It is meant as container for nanogui::ref to widget. It doesn't implement
+ *  own logic, as creating widget, so in constructor, and virtual methods user
+ *  must manually assign nanogui::Widget to nanogui::ref.  
+ */
 class CustomWidget{
     
   public:
-    CustomWidget(){};
-    virtual ~CustomWidget(){};
+    CustomWidget();
+    virtual ~CustomWidget() = default;
+
+    /** To print name of widget. */
+    operator std::string();
+
+    /// Method to override resize behaviour.
+    /** Resize widget, due to onw behaviour. Except init, you don't want to
+     *  call this directly. Default it calls `calc_layout`. Set position, size,
+     *  etc here.
+     */
+    virtual void resize( Vector2i v );
+
+    /// Calculate and set size/position of widget.
+    /** Sets `widget_` size and position due to `YG_node` setup. */
+    void calc_layout( Vector2i v );
+
+    /** Update content of widget, due to onw behaviour.
+     *  Currently it's done every frame for every widget,
+     *  so don't call that directly.
+     */
+    virtual void update(){};
 
     /////////////
     // Getters //
     /////////////
 
     /** Return raw pointer to main Widget */
-    Widget* widget(){ return widget_.get(); };
+    inline Widget* widget(){ return widget_.get(); };
     /** Return nanogui reference to Widget */
-    nanogui::ref<Widget> widget_ref(){ return widget_; };
+    inline nanogui::ref<Widget> widget_ref(){ return widget_; };
 
     //////////////////////////
     // Pure virtual methods //
@@ -60,34 +78,16 @@ class CustomWidget{
     // Virtual methods //
     /////////////////////
 
-    virtual void show(){ may_update = true; }
-    virtual void hide(){ may_update = false; }
+    virtual void show();
+    virtual void hide();
 
-    /** Resize widget, due to onw behaviour.
-     *  Except init, you don't want to call this directly.
-     *  Set anchor (position, size - layout) here.
-     */
-    virtual void resize( Vector2i v ){};
+    bool may_update; //< Will it update next frame?
+    YGNodeRef YG_node; //< Yoga layout node. 
+    [[depracted]]const widget_map* owner; //< Where is shared_ptr?
+    
 
-    /** Update content of widget, due to onw behaviour.
-     *  Currently it's done every frame for every widget,
-     *  so don't call that directly.
-     */
-    virtual void update(){};
-    bool may_update = false;
-
-    const widget_map* owner;
-    /** To print name of widget. */
-    operator std::string(){
-        for( auto const& x : *owner ) {
-            if( x.second.get() == this ) return( x.first );
-        }
-        std::string s = "No *CustomWidget fund in owner!";
-        throw s;
-    };
-        
   protected:
-    nanogui::ref<Widget> widget_; /**< Main managed widget. */
+    nanogui::ref<Widget> widget_; ///< Main managed widget.
 };
 
 #endif // !_CUSTOM_WIDGET_
