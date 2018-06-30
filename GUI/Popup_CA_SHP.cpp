@@ -38,7 +38,7 @@ Popup_CA_SHP::~Popup_CA_SHP(){};
 
 void Popup_CA_SHP::init(){
 
-    widget_ = new Window( GUI.get_screen(), "" );
+    widget_ = new Window( GUI.screen(), "" );
 };
 
 void Popup_CA_SHP::make(){
@@ -49,7 +49,7 @@ void Popup_CA_SHP::make(){
     ref< BoxLayout > top_layout = new BoxLayout( Orientation::Horizontal );
     widget_->setLayout( top_layout.get() );
 
-    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.get_screen()->nvgContext() );
+    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.screen()->nvgContext() );
     widget_->setTheme( default_theme.get() );
     widget_->theme()->mWindowHeaderHeight = 0;
     auto _temp_v = std::vector<Widget*>{
@@ -84,19 +84,19 @@ void Popup_CA_SHP::hide(){
 
 void Popup_CA_SHP::resize( Vector2i v ){
     auto _fix_size =
-            shp->preferredSize( GUI.get_screen()->nvgContext() )
-           +ca->preferredSize( GUI.get_screen()->nvgContext() );
+            shp->preferredSize( GUI.screen()->nvgContext() )
+           +ca->preferredSize( GUI.screen()->nvgContext() );
     widget_->setFixedSize( Vector2i( _fix_size.x(), widget_->size().y() ) );
     auto anchor = GUI_::Anchor( GUI.Alignment::End );
     anchor.is_margin_rel = false;
     anchor.margin = Popup_CA_SHP_TOP_M;
     GUI.set_x_anchor(
         widget_.get(),
-        GUI.get_screen(),
+        GUI.screen(),
         anchor
     );
     anchor.mode = GUI.Alignment::End;
-    anchor.margin = -Popup_CA_SHP_RIGHT_M - widget_->preferredSize( GUI.get_screen()->nvgContext() ).y();
+    anchor.margin = -Popup_CA_SHP_RIGHT_M - widget_->preferredSize( GUI.screen()->nvgContext() ).y();
     GUI.set_y_anchor(
         widget_.get(),
         GUI.widgets["pause_panel"]->widget(),

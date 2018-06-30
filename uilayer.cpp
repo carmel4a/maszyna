@@ -962,7 +962,7 @@ ui_layer::render() {
 
     render_panels();
     render_tooltip();
-    GUI.draw_gui();
+    GUI.render();
 
     glPopAttrib();
 }

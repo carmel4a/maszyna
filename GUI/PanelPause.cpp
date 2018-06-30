@@ -21,11 +21,12 @@ PanelPause::PanelPause(){
 
 };
 
-PanelPause::~PanelPause(){};
+PanelPause::~PanelPause(){
+};
 
 void PanelPause::init(){
 
-    widget_ = new Widget( GUI.get_screen() );
+    widget_ = new Widget( GUI.screen() );
     panel = new Window( widget_, "" );
     may_update = true;
 };
@@ -38,7 +39,7 @@ void PanelPause::make(){
     
     nanogui::ref< BoxLayout > layout = new BoxLayout( nanogui::Orientation::Vertical );
     panel->setLayout( layout.get() );
-    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.get_screen()->nvgContext() );
+    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.screen()->nvgContext() );
     panel->setTheme( default_theme );
     panel->theme()->mWindowHeaderHeight = 0;
 

@@ -115,14 +115,14 @@ void make_screenshot()
 }
 void char_callback(GLFWwindow *window,  unsigned int codepoint)
 {
-    GUI.get_screen()->charCallbackEvent(codepoint);
+    GUI.screen()->charCallbackEvent(codepoint);
 }
 
 void window_resize_callback(GLFWwindow *window, int w, int h)
 {
     // NOTE: we have two variables which basically do the same thing as we don't have dynamic fullscreen toggle
     // TBD, TODO: merge them?
-    GUI.get_screen()->resizeCallbackEvent(w, h);
+    GUI.screen()->resizeCallbackEvent(w, h);
 	Global.iWindowWidth = w;
 	Global.iWindowHeight = h;
     Global.fDistanceFactor = std::max( 0.5f, h / 768.0f ); // not sure if this is really something we want to use
@@ -135,7 +135,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 		return;
 
     input::Mouse.move( x, y );
-    GUI.get_screen()->cursorPosCallbackEvent( x, y );
+    GUI.screen()->cursorPosCallbackEvent( x, y );
 
     if( !Global.ControlPicking ) {
         glfwSetCursorPos( window, 0, 0 );
@@ -144,7 +144,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 
 void mouse_button_callback( GLFWwindow* window, int button, int action, int mods ) {
 
-    GUI.get_screen()->mouseButtonCallbackEvent(button, action, mods);
+    GUI.screen()->mouseButtonCallbackEvent(button, action, mods);
 
     if( ( button == GLFW_MOUSE_BUTTON_LEFT )
      || ( button == GLFW_MOUSE_BUTTON_RIGHT ) ) {
@@ -159,7 +159,7 @@ void key_callback( GLFWwindow *window, int key, int scancode, int action, int mo
     Global.ctrlState = ( mods & GLFW_MOD_CONTROL ) ? true : false;
 
     // give the ui first shot at the input processing...
-    if( GUI.get_screen()->keyCallbackEvent(key, scancode, action, mods)
+    if( GUI.screen()->keyCallbackEvent(key, scancode, action, mods)
     ) return;
 
     if( true == UILayer.on_key( key, action ) ) { return; }
@@ -224,7 +224,7 @@ void focus_callback( GLFWwindow *window, int focus )
 
 void scroll_callback( GLFWwindow* window, double xoffset, double yoffset ) {
 
-    GUI.get_screen()->scrollCallbackEvent(xoffset, yoffset);
+    GUI.screen()->scrollCallbackEvent(xoffset, yoffset);
     if( Global.ctrlState ) {
         // ctrl + scroll wheel adjusts fov in debug mode
         Global.FieldOfView = clamp( static_cast<float>(Global.FieldOfView - yoffset * 20.0 / Global.fFpsAverage), 15.0f, 75.0f );
@@ -446,7 +446,7 @@ int main(int argc, char *argv[])
         }
         glfwSetDropCallback(window,
             [](GLFWwindow *, int count, const char **filenames) {
-                GUI.get_screen()->dropCallbackEvent(count, filenames);
+                GUI.screen()->dropCallbackEvent(count, filenames);
             }
         );
 

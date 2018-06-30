@@ -17,48 +17,43 @@
 #include <string> // std::string
 
 #include "tinyfsm.hpp"
+#include "Yoga.h"
 
 #include "nanogui/nanogui.h"
 #include "Logs.h" //debug
-#include "LabelArray.h"
 
 using namespace nanogui;
 
-class CustomWidget; class LabelArray;
+class CustomWidget; class LabelArray; class LabelArray;
 struct GLFWwindow; struct PrintLine;
 
-typedef std::shared_ptr< CustomWidget > sh_CW;
-typedef std::unordered_map< std::string, sh_CW > widget_map;
+typedef std::shared_ptr< CustomWidget > shared_customwidget_ptr;
+typedef std::unordered_map< std::string, shared_customwidget_ptr > widget_map;
 
-
-/// Enter point to user interface.
-/**
- * There mustn't be more than one instance of this class.
- * Object of this class (named `GUI`) is made by 'itself' so you don't want create it
- * by hand.
+/// Entry point to user interface.
+/** There mustn't be more than one instance of this class. Object of this class
+ *  (named `GUI`) is made by 'itself' so you don't want create it by hand.
  */
 class GUI_{
-
   public:
     GUI_();
     ~GUI_();
 
     /// Post constructor.
-    /** %Call after succesfull init of glfw window. */
-    //void init(GLFWwindow* window);
+    /** %Call after succesfull init of GLFW window. */
     inline void set_main_window( GLFWwindow* window ){
-        get_screen()->initialize( window, true );
+        screen_->initialize( window, true );
     };
     /// Draw gui.
     /** %Call it every frame. It updates content of widgets. */
-    void draw_gui();
+    void render();
     
-    /// Return nanogui::Screen. Synonym to nanogui::Widget::screen. 
+    /// Return nanogui::Screen. Synonym to nanogui::Widget::screen_. 
     /** nanogui::Screen class, handles GLFW window. Represent an glfw window.
      *  It should be an singleton, untill MaSzyna will have one main window.
      *  It may change eg. when mp module will be implemented.
      */
-    Screen* get_screen();
+    Screen* screen();
     
     /// Register widget in GUI_.
     /** It only adds CustomWidget to widget array, and calls
@@ -67,7 +62,7 @@ class GUI_{
      */
     void add_widget(
              std::string name,        ///< System name in widget map.
-            const sh_CW& sptr_custom, ///< std::shared_ptr with previously
+            const shared_customwidget_ptr& sptr_custom, ///< std::shared_ptr with previously
                                       ///< created CustomWidget.
              widget_map& where        ///< For now it should be GUI_::widgets .
     );
@@ -78,11 +73,15 @@ class GUI_{
             std::string name, ///< System name of CustomWidget.
             widget_map& from  ///< Widget map where widget is registered. Usually Widgets.
     );
+        
+    void add_to_layout( const YGNodeRef what, YGNodeRef where );
+    void remove_from_layout( const YGNodeRef what, YGNodeRef from );
+
     void update_vars();
     void update_layout( Widget* of );
 
     widget_map widgets; ///< Widget map containing names and shared pointers to CustomWidget s.
-
+    std::shared_ptr< CustomWidget > root;
     /// Shortcut to call no virtual methods on objects derivered from CustomWidget .
     /** Usage: `GUI.get<DerivedClass>("name")->method();`
      *  If you are creating own widget consider add new virtual method to CustomWidget .
@@ -177,7 +176,7 @@ class GUI_{
                _get_axis( v1, axis ) );
     };
     
-    std::shared_ptr< Screen > screen;
+    std::shared_ptr< Screen > screen_;
     std::shared_ptr< FormHelper > helper;
     bool may_render = false; // dono if it'll be necesary.
 };
@@ -185,17 +184,18 @@ class GUI_{
 extern GUI_ GUI;
 
 class InputScreen : public nanogui::Screen {
-    public:
-        InputScreen();
-        virtual ~InputScreen() = default;
-        bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
-        void resize( const nanogui::Vector2i v );
+  public:
+    InputScreen();
+    virtual ~InputScreen();
+    bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
+    void resize( const nanogui::Vector2i v );
+    YGNodeRef YG_node;
 };
 
 class DefaultTheme : public Theme{
-    public:
-        DefaultTheme( NVGcontext *ctx );
-        ~DefaultTheme();
+  public:
+    DefaultTheme( NVGcontext *ctx );
+    ~DefaultTheme();
 };
 
 #endif //!_MAIN_GUI_

@@ -29,7 +29,7 @@ PopupExit::~PopupExit(){};
 
 void PopupExit::init(){
 
-    widget_ = new PopupExitPanel( GUI.get_screen(), shared_from_this() );
+    widget_ = new PopupExitPanel( GUI.screen(), shared_from_this() );
 };
 
 void PopupExit::make(){
@@ -84,23 +84,9 @@ void assign_grid_layout(                       Widget* to,
     dynamic_cast< GridLayout* >( to->layout() )->setColAlignment( alignment );
 };
 
-void PopupExit::show(){
-
-    widget_->setVisible( true );
-    widget_->requestFocus();
-    GUI.update_layout( widget_.get() );
-};
-
-void PopupExit::hide(){
-    
-    widget_->setVisible( false );
-    GUI.get_screen()->requestFocus();
-    GUI.update_layout( widget_.get() );
-};
-
 void PopupExit::exit(){
 
-    glfwSetWindowShouldClose( GUI.get_screen()->glfwWindow(), 1 );
+    glfwSetWindowShouldClose( GUI.screen()->glfwWindow(), 1 );
 };
 void PopupExit::no_exit(){
 
@@ -134,7 +120,7 @@ void PopupExit::resize(Vector2i v){
     auto anchor = GUI_::Anchor( GUI.Alignment::Centered );
     GUI.set_x_anchor(
         widget_.get(),
-        GUI.get_screen(),
+        GUI.screen(),
         anchor
     );
     anchor.mode = GUI.Alignment::Begin;
@@ -142,7 +128,7 @@ void PopupExit::resize(Vector2i v){
     anchor.margin = 10;
     GUI.set_y_anchor(
         widget_.get(),
-        GUI.get_screen(),
+        GUI.screen(),
         anchor
     );
 }

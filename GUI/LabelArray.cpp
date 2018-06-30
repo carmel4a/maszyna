@@ -12,6 +12,8 @@
 #include "LabelArray.h"
 #include "Globals.h"
 #include "Logs.h"
+#include "GUI.h"
+
 
 using namespace nanogui;
 
@@ -40,8 +42,8 @@ LabelArray::~LabelArray(){};
 void LabelArray::init(){
 
     ( transparent )
-    ? widget_ = new Widget( GUI.get_screen() )
-    : widget_ = new Window( GUI.get_screen(), name );
+    ? widget_ = new Widget( GUI.screen() )
+    : widget_ = new Window( GUI.screen(), name );
     scroll_panel = new VScrollPanel( widget_ );
     group = new Widget( scroll_panel );
     ref< Label > _temp;
@@ -72,7 +74,7 @@ void LabelArray::make(){
     ref< BoxLayout > group_layout = new BoxLayout( Orientation::Vertical, nanogui::Alignment::Minimum, 0, 10  );
     group->setLayout( group_layout.get() );
 
-    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.get_screen()->nvgContext() );
+    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.screen()->nvgContext() );
     widget_->setTheme( default_theme );
 
     GUI.update_layout( widget_.get() );
@@ -99,14 +101,14 @@ void LabelArray::resize( Vector2i v ){
     (fixed_w == -1) ? max_x = v.x()/2 : max_x = fixed_w;
     (fixed_h == -1) ? max_y = v.y()/2 : max_y = fixed_h;
 
+    // Set widget_
     widget_->setFixedWidth(max_x);
     widget_->setFixedHeight(max_y);
-    // Set widget_
     auto anchor = GUI_::Anchor( GUI.Alignment::Centered );
     GUI.set_x_anchor(
-            widget_.get(), GUI.get_screen(), anchor );
+            widget_.get(), GUI.screen(), anchor );
     GUI.set_y_anchor(
-            widget_.get(), GUI.get_screen(), anchor );
+            widget_.get(), GUI.screen(), anchor );
 
     GUI.update_layout( widget_.get() );
     scroll_panel->setFixedHeight( widget_->size().y() - widget_->theme()->mWindowHeaderHeight -10 -25 );
@@ -146,8 +148,8 @@ void LoadingLog::update(){ return; };
 
 void LoadingLog::init(){
     ( transparent )
-    ? widget_ = new Widget( GUI.get_screen() )
-    : widget_ = new Window( GUI.get_screen(), name );
+    ? widget_ = new Widget( GUI.screen() )
+    : widget_ = new Window( GUI.screen(), name );
     scroll_panel = new VScrollPanel( widget_ );
     group = new Widget( scroll_panel );
     may_update = true;
@@ -160,7 +162,7 @@ void LoadingLog::make(){
     //widget_->setLayout( top_layout.get() );
     //group->setLayout( top_layout.get() );
 
-    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.get_screen()->nvgContext() );
+    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.screen()->nvgContext() );
     widget_->setTheme( default_theme );
     //panel->theme()->mWindowHeaderHeight = 0;
 

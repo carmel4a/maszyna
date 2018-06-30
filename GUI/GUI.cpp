@@ -22,18 +22,20 @@
 #include "PanelPause.h"
 #include "LabelArray.h"
 
+#include "Yoga.h"
+
 
 using namespace nanogui;
-class PopupExit; class LabelArray; class LoadingLog;
+class InputScreen; class PopupExit; class LabelArray; class LoadingLog;
 struct GUI_FSM; struct On; struct PrintLine;
 
 GUI_ GUI;
 
 GUI_::GUI_(){
 
-    screen = std::make_shared< InputScreen >();
+    screen_ = std::make_shared< InputScreen >();
     // Create a gui helper. Creating windows, widgets, etc.
-    helper = std::make_shared< FormHelper >( get_screen() );
+    helper = std::make_shared< FormHelper >( screen() );
     WriteLog( "GUI created." );
 };
 
@@ -246,11 +248,11 @@ void GUI_::Start::react( GUI_Init const & ) {
 void GUI_::Start::entry() { };
 void GUI_::Start::exit() {
 
-    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.get_screen()->nvgContext() );
-    GUI.get_screen()->setTheme( default_theme );
+    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.screen()->nvgContext() );
+    GUI.screen()->setTheme( default_theme );
 
     //const auto& loading_log_ref = std::make_shared< LoadingLog >();
-    GUI.get_screen()->setVisible( true );
+    GUI.screen()->setVisible( true );
     // Mark gui as ready to be drawn.
     GUI.may_render = true;
 
