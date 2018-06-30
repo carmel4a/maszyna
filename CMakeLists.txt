@@ -6,8 +6,8 @@ set(DEPS_DIR ${DEPS_DIR} "${CMAKE_SOURCE_DIR}/ref")
 project("eu07")
 
 set(CMAKE_CXX_STANDARD 14)
-include_directories("." "Console" "McZapkie" "ref/coro" "ref/nanovg/src" "GUI" "ref/tinyfsm/include" )
-file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h"  "ref/coro/*.h"  "ref/nanovg/src/*.h" "GUI/*.h" "ref/tinyfsm/include/*.h" )
+include_directories("." "Console" "McZapkie" "ref/coro" "ref/nanovg/src" "GUI" "ref/tinyfsm/include" "ref/yoga")
+file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h"  "ref/coro/*.h"  "ref/nanovg/src/*.h" "GUI/*.h" "ref/tinyfsm/include/*.h" "ref/yoga/*.h")
 
 set(SOURCES
 "Texture.cpp"
@@ -87,6 +87,15 @@ set(SOURCES
 "GUI/PanelPause.cpp"
 "GUI/LabelArray.cpp"
 "GUI/Popup_CA_SHP.cpp"
+"ref/yoga/Utils.cpp"
+"ref/yoga/YGConfig.cpp"
+"ref/yoga/YGEnums.cpp"
+"ref/yoga/YGFloatOptional.cpp"
+"ref/yoga/YGLayout.cpp"
+"ref/yoga/YGNode.cpp"
+"ref/yoga/YGNodePrint.cpp"
+"ref/yoga/YGStyle.cpp"
+"ref/yoga/Yoga.cpp"
 )
 
 set (PREFIX "")
