@@ -62,25 +62,39 @@ void GUI_::render(){
 };
 
 void GUI_::add_widget(                 std::string name,
-                       const shared_custom_widget& s_ptr_custom_widget,
+                       const shared_customwidget_ptr& s_ptr_custom_widget,
                                        widget_map& where                ){
     s_ptr_custom_widget->init();
     where[name] = s_ptr_custom_widget;
     s_ptr_custom_widget->make();
     update_layout( s_ptr_custom_widget->widget() );
+    add_to_layout( s_ptr_custom_widget->YG_node, dynamic_cast<InputScreen*>(screen_.get())->YG_node );
+};
+
+void GUI_::add_to_layout( const YGNodeRef what, YGNodeRef where ){
+
+    YGNodeInsertChild( where, what, YGNodeGetChildCount(where) );
+};
+
+void GUI_::remove_from_layout( const YGNodeRef what, YGNodeRef from ){
+    
+    YGNodeRemoveChild( from, what );
 };
 
 void GUI_::update_layout( Widget* of ){
-    
-    of->parent()->performLayout( get_screen()->nvgContext() );
+    ( of->parent() )
+    ? of->parent()->performLayout( screen_->nvgContext() )
+    : screen_->performLayout();
 };
 
 void GUI_::remove_widget( std::string name,
                           widget_map& from  ){
         Widget* parent = from[name].get()->widget()->parent();
         parent->removeChild( from[name].get()->widget() );
-        from.erase( name );
         update_layout( parent );
+        from.erase( name );
+        remove_from_layout( from[name].get()->YG_node, dynamic_cast<InputScreen*>(screen_.get())->YG_node );
+        YGNodeFreeRecursive( from[name].get()->YG_node );
 };
 
 void GUI_::update_vars(){
@@ -192,6 +206,9 @@ void GUI_::_set_axis_anchor(
 };
 
 InputScreen::InputScreen(){
+
+    YG_node = YGNodeNew();
+    YGNodeStyleSetDirection( YG_node, YGDirectionLTR );
     setResizeCallback(
         [this]( Vector2i v )->void{
             resize( v ); 
@@ -200,10 +217,18 @@ InputScreen::InputScreen(){
     //setResizeCallback( std::bind( &InputScreen::resize(), this, std::placeholders::_1 ) );
 };
 
+InputScreen::~InputScreen(){
+
+    YGNodeFreeRecursive( YG_node );
+};
+
 void InputScreen::resize( nanogui::Vector2i v ){
-    for( auto const& [key, val] : GUI.widgets )
-    {
-        val->resize( v );
+
+    YGNodeStyleSetMinWidth ( YG_node, v.x() );
+    YGNodeStyleSetMinHeight( YG_node, v.y() );
+    YGNodeCalculateLayout( YG_node, v.x(), v.y(), YGDirectionLTR );
+    for( auto const& x : GUI.widgets ){
+        x.second->resize( v );
     }
 };
 
@@ -227,7 +252,6 @@ bool InputScreen::keyboardEvent(int key, int scancode, int action, int modifiers
             if ((*it)->focused() && (*it)->keyboardEvent(key, scancode, action, modifiers))
                 return true;
     }
-    
     return false;
 };
 

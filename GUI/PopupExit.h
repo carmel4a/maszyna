@@ -27,11 +27,7 @@ class PopupExit:
         virtual ~PopupExit();
         void init() override;
         void make() override;
-        
-        void show() override;
-        void hide() override;
         void resize( Vector2i v ) override;
-
         bool may_quit = true;
 
     private:

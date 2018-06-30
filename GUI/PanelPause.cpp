@@ -49,38 +49,19 @@ void PanelPause::make(){
     GUI.update_layout( panel.get() );
     GUI.update_layout( widget_.get() );
 
+    
+    YGNodeStyleSetPosition( YG_node, YGEdgeTop, 10 );
+    YGNodeStyleSetPosition( YG_node, YGEdgeRight, 10 );
+
+    YGNodeStyleSetPositionType( YG_node, YGPositionTypeAbsolute );
+    
+    YGNodeStyleSetMinWidth( YG_node, widget_->preferredSize( GUI.screen()->nvgContext() ).x() );
+    YGNodeStyleSetMinHeight( YG_node, widget_->preferredSize( GUI.screen()->nvgContext() ).y() );
+    YGNodeStyleSetWidth( YG_node, widget_->preferredSize( GUI.screen()->nvgContext() ).x() );
+    YGNodeStyleSetHeight( YG_node, widget_->preferredSize( GUI.screen()->nvgContext() ).y() );
+
     resize( Vector2i( Global.iWindowWidth, Global.iWindowHeight ) );
 };
-
-void PanelPause::show(){
-
-    widget_->setVisible( true );
-    GUI.update_layout( widget_.get() );
-};
-
-void PanelPause::hide(){
-    
-    widget_->setVisible( false );
-    GUI.update_layout( widget_.get() );
-};
-
-void PanelPause::resize( Vector2i v ){
-
-    auto anchor = GUI_::Anchor( GUI.Alignment::End );
-    anchor.is_margin_rel = false;
-    anchor.margin = 10;
-    GUI.set_x_anchor(
-        widget_.get(),
-        GUI.get_screen(),
-        anchor
-    );
-    anchor.mode = GUI.Alignment::Begin;
-    GUI.set_y_anchor(
-        widget_.get(),
-        GUI.get_screen(),
-        anchor
-    );
-}
 
 void PanelPause::update(){
 
