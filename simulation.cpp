@@ -1,4 +1,4 @@
-﻿/*
+/*
 This Source Code Form is subject to the
 terms of the Mozilla Public License, v.
 2.0. If a copy of the MPL was not
@@ -131,7 +131,7 @@ state_manager::deserialize( cParser &Input, scene::scratch_data &Scratchpad ) {
         }
 
         timenow = std::chrono::steady_clock::now();
-        if( std::chrono::duration_cast<std::chrono::milliseconds>( timenow - timelast ).count() >= 200 ) {
+        if( std::chrono::duration_cast<std::chrono::milliseconds>( timenow - timelast ).count() >= 100 ) {
             timelast = timenow;
             glfwPollEvents();
             UILayer.set_progress( Input.getProgress(), Input.getFullProgress() );
