@@ -80,9 +80,9 @@ class CustomWidget{
     virtual void show();
     virtual void hide();
 
-    bool may_update; //< Will it update next frame?
-    YGNodeRef YG_node; //< Yoga layout node. 
-    [[depracted]]const widget_map* owner; //< Where is shared_ptr?
+    bool may_update; ///< Will it update next frame?
+    YGNodeRef YG_node; ///< Yoga layout node. 
+    [[depracted]]const widget_map* owner; ///< Where is shared_ptr?
     
 
   protected:
