@@ -21,11 +21,24 @@
 
 #include "nanogui/nanogui.h"
 #include "Logs.h" //debug
+#include "RootUI.h"
 
 using namespace nanogui;
 
 class CustomWidget; class LabelArray; class LabelArray;
 struct GLFWwindow; struct PrintLine;
+
+
+class InputScreen : public nanogui::Screen {
+  public:
+    InputScreen();
+    virtual ~InputScreen();
+    bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
+    bool propagate_key( int key, int scancode, int action, int modifiers );
+    void resize( const nanogui::Vector2i v );
+
+    YGNodeRef YG_node;
+};
 
 typedef std::shared_ptr< CustomWidget > shared_customwidget_ptr;
 typedef std::unordered_map< std::string, shared_customwidget_ptr > widget_map;
@@ -81,7 +94,7 @@ class GUI_{
     void update_layout( Widget* of );
 
     widget_map widgets; ///< Widget map containing names and shared pointers to CustomWidget s.
-    std::shared_ptr< CustomWidget > root;
+    std::shared_ptr< RootUI > root;
     /// Shortcut to call no virtual methods on objects derivered from CustomWidget .
     /** Usage: `GUI.get<DerivedClass>("name")->method();`
      *  If you are creating own widget consider add new virtual method to CustomWidget .
@@ -125,12 +138,12 @@ class GUI_{
     struct SceneLoaded : public tinyfsm::Event {};
     
     struct GUI_FSM : public tinyfsm::Fsm<GUI_FSM>{
-            
+
         //virtual void react(tinyfsm::Event const &) { };
         virtual void react( GUI_Init const & ) {  };
         virtual void react( PrintLine const & ) {  };
         virtual void react( SceneLoaded const & ) {  };
-
+        
         virtual void entry(void) { };
         virtual void exit(void)  { };
     };
@@ -152,6 +165,8 @@ class GUI_{
         void entry() override;
     };
     bool is_ready(){ return may_render; };
+    void set_root( std::shared_ptr<RootUI> new_root );
+    
   private:
     void _set_axis_anchor( 
             Widget& what,
@@ -182,15 +197,6 @@ class GUI_{
 };
 
 extern GUI_ GUI;
-
-class InputScreen : public nanogui::Screen {
-  public:
-    InputScreen();
-    virtual ~InputScreen();
-    bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
-    void resize( const nanogui::Vector2i v );
-    YGNodeRef YG_node;
-};
 
 class DefaultTheme : public Theme{
   public:

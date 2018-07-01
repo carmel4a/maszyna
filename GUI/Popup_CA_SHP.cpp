@@ -38,7 +38,7 @@ Popup_CA_SHP::~Popup_CA_SHP(){};
 
 void Popup_CA_SHP::init(){
 
-    widget_ = new Window( GUI.screen(), "" );
+    widget_ = new Window( GUI.root->widget(), "" );
 };
 
 void Popup_CA_SHP::make(){

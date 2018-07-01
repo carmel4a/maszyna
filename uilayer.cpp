@@ -192,14 +192,6 @@ ui_layer::on_key( int const Key, int const Action ) {
             return true;
         }
 
-        case GLFW_KEY_F12: {
-			if (Action == GLFW_PRESS)
-				ui_log->enabled = !ui_log->enabled;
-            // coś tam jeszcze
-            Global.iTextMode = Key;
-            return true;
-        }
-
         default: {
             break;
         }

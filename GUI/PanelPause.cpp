@@ -27,7 +27,7 @@ PanelPause::~PanelPause(){
 
 void PanelPause::init(){
 
-    widget_ = new Widget( GUI.screen() );
+    widget_ = new Widget( GUI.root->widget() );
     panel = new Window( widget_, "" );
     may_update = true;
 };
@@ -67,4 +67,11 @@ void PanelPause::update(){
 
     if( Global.iPause > 0 ) show();
     else hide();
+};
+
+void PanelPause::hide(){
+
+    widget_->setVisible( false );
+    GUI.update_layout( widget_.get() );
+    widget_->setFocused( false );
 };

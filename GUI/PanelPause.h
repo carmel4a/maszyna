@@ -23,6 +23,7 @@ class PanelPause:
         void init() override;
         void make() override;
         
+        void hide() override;
         void update() override;
     private:
         nanogui::ref< Window > panel;

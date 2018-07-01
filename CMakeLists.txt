@@ -83,6 +83,8 @@ set(SOURCES
 "station.cpp"
 "GUI/GUI.cpp"
 "GUI/CustomWidget.cpp"
+"GUI/UI_Simulation.cpp"
+"GUI/RootUI.cpp"
 "GUI/PopupExit.cpp"
 "GUI/PanelPause.cpp"
 "GUI/LabelArray.cpp"

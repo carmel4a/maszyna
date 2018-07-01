@@ -32,6 +32,7 @@ void CustomWidget::hide(){
 
     widget_->setVisible( false );
     GUI.update_layout( widget_.get() );
+    widget_->setFocused( false );
     may_update = false;
 };
 

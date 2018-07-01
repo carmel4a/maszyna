@@ -21,6 +21,8 @@
 #include "Popup_CA_SHP.h"
 #include "PanelPause.h"
 #include "LabelArray.h"
+#include "UI_Simulation.h"
+
 
 #include "Yoga.h"
 
@@ -84,7 +86,7 @@ void GUI_::remove_from_layout( const YGNodeRef what, YGNodeRef from ){
 void GUI_::update_layout( Widget* of ){
     ( of->parent() )
     ? of->parent()->performLayout( screen_->nvgContext() )
-    : screen_->performLayout();
+    : root->widget()->performLayout( screen_->nvgContext() );
 };
 
 void GUI_::remove_widget( std::string name,
@@ -103,6 +105,21 @@ void GUI_::update_vars(){
             x.second->update();
         }
     }
+};
+
+void GUI_::set_root( std::shared_ptr<RootUI> new_root ){
+
+    if( root != nullptr){
+        remove_from_layout( root->YG_node, dynamic_cast<InputScreen*>(screen())->YG_node );
+        YGNodeFreeRecursive( root->YG_node );
+        screen_->removeChild( root->widget() );
+    }
+    new_root->init();
+    root = new_root;
+    root->make();
+    update_layout( root->widget() );
+    update_layout( screen_.get() );
+    screen_->performLayout();
 };
 
 /*
@@ -233,26 +250,20 @@ void InputScreen::resize( nanogui::Vector2i v ){
 };
 
 bool InputScreen::keyboardEvent(int key, int scancode, int action, int modifiers){
-    
-    if( key == GLFW_KEY_F10 ){
-        const auto& popup = dynamic_cast< PopupExit* >( GUI.widgets["exit_popup"].get() );
-        if( popup->may_quit && action == GLFW_PRESS ){
-            if( popup->widget()->visible() ){
-                popup->hide();
-            }
-            else{
-                popup->show();
-            }
-            return true;
-        }
-    }
+
+    if( GUI.root->keyboardEvent( key, scancode, action, modifiers )  ) return true;
+    if( propagate_key( key, scancode, action, modifiers )  ) return true;
+    return false;
+};
+
+bool InputScreen::propagate_key( int key, int scancode, int action, int modifiers ){
 
     if (mFocusPath.size() > 0) {
         for (auto it = mFocusPath.rbegin() + 1; it != mFocusPath.rend(); ++it)
             if ((*it)->focused() && (*it)->keyboardEvent(key, scancode, action, modifiers))
                 return true;
     }
-    return false;
+    return false;        
 };
 
 #define FONT_SCALE 2
@@ -307,13 +318,16 @@ void GUI_::LoadingScreen::entry() {
  };
 
 void GUI_::LoadingScreen::exit(){
-
+    if( Global.loading_log )
     GUI.widgets["loading_log"]->hide();
 }; 
 
-//void GUI_::LoadingScreen::react( SceneLoaded const & ) { transit<Simulation>(); };
 void GUI_::Simulation::entry() {
     WriteLog("SimulationState.");
+
+    const auto& simulation_ui = std::make_shared< UI_Simulation >();
+
+    GUI.set_root( simulation_ui );
 
     const auto& exit_popup_ref = std::make_shared< PopupExit >();
     GUI.add_widget("exit_popup",
@@ -332,31 +346,8 @@ void GUI_::Simulation::entry() {
                     ca_shp_ref,
                     GUI.widgets
     );
-    /*
-    const auto& log_widget_ref = std::make_shared< LabelArray >(
-            true,     // transparent = true,
-            "opcja 1", //std::string Name = "Label Array",
-            10,        // Size = 10,
-            500        // int fixed_w = -1,
-                       //std::string Def_text = ""
-    );
-    add_widget("log_widget",
-                log_widget_ref,
-                widgets
-    );
-    */
-    const auto& log_widget_ref2 = std::make_shared< LabelArray >(
-            false,     // transparent = true,
-            "opcja 1", //std::string Name = "Label Array",
-            10,        // Size = 10,
-            -1        // int fixed_w = -1,
-                       //std::string Def_text = ""
-    );
-    GUI.add_widget("log_widget2",
-                    log_widget_ref2,
-                    GUI.widgets
-    );
 };
 
-FSM_INITIAL_STATE(GUI_::GUI_FSM, GUI_::Start)
 
+
+FSM_INITIAL_STATE(GUI_::GUI_FSM, GUI_::Start)

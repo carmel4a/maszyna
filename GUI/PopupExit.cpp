@@ -29,7 +29,7 @@ PopupExit::~PopupExit(){};
 
 void PopupExit::init(){
 
-    widget_ = new PopupExitPanel( GUI.screen(), shared_from_this() );
+    widget_ = new PopupExitPanel( GUI.root->widget(), shared_from_this() );
 };
 
 void PopupExit::make(){
