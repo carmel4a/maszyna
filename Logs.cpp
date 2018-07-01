@@ -83,7 +83,7 @@ void WriteLog( const char *str, logtype const Type ) {
         output << str << "\n";
         output.flush();
     }
-    if( GUI.is_ready() ) FSM.send_event( PrintLine( std::string( str ) ) );
+    if( GUI.is_ready() ) FSM::send_event( PrintLine( str ) );
 
 #ifdef _WIN32
     if( Global.iWriteLogEnabled & 2 ) {
