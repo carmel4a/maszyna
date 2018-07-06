@@ -15,7 +15,7 @@
 #include "CustomWidget.h"
 #include "PopupExit.h"
 #include "Globals.h"
-
+#include "OldLayoutSystem.h"
 using namespace nanogui;
 
 
@@ -117,18 +117,18 @@ bool PopupExitPanel::keyboardEvent( int key, int scancode, int action, int modif
 
 void PopupExit::resize(Vector2i v){
         
-    auto anchor = GUI_::Anchor( GUI.Alignment::Centered );
-    GUI.set_x_anchor(
+    auto anchor = OldLayout::Anchor( OldLayout::Alignment::Centered );
+    OldLayout::set_x_anchor(
         widget_.get(),
         GUI.screen(),
         anchor
     );
-    anchor.mode = GUI.Alignment::Begin;
+    anchor.mode = OldLayout::Alignment::Begin;
     anchor.is_margin_rel = false;
     anchor.margin = 10;
-    GUI.set_y_anchor(
+    OldLayout::set_y_anchor(
         widget_.get(),
         GUI.screen(),
         anchor
     );
-}
+};

@@ -11,14 +11,14 @@
 #define _FSM_HANDLER_
 
 #include "tinyfsm.hpp"
-#include "GUI.h"
+#include "GUI_FSM.h"
 
 /// FSMs list in project.
 /** If you created new FSM, add it here. Don't touch it in other reasons if it
  *  is not necessary. 
  */
 typedef tinyfsm::FsmList<
-    GUI_::GUI_FSM //,
+    GUI_FSM
     // other fsm object, ...
 > fsm_handler;
 

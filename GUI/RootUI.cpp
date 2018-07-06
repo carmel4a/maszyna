@@ -15,10 +15,13 @@
 #include "Logs.h"
 
 using namespace nanogui;
-
+RootUI::RootUI(){
+    
+    widget_ = new Widget( GUI.screen() );
+    widget_->setVisible(true);
+};
 void RootUI::init(){
 
-    widget_ = new Widget( GUI.screen() );
     show();
 };
 
@@ -27,15 +30,3 @@ void RootUI::make(){
     show();
     resize( Vector2i( Global.iWindowWidth, Global.iWindowHeight ) );
 };
- 
-void RootUI::resize( Vector2i v ){
-
-    YGNodeStyleSetWidth( YG_node, v.x() );
-    YGNodeStyleSetHeight( YG_node, v.y() );
-    YGNodeStyleSetMinWidth( YG_node, v.x() );
-    YGNodeStyleSetMinHeight( YG_node, v.y() );
-    YGNodeStyleSetPositionType( YG_node, YGPositionTypeAbsolute );
-    
-    calc_layout( v );
-};
-

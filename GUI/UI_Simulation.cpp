@@ -14,30 +14,31 @@
 #include "GUI.h"
 #include "PopupExit.h"
 #include "LabelArray.h"
+#include "Globals.h"
 
 using namespace nanogui;
 
 UI_Simulation::UI_Simulation(){
 
-    widget_ = new Widget( GUI.screen() );
+};
+
+UI_Simulation::~UI_Simulation(){
+
 };
 
 void UI_Simulation::resize( Vector2i v ){
 
-    YGNodeStyleSetWidth( YG_node, v.x() );
-    YGNodeStyleSetHeight( YG_node, v.y() );
-    YGNodeStyleSetMinWidth( YG_node, v.x() );
-    YGNodeStyleSetMinHeight( YG_node, v.y() );
-    YGNodeStyleSetPositionType( YG_node, YGPositionTypeAbsolute );
-    
-    calc_layout( v );
+    widget_->setFixedSize( v );
 };
 
 bool UI_Simulation::keyboardEvent(int key, int scancode, int action, int modifiers){;
 
     if( key == GLFW_KEY_F10 ){
-        const auto& popup = dynamic_cast< PopupExit* >( GUI.widgets["exit_popup"].get() );
-        if( popup->may_quit && action == GLFW_PRESS ){
+        auto popup = GUI.root->widgets["exit_popup"];
+
+        bool may_quit = dynamic_cast< PopupExit* >( popup.get() )->may_quit;
+        bool pressed = action == GLFW_PRESS;
+        if( may_quit && pressed ){
             if( popup->widget()->visible() ){
                 popup->hide();
             }
@@ -49,7 +50,8 @@ bool UI_Simulation::keyboardEvent(int key, int scancode, int action, int modifie
             return true;;
         }
     } else if( key == GLFW_KEY_F12 ){
-        const auto& _log = dynamic_cast< LabelArray* >( GUI.widgets["loading_log"].get() );
+
+        auto _log = GUI.root->widgets["loading_log"];
         if( action == GLFW_PRESS ){
             if( _log->widget()->visible() ){
                 _log->hide();

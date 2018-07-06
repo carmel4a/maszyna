@@ -15,7 +15,6 @@
 #include <memory> // std::shared_pt
 #include <unordered_map> // std::unordered_map
 
-#include "Yoga.h"
 #include "nanogui/nanogui.h"
 
 using namespace nanogui;
@@ -46,8 +45,6 @@ class CustomWidget{
     virtual void resize( Vector2i v );
 
     /// Calculate and set size/position of widget.
-    /** Sets `widget_` size and position due to `YG_node` setup. */
-    void calc_layout( Vector2i v );
 
     /** Update content of widget, due to onw behaviour.
      *  Currently it's done every frame for every widget,
@@ -81,10 +78,11 @@ class CustomWidget{
     virtual void hide();
 
     bool may_update; ///< Will it update next frame?
-    YGNodeRef YG_node; ///< Yoga layout node. 
-    [[depracted]]const widget_map* owner; ///< Where is shared_ptr?
-    
 
+    [[depracted]]
+    const widget_map* owner; ///< Where is shared_ptr?
+    
+    widget_map widgets;
   protected:
     nanogui::ref<Widget> widget_; ///< Main managed widget.
 };

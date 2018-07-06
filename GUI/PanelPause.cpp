@@ -12,7 +12,7 @@
 #include "CustomWidget.h"
 #include "PanelPause.h"
 #include "Globals.h"
-#include "Yoga.h"
+#include "OldLayoutSystem.h"
 
 using namespace nanogui;
 
@@ -27,38 +27,20 @@ PanelPause::~PanelPause(){
 
 void PanelPause::init(){
 
-    widget_ = new Widget( GUI.root->widget() );
-    panel = new Window( widget_, "" );
+    widget_ = new Window( GUI.root->widget(), "" );
     may_update = true;
 };
 
 void PanelPause::make(){
 
     ref< BoxLayout > top_layout = new BoxLayout( Orientation::Horizontal );
-
+    top_layout->setMargin( 5 ); 
     widget_->setLayout( top_layout.get() );
     
-    nanogui::ref< BoxLayout > layout = new BoxLayout( nanogui::Orientation::Vertical );
-    panel->setLayout( layout.get() );
-    nanogui::ref< Theme > default_theme = new DefaultTheme( GUI.screen()->nvgContext() );
-    panel->setTheme( default_theme );
-    panel->theme()->mWindowHeaderHeight = 0;
+    widget_->theme()->mWindowHeaderHeight = 0;
 
-    
-    nanogui::ref< Label > label = new Label( panel.get(), "PAUSED" );
-    GUI.update_layout( panel.get() );
+    nanogui::ref< Label > label = new Label( widget_.get(), "PAUSED" );
     GUI.update_layout( widget_.get() );
-
-    
-    YGNodeStyleSetPosition( YG_node, YGEdgeTop, 10 );
-    YGNodeStyleSetPosition( YG_node, YGEdgeRight, 10 );
-
-    YGNodeStyleSetPositionType( YG_node, YGPositionTypeAbsolute );
-    
-    YGNodeStyleSetMinWidth( YG_node, widget_->preferredSize( GUI.screen()->nvgContext() ).x() );
-    YGNodeStyleSetMinHeight( YG_node, widget_->preferredSize( GUI.screen()->nvgContext() ).y() );
-    YGNodeStyleSetWidth( YG_node, widget_->preferredSize( GUI.screen()->nvgContext() ).x() );
-    YGNodeStyleSetHeight( YG_node, widget_->preferredSize( GUI.screen()->nvgContext() ).y() );
 
     resize( Vector2i( Global.iWindowWidth, Global.iWindowHeight ) );
 };
@@ -75,3 +57,21 @@ void PanelPause::hide(){
     GUI.update_layout( widget_.get() );
     widget_->setFocused( false );
 };
+
+void PanelPause::resize( Vector2i v ){
+
+    auto anchor = OldLayout::Anchor( OldLayout::Alignment::End );
+    anchor.is_margin_rel = false;
+    anchor.margin = 10;
+    OldLayout::set_x_anchor(
+        widget_.get(),
+        GUI.screen(),
+        anchor
+    );
+    anchor.mode = OldLayout::Alignment::Begin;
+    OldLayout::set_y_anchor(
+        widget_.get(),
+        GUI.screen(),
+        anchor
+    );
+}

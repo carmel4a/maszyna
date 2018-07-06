@@ -37,7 +37,7 @@ class LabelArray:
     void update() override;
     void show() override;
     void hide() override;
-    void resize( Vector2i v );
+    void resize( Vector2i v ) override;
 
     int fixed_w;
     int fixed_h;

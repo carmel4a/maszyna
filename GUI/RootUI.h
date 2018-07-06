@@ -14,20 +14,19 @@
 #include "Yoga.h"
 #include "nanogui/nanogui.h"
 
-
 using namespace nanogui;
 
-class CustomWidget;
+typedef std::shared_ptr< CustomWidget > shared_customwidget_ptr;
+typedef std::unordered_map< std::string, shared_customwidget_ptr > widget_map;
 
 class RootUI:
-        public CustomWidget, 
-        public std::enable_shared_from_this< RootUI >{
+    public CustomWidget {
   public:
-    RootUI() = default;
+    RootUI();
     virtual ~RootUI() = default;
-    void init() override;
-    void make() override;
-    void resize( Vector2i v ) override;
+    virtual void init() override;
+    virtual void make() override;
+    virtual void resize( Vector2i v ) = 0;
     virtual bool keyboardEvent(int key, int scancode, int action, int modifiers) = 0;
 };
 

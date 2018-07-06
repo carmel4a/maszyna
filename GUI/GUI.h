@@ -16,7 +16,6 @@
 #include <unordered_map> // unordered_map
 #include <string> // std::string
 
-#include "tinyfsm.hpp"
 #include "Yoga.h"
 
 #include "nanogui/nanogui.h"
@@ -26,22 +25,30 @@
 using namespace nanogui;
 
 class CustomWidget; class LabelArray; class LabelArray;
-struct GLFWwindow; struct PrintLine;
+struct GLFWwindow; struct PrintLine; struct nvgContext;
+
+typedef std::shared_ptr< CustomWidget > shared_customwidget_ptr;
+typedef std::unordered_map< std::string, shared_customwidget_ptr > widget_map;
+///< Widget map containing names and shared pointers to CustomWidget s.
 
 
+/// Derivered screen class, to implement own logic.
+/** Handles own YGNode, propagate inputs. */
 class InputScreen : public nanogui::Screen {
   public:
     InputScreen();
     virtual ~InputScreen();
-    bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
-    bool propagate_key( int key, int scancode, int action, int modifiers );
+
+    bool keyboardEvent( int key, int scancode, int action, int modifiers ) override;
+
+    /** It do NOT resize `Widgets`, it only call `resize()` on CustomWidgets. If
+     *  there is need to do sth on every children, it must be implemented.
+     */
     void resize( const nanogui::Vector2i v );
-
-    YGNodeRef YG_node;
+  protected:
+    /** Default implementation from nanogui::Screen */
+    bool propagate_key( int key, int scancode, int action, int modifiers );
 };
-
-typedef std::shared_ptr< CustomWidget > shared_customwidget_ptr;
-typedef std::unordered_map< std::string, shared_customwidget_ptr > widget_map;
 
 /// Entry point to user interface.
 /** There mustn't be more than one instance of this class. Object of this class
@@ -54,7 +61,7 @@ class GUI_{
 
     /// Post constructor.
     /** %Call after succesfull init of GLFW window. */
-    inline void set_main_window( GLFWwindow* window ){
+    inline void set_window( GLFWwindow* window ){
         screen_->initialize( window, true );
     };
     /// Draw gui.
@@ -89,111 +96,44 @@ class GUI_{
         
     void add_to_layout( const YGNodeRef what, YGNodeRef where );
     void remove_from_layout( const YGNodeRef what, YGNodeRef from );
-
+    
+    /** Calls `update()` on root's childrens. */
     void update_vars();
+
+    /** Calls `update()` on root's childrens. */
     void update_layout( Widget* of );
 
-    widget_map widgets; ///< Widget map containing names and shared pointers to CustomWidget s.
-    std::shared_ptr< RootUI > root;
     /// Shortcut to call no virtual methods on objects derivered from CustomWidget .
-    /** Usage: `GUI.get<DerivedClass>("name")->method();`
+    /** Usage: `GUI.get<DerivedClass>("name")->method();`\n
      *  If you are creating own widget consider add new virtual method to CustomWidget .
      */
     template< class T >
     T* get( std::string name );
+    inline void set_ready( bool b ){ may_render = b; };
     
-    enum Alignment : short{
-        Begin,    ///< up to down, left to right
-        Centered, ///< centered, prefered size
-        End,      ///< down to up, right to left
-        Fill      ///< fill this axis
-    };
-
-    struct Anchor{
-        Anchor( Alignment mode = Alignment::Begin ) :
-        mode{mode} {};
-        bool is_margin_rel = true;
-        int margin = 0;
-        float margin_rel = 0;
-        Alignment mode;
-    };
-    
-    inline void set_x_anchor( 
-            Widget* what,
-            Widget* to,
-            GUI_::Anchor anchor_x
-    ){ _set_axis_anchor( *what, *to, anchor_x, 0 ); };
-    
-    inline void set_y_anchor( 
-            Widget* what,
-            Widget* to,
-            GUI_::Anchor anchor_y
-    ){ _set_axis_anchor( *what, *to, anchor_y, 1 ); };
-
-    /////////
-    // FSM //
-    /////////
-
-    struct GUI_Init : public tinyfsm::Event {};
-    struct SceneLoaded : public tinyfsm::Event {};
-    
-    struct GUI_FSM : public tinyfsm::Fsm<GUI_FSM>{
-
-        //virtual void react(tinyfsm::Event const &) { };
-        virtual void react( GUI_Init const & ) {  };
-        virtual void react( PrintLine const & ) {  };
-        virtual void react( SceneLoaded const & ) {  };
-        
-        virtual void entry(void) { };
-        virtual void exit(void)  { };
-    };
-
-    struct Start : GUI_FSM{
-        void react( GUI_Init const & ) override;
-        void entry() override;
-        void exit() override;
-    };
-
-    struct LoadingScreen : GUI_FSM{
-        void react( PrintLine const & e ) override;
-        void react( SceneLoaded const & ) override;
-        void entry() override;
-        void exit() override;
-    };
-
-    struct Simulation : GUI_FSM{
-        void entry() override;
-    };
     bool is_ready(){ return may_render; };
+
     void set_root( std::shared_ptr<RootUI> new_root );
     
-  private:
-    void _set_axis_anchor( 
-            Widget& what,
-            Widget& to,
-            GUI_::Anchor anchor,
-            short axis
-    );
-        
-    template< typename T = Vector2i >
-    inline auto _get_axis( T t, int i ){
-        return i == 0 ? t.x() : t.y();
-    };
+    /// Temporary memory for widgets.
+    /** May be deletet. Now we keep CustomWidget s in `GUI.root->widgets`, but
+     *  it may be usefull eg. in change root, when we want keep reference to
+     *  widget.
+     */
+    [[depracted]] widget_map widgets;
 
-    template< typename T = Vector2i >
-    inline T _get_rel_to_axis( T v1, T v2 , int axis ){
-        return (axis == 0) ?
-            T(
-               _get_axis( v1, axis ),
-               _get_axis( v2, !axis ) ) :
-            T(
-               _get_axis( v2, !axis ),
-               _get_axis( v1, axis ) );
-    };
-    
+    /// Root widget.
+    /** Root widgets are "normal" widgets, are childrens of GUI_::screen_. They
+     *  purpose is implement own "global" input behaviour (key shortcuts,
+     *  etc.). There may be understood as different screens/states (Editor,
+     *  Menu, Simulation, etc).
+     */
+    std::shared_ptr< RootUI > root;
+
+  private:
     std::shared_ptr< Screen > screen_;
     std::shared_ptr< FormHelper > helper;
-    bool may_render = false; // dono if it'll be necesary.
+    bool may_render = false;
 };
 
 extern GUI_ GUI;

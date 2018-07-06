@@ -23,6 +23,7 @@ class PanelPause:
         void init() override;
         void make() override;
         
+        void resize( Vector2i v ) override;
         void hide() override;
         void update() override;
     private:

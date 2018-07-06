@@ -20,10 +20,13 @@ class UI_Simulation:
         public RootUI{
   public:
     UI_Simulation();
-    virtual ~UI_Simulation() = default;
+    virtual ~UI_Simulation();
 
     void resize( Vector2i v ) override;
     bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
+
+    YGNodeRef right;
+    ref<Widget> top_widget;
 };
 
 #endif /* !_UI_SIMULATION_ */

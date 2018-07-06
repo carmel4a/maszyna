@@ -15,6 +15,7 @@ http://mozilla.org/MPL/2.0/.
 #include "winheaders.h"
 #include "utilities.h"
 #include "uilayer.h"
+#include "GUI.h"
 
 std::ofstream output; // standardowy "log.txt", można go wyłączyć
 std::ofstream errors; // lista błędów "errors.txt", zawsze działa

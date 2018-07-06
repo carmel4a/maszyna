@@ -13,7 +13,8 @@
 #include "Globals.h"
 #include "Logs.h"
 #include "GUI.h"
-
+#include "UI_LoadingScreen.h" // DEbUGc
+#include "OldLayoutSystem.h"
 
 using namespace nanogui;
 
@@ -42,8 +43,8 @@ LabelArray::~LabelArray(){};
 void LabelArray::init(){
 
     ( transparent )
-    ? widget_ = new Widget( GUI.screen() )
-    : widget_ = new Window( GUI.screen(), name );
+    ? widget_ = new Widget( GUI.root->widget() )
+    : widget_ = new Window( GUI.root->widget(), name );
     scroll_panel = new VScrollPanel( widget_ );
     group = new Widget( scroll_panel );
     scroll_panel->setScroll( 1.0F );
@@ -92,10 +93,10 @@ void LabelArray::resize( Vector2i v ){
     // Set widget_
     widget_->setFixedWidth(max_x);
     widget_->setFixedHeight(max_y);
-    auto anchor = GUI_::Anchor( GUI.Alignment::Centered );
-    GUI.set_x_anchor(
+    auto anchor = OldLayout::Anchor( OldLayout::Alignment::Centered );
+    OldLayout::set_x_anchor(
             widget_.get(), GUI.screen(), anchor );
-    GUI.set_y_anchor(
+    OldLayout::set_y_anchor(
             widget_.get(), GUI.screen(), anchor );
 
     GUI.update_layout( widget_.get() );

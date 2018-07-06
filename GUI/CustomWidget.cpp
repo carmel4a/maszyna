@@ -11,14 +11,11 @@
 #include "GUI.h"
 
 CustomWidget::CustomWidget()
-        : may_update{false}
-        , YG_node{YGNodeNew()} {
-    YGNodeStyleSetDirection( YG_node, YGDirectionLTR );
+        : may_update{false} {
 };
 
 void CustomWidget::resize( Vector2i v ){
 
-    calc_layout( v );
 };
 
 void CustomWidget::show(){
@@ -34,18 +31,6 @@ void CustomWidget::hide(){
     GUI.update_layout( widget_.get() );
     widget_->setFocused( false );
     may_update = false;
-};
-
-void CustomWidget::calc_layout( Vector2i v ){
-
-    // Calculate layout
-    YGNodeCalculateLayout( YG_node, (float) v.x(), (float) v.y(), YGDirectionLTR );
-    // Set position
-    Vector2i _temp = Vector2i( YGNodeLayoutGetLeft( YG_node ), YGNodeLayoutGetTop( YG_node ) );
-    widget_->setPosition( _temp );
-    // Set size
-    _temp = Vector2i( YGNodeLayoutGetWidth( YG_node ), YGNodeLayoutGetHeight( YG_node ) );
-    widget_->setSize( _temp );
 };
 
 CustomWidget::operator std::string(){

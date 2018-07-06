@@ -22,8 +22,6 @@ Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
 #include <thread>
 
 #include "World.h"
-#include "GUI.h"
-#include "FSM.h"
 #include "simulation.h"
 #include "Globals.h"
 #include "Timer.h"
@@ -37,12 +35,16 @@ Stele, firleju, szociu, hunter, ZiomalCl, OLI_EU and others
 #include "Console.h"
 #include "uart.h"
 #include "PyInt.h"
-#include "World.h"
 #include "MOVER.h"
 #include "utilities.h"
 #include "Timer.h"
 #include "resource.h"
 #include "uilayer.h"
+#undef sign
+#include "GUI.h"
+#include "GUI_FSM.h"
+#include "FSM.h"
+#define sign(x) ((x) < 0 ? -1 : ((x) > 0 ? 1 : 0))
 #include "uart.h"
 #include "motiontelemetry.h"
 
@@ -122,9 +124,9 @@ void window_resize_callback(GLFWwindow *window, int w, int h)
 {
     // NOTE: we have two variables which basically do the same thing as we don't have dynamic fullscreen toggle
     // TBD, TODO: merge them?
-    GUI.screen()->resizeCallbackEvent(w, h);
 	Global.iWindowWidth = w;
 	Global.iWindowHeight = h;
+    GUI.screen()->resizeCallbackEvent(w, h);
     Global.fDistanceFactor = std::max( 0.5f, h / 768.0f ); // not sure if this is really something we want to use
 	glViewport(0, 0, w, h);
 }
@@ -387,14 +389,14 @@ int main(int argc, char *argv[])
             input::uart = std::make_unique<uart_input>();
 		if (Global.motiontelemetry_conf.enable)
 			input::motiontelemetry = std::make_unique<motiontelemetry>();
-        GUI.set_main_window( window );
-        FSM::send_event( GUI_::GUI_Init() );
+        GUI.set_window( window );
+        FSM::send_event( GUI_Events::Init() );
 		Global.pWorld = &World;
 		if( false == World.Init( window ) ) {
             ErrorLog( "Simulation setup failed" );
             return -1;
         }
-        FSM::send_event( GUI_::SceneLoaded() );
+        FSM::send_event( GUI_Events::SceneLoaded() );
     }
     catch( std::bad_alloc const &Error )
 	{

@@ -7,7 +7,7 @@
     http://mozilla.org/MPL/2.0/.
 */
 //#define Option1;
-#define Option2;
+#define Option2
 #define Popup_CA_SHP_FONT_SIZE 50
 #define Popup_CA_SHP_FONT_COLOR 255, 0, 0
 #define Popup_CA_SHP_TOP_M 10
@@ -25,6 +25,7 @@
 #include "World.h"
 #include "DynObj.h"
 #include "Driver.h"
+#include "OldLayoutSystem.h"
 
 using namespace nanogui;
 
@@ -87,24 +88,24 @@ void Popup_CA_SHP::resize( Vector2i v ){
             shp->preferredSize( GUI.screen()->nvgContext() )
            +ca->preferredSize( GUI.screen()->nvgContext() );
     widget_->setFixedSize( Vector2i( _fix_size.x(), widget_->size().y() ) );
-    auto anchor = GUI_::Anchor( GUI.Alignment::End );
+    auto anchor = OldLayout::Anchor( OldLayout::Alignment::End );
     anchor.is_margin_rel = false;
     anchor.margin = Popup_CA_SHP_TOP_M;
-    GUI.set_x_anchor(
+    OldLayout::set_x_anchor(
         widget_.get(),
         GUI.screen(),
         anchor
     );
-    anchor.mode = GUI.Alignment::End;
+    anchor.mode = OldLayout::Alignment::End;
     anchor.margin = -Popup_CA_SHP_RIGHT_M - widget_->preferredSize( GUI.screen()->nvgContext() ).y();
-    GUI.set_y_anchor(
+    OldLayout::set_y_anchor(
         widget_.get(),
-        GUI.widgets["pause_panel"]->widget(),
+        GUI.root->widgets["pause_panel"]->widget(),
         anchor
     );
     GUI.update_layout( widget_.get() );
     anchor.margin = 0;
-    GUI.set_x_anchor(
+    OldLayout::set_x_anchor(
         ca.get(),
         widget_.get(),
         anchor
