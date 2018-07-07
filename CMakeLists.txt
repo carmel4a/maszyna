@@ -92,15 +92,6 @@ set(SOURCES
 "GUI/PanelPause.cpp"
 "GUI/LabelArray.cpp"
 "GUI/Popup_CA_SHP.cpp"
-"ref/yoga/Utils.cpp"
-"ref/yoga/YGConfig.cpp"
-"ref/yoga/YGEnums.cpp"
-"ref/yoga/YGFloatOptional.cpp"
-"ref/yoga/YGLayout.cpp"
-"ref/yoga/YGNode.cpp"
-"ref/yoga/YGNodePrint.cpp"
-"ref/yoga/YGStyle.cpp"
-"ref/yoga/Yoga.cpp"
 )
 
 set (PREFIX "")

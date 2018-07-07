@@ -7,25 +7,26 @@
     http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef _UI_SIMULATION_
-#define _UI_SIMULATION_
+#ifndef _UI_LOADING_SCREEN_
+#define _UI_LOADING_SCREEN_
 
-//#include "RootUI.h"
 #include "nanogui/nanogui.h"
 #include "RootUI.h"
+
 using namespace nanogui;
 
-class UI_Simulation:
+class UI_LoadingScreen:
         public RootUI{
   public:
-    UI_Simulation();
-    virtual ~UI_Simulation();
+    UI_LoadingScreen();
+    virtual ~UI_LoadingScreen();
 
     void resize( Vector2i v ) override;
     bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
-
-    YGNodeRef right;
     ref<Widget> top_widget;
+    YGNodeRef top;
+    ref<Widget> test;
+    YGNodeRef YG_test;
 };
 
-#endif /* !_UI_SIMULATION_ */
+#endif /* !_UI_LOADING_SCREEN_ */

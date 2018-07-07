@@ -11,7 +11,6 @@
 #define _ROOT_UI_
 
 #include "CustomWidget.h"
-#include "Yoga.h"
 #include "nanogui/nanogui.h"
 
 using namespace nanogui;

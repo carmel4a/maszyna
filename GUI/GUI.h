@@ -16,8 +16,6 @@
 #include <unordered_map> // unordered_map
 #include <string> // std::string
 
-#include "Yoga.h"
-
 #include "nanogui/nanogui.h"
 #include "Logs.h" //debug
 #include "RootUI.h"

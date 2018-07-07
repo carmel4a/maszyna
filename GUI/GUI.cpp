@@ -15,7 +15,6 @@
 #include "GUI.h"
 #include "Logs.h"
 #include "CustomWidget.h"
-#include "Yoga.h"
 
 #define FONT_SCALE 2
 

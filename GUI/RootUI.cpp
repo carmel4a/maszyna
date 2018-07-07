@@ -7,7 +7,6 @@
     http://mozilla.org/MPL/2.0/.
 */
 
-#include "Yoga.h"
 #include "CustomWidget.h"
 #include "nanogui/nanogui.h"
 #include "GUI.h"
