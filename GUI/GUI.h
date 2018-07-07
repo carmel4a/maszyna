@@ -91,10 +91,7 @@ class GUI_{
             std::string name, ///< System name of CustomWidget.
             widget_map& from  ///< Widget map where widget is registered. Usually Widgets.
     );
-        
-    void add_to_layout( const YGNodeRef what, YGNodeRef where );
-    void remove_from_layout( const YGNodeRef what, YGNodeRef from );
-    
+
     /** Calls `update()` on root's childrens. */
     void update_vars();
 

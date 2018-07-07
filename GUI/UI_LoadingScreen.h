@@ -24,9 +24,8 @@ class UI_LoadingScreen:
     void resize( Vector2i v ) override;
     bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
     ref<Widget> top_widget;
-    YGNodeRef top;
+
     ref<Widget> test;
-    YGNodeRef YG_test;
 };
 
 #endif /* !_UI_LOADING_SCREEN_ */

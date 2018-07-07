@@ -66,16 +66,6 @@ void GUI_::add_widget(                    std::string name,
     update_layout( s_ptr_custom_widget->widget() );
 };
 
-void GUI_::add_to_layout( YGNodeRef what, YGNodeRef where ){
-
-    YGNodeInsertChild( where, what, YGNodeGetChildCount(where) );
-};
-
-void GUI_::remove_from_layout( const YGNodeRef what, YGNodeRef from ){
-    
-    YGNodeRemoveChild( from, what );
-};
-
 void GUI_::update_layout( Widget* of ){
     ( of->parent() )
     ? of->parent()->performLayout( screen_->nvgContext() )
