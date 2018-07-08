@@ -14,6 +14,20 @@ CustomWidget::CustomWidget()
         : may_update{false} {
 };
 
+CustomWidget::CustomWidget( const CustomWidget& x ){
+
+    this->may_update = x.may_update;
+    this->owner = x.owner; // shallow copy is ok here, as owner is const
+    for( const auto & x : x.widgets ){
+        this->widgets[x.first] = std::shared_ptr<CustomWidget>( x.second->clone() );
+    }
+    this->widget_ = nanogui::ref<Widget>( new Widget( *( x.widget_.get() ) ) );
+};
+
+CustomWidget& CustomWidget::operator= ( const CustomWidget& x ){};
+CustomWidget::CustomWidget( CustomWidget&& x ){};
+CustomWidget& CustomWidget::operator= ( CustomWidget&& x ){};
+
 void CustomWidget::resize( Vector2i v ){
 
 };

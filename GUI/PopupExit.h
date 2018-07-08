@@ -25,6 +25,10 @@ class PopupExit:
     public:
         PopupExit();
         virtual ~PopupExit();
+        // PopupExit( const PopupExit & x ) { return }            // TODO;
+        // PopupExit* create() const { return new PopupExit(); }; // TODO
+        PopupExit* clone() const override { return new PopupExit( *this ); };
+
         void init() override;
         void make() override;
         void resize( Vector2i v ) override;
@@ -40,6 +44,7 @@ class PopupExitPanel : public Window {
     public:
         PopupExitPanel( Widget* widget_, std::shared_ptr< PopupExit > _root );
         virtual ~PopupExitPanel();
+
         bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
         std::shared_ptr< PopupExit > root;
 };

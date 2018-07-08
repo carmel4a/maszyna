@@ -23,6 +23,9 @@ class RootUI:
   public:
     RootUI();
     virtual ~RootUI() = default;
+    // virtual RootUI* create() const = 0; // TODO
+    virtual RootUI* clone() const = 0;
+
     virtual void init() override;
     virtual void make() override;
     virtual void resize( Vector2i v ) = 0;

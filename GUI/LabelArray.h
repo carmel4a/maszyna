@@ -31,6 +31,9 @@ class LabelArray:
             std::string Def_text = ""
     );
     virtual ~LabelArray();
+    // LabelArray( const LabelArray & x ) {}                       // TODO;
+    // LabelArray* create() const { return new LabelArray(); }; // TODO
+    LabelArray* clone() const override { return new LabelArray( *this ); };
     void init() override;
     void make() override;
     

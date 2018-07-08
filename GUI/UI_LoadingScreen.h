@@ -20,6 +20,9 @@ class UI_LoadingScreen:
   public:
     UI_LoadingScreen();
     virtual ~UI_LoadingScreen();
+    // UI_LoadingScreen( const UI_LoadingScreen & x ) {};                    // TODO
+    // UI_LoadingScreen* create() const { return new UI_LoadingScreen(); }; // TODO
+    UI_LoadingScreen* clone() const { return new UI_LoadingScreen( *this ); };
 
     void resize( Vector2i v ) override;
     bool keyboardEvent(int key, int scancode, int action, int modifiers) override;

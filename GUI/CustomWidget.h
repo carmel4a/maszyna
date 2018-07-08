@@ -34,6 +34,11 @@ class CustomWidget{
     CustomWidget();
     virtual ~CustomWidget() = default;
 
+    CustomWidget( const CustomWidget& );
+    CustomWidget& operator= ( const CustomWidget& ); // TODO
+    CustomWidget( CustomWidget&& );                  // TODO
+    CustomWidget& operator= ( CustomWidget&& );      // TODO
+
     /** To print name of widget. */
     operator std::string();
 
@@ -65,6 +70,8 @@ class CustomWidget{
     // Pure virtual methods //
     //////////////////////////
 
+    // virtual CustomWidget* create() const = 0; // TODO
+    virtual CustomWidget* clone() const = 0;
     /** Called before adding to `GUI::widget` map. */
     virtual void init() = 0;
     /** Called after adding to `GUI::widget` map. */

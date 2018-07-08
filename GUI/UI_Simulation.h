@@ -20,6 +20,9 @@ class UI_Simulation:
   public:
     UI_Simulation();
     virtual ~UI_Simulation();
+    // UI_Simulation( const UI_Simulation & x ) {};                    // TODO
+    // UI_Simulation* create() const { return new UI_Simulation(); }; // TODO
+    UI_Simulation* clone() const { return new UI_Simulation( *this ); };
 
     void resize( Vector2i v ) override;
     bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
