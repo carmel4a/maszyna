@@ -23,16 +23,15 @@ class GUI_; class CustomWidget; class PopupExitPanel;
 
 void assign_grid_layout(Widget* to, const nanogui::Orientation orientation, const std::vector< Alignment > alignment);
 
-PopupExit::PopupExit(){};
+PopupExit::PopupExit( std::string Name, shared_c_widget Owner )
+        : CustomWidget(Name, Owner){};
 
 PopupExit::~PopupExit(){};
 
-void PopupExit::init(){
-
-    widget_ = new PopupExitPanel( GUI.root->widget(), shared_from_this() );
-};
-
 void PopupExit::make(){
+
+    widget_ = new PopupExitPanel( GUI.root->widget(), std::static_pointer_cast<PopupExit>( shared_from_this() ) );
+
 
     std::vector< Alignment > alignment_vector {
         nanogui::Alignment::Minimum,
@@ -93,10 +92,11 @@ void PopupExit::no_exit(){
     hide();
 };
 
-PopupExitPanel::PopupExitPanel( Widget* w, std::shared_ptr< PopupExit > _r ):
-        Window( w, "" ),
-        root{_r}{
-    
+PopupExitPanel::PopupExitPanel( Widget* w, std::shared_ptr< PopupExit > _r )
+        : Window( w, "" )
+        , root{_r}
+{
+    assert( dynamic_cast<PopupExit*>(_r.get()) != nullptr );
     setVisible( false );
 };
 

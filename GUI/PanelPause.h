@@ -18,13 +18,14 @@ class PopupExitPanel;
 class PanelPause:
         public CustomWidget{
     public:
-        PanelPause();
-        virtual ~PanelPause();
+        PanelPause(
+                std::string Name,
+                shared_c_widget Owner );
+        virtual ~PanelPause() = default;
         // PanelPause( const PanelPause & x ) {}                    // TODO;
         // PanelPause* create() const { return new PanelPause(); }; // TODO
         PanelPause* clone() const override { return new PanelPause( *this ); };
 
-        void init() override;
         void make() override;
         
         void resize( Vector2i v ) override;

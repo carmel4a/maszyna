@@ -14,16 +14,35 @@
 #include "Logs.h"
 
 using namespace nanogui;
-RootUI::RootUI(){
+RootUI::RootUI()
+        : CustomWidget( "root", std::shared_ptr<RootUI>(nullptr) ){
     
     widget_ = new Widget( GUI.screen() );
     widget_->setVisible(true);
 };
-void RootUI::init(){
 
-    show();
+void RootUI::update_tree(){
+
+    for( auto const& x : widgets ){
+        if( x.second->may_update ){
+            x.second->update();
+        }
+    }
+}
+void RootUI::resize_tree( Vector2i v ){
+
+    resize( v );
+    for( auto const& x : widgets ){
+        x.second->resize( v );
+    }
 };
+void RootUI::delete_(){
 
+    for( auto & x: widgets ){
+        x.second = nullptr;
+        widgets.erase( x.first );
+    }
+};
 void RootUI::make(){
 
     show();

@@ -19,6 +19,7 @@
 #include "nanogui/nanogui.h"
 #include "Logs.h" //debug
 #include "RootUI.h"
+#include "InputScreen.h"
 
 using namespace nanogui;
 
@@ -28,25 +29,6 @@ struct GLFWwindow; struct PrintLine; struct nvgContext;
 typedef std::shared_ptr< CustomWidget > shared_customwidget_ptr;
 typedef std::unordered_map< std::string, shared_customwidget_ptr > widget_map;
 ///< Widget map containing names and shared pointers to CustomWidget s.
-
-
-/// Derivered screen class, to implement own logic.
-/** Handles own YGNode, propagate inputs. */
-class InputScreen : public nanogui::Screen {
-  public:
-    InputScreen();
-    virtual ~InputScreen();
-
-    bool keyboardEvent( int key, int scancode, int action, int modifiers ) override;
-
-    /** It do NOT resize `Widgets`, it only call `resize()` on CustomWidgets. If
-     *  there is need to do sth on every children, it must be implemented.
-     */
-    void resize( const nanogui::Vector2i v );
-  protected:
-    /** Default implementation from nanogui::Screen */
-    bool propagate_key( int key, int scancode, int action, int modifiers );
-};
 
 /// Entry point to user interface.
 /** There mustn't be more than one instance of this class. Object of this class
@@ -71,29 +53,10 @@ class GUI_{
      *  It should be an singleton, untill MaSzyna will have one main window.
      *  It may change eg. when mp module will be implemented.
      */
-    Screen* screen();
+    inline Screen* screen() { return screen_.get(); };
     
-    /// Register widget in GUI_.
-    /** It only adds CustomWidget to widget array, and calls
-     *  make/init methods. Before use you must create object derivering
-     *  CustomWidget in `std::shared_ptr` .
-     */
-    void add_widget(
-             std::string name,        ///< System name in widget map.
-            const shared_customwidget_ptr& sptr_custom, ///< std::shared_ptr with previously
-                                      ///< created CustomWidget.
-             widget_map& where        ///< For now it should be GUI_::widgets .
-    );
-    
-    /// Unregister widget in GUI_, and delete it.
-    /** It deletes widget from it's parent, then deletes CustomWidget. */
-    void remove_widget(
-            std::string name, ///< System name of CustomWidget.
-            widget_map& from  ///< Widget map where widget is registered. Usually Widgets.
-    );
-
     /** Calls `update()` on root's childrens. */
-    void update_vars();
+    inline void update_vars() { if(root) root->update_tree(); };
 
     /** Calls `update()` on root's childrens. */
     void update_layout( Widget* of );
@@ -115,7 +78,7 @@ class GUI_{
      *  it may be usefull eg. in change root, when we want keep reference to
      *  widget.
      */
-    [[depracted]] widget_map widgets;
+    widget_map widgets;
 
     /// Root widget.
     /** Root widgets are "normal" widgets, are childrens of GUI_::screen_. They
@@ -125,6 +88,7 @@ class GUI_{
      */
     std::shared_ptr< RootUI > root;
 
+    std::unordered_map< std::string, std::shared_ptr<CustomWidget::Data> > memory;
   private:
     std::shared_ptr< Screen > screen_;
     std::shared_ptr< FormHelper > helper;

@@ -31,18 +31,19 @@ using namespace nanogui;
 
 class GUI_; class CustomWidget;
 
-Popup_CA_SHP::Popup_CA_SHP(){
+Popup_CA_SHP::Popup_CA_SHP(
+        std::string Name,
+        shared_c_widget Owner)
+        : CustomWidget( Name, Owner ) {
     may_update = true;
 };
 
 Popup_CA_SHP::~Popup_CA_SHP(){};
 
-void Popup_CA_SHP::init(){
+void Popup_CA_SHP::make(){
 
     widget_ = new Window( GUI.root->widget(), "" );
-};
 
-void Popup_CA_SHP::make(){
 
     ca = new Label( widget_.get(), "CA" );
     shp = new Label( widget_.get(), "SHP" );
@@ -100,7 +101,7 @@ void Popup_CA_SHP::resize( Vector2i v ){
     anchor.margin = -Popup_CA_SHP_RIGHT_M - widget_->preferredSize( GUI.screen()->nvgContext() ).y();
     OldLayout::set_y_anchor(
         widget_.get(),
-        GUI.root->widgets["pause_panel"]->widget(),
+        GUI.root->get_child("PanelPause")->widget(),
         anchor
     );
     GUI.update_layout( widget_.get() );

@@ -18,20 +18,16 @@ using namespace nanogui;
 
 class GUI_; class CustomWidget; class PopupExitPanel;
 
-PanelPause::PanelPause(){
+PanelPause::PanelPause( 
+        std::string Name,
+        shared_c_widget Owner
+ ) : CustomWidget( Name, Owner ) {};
 
-};
-
-PanelPause::~PanelPause(){
-};
-
-void PanelPause::init(){
+void PanelPause::make(){
 
     widget_ = new Window( GUI.root->widget(), "" );
     may_update = true;
-};
 
-void PanelPause::make(){
 
     ref< BoxLayout > top_layout = new BoxLayout( Orientation::Horizontal );
     top_layout->setMargin( 5 ); 

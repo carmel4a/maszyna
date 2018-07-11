@@ -33,7 +33,7 @@ void UI_Simulation::resize( Vector2i v ){
 bool UI_Simulation::keyboardEvent(int key, int scancode, int action, int modifiers){;
 
     if( key == GLFW_KEY_F10 ){
-        auto popup = GUI.root->widgets["exit_popup"];
+        auto popup = widgets["PopupExit"];
 
         bool may_quit = dynamic_cast< PopupExit* >( popup.get() )->may_quit;
         bool pressed = action == GLFW_PRESS;
@@ -50,7 +50,7 @@ bool UI_Simulation::keyboardEvent(int key, int scancode, int action, int modifie
         }
     } else if( key == GLFW_KEY_F12 ){
 
-        auto _log = GUI.root->widgets["loading_log"];
+        auto _log = widgets["loading_log"];
         if( action == GLFW_PRESS ){
             if( _log->widget()->visible() ){
                 _log->hide();

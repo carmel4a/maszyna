@@ -6,7 +6,7 @@
     obtain one at
     http://mozilla.org/MPL/2.0/.
 */
-
+#include <memory>
 #include "GUI_FSM.h"
 #include "GUI.h"
 #include "FSM.h"
@@ -56,44 +56,43 @@ void GUI_States::Start::react( GUI_Events::Init const & ){
 
 void GUI_States::LoadingScreen::entry(){ 
 
-    const auto& loading_screen_ui = std::make_shared< UI_LoadingScreen >();
+    std::shared_ptr<UI_LoadingScreen> loading_screen_ui( new UI_LoadingScreen() );
+    loading_screen_ui->init();
     GUI.set_root( loading_screen_ui );
     
     if( Global.loading_log ){
-        const auto& log_temp = std::make_shared< LabelArray >(
+        std::shared_ptr<LabelArray> _log_temp( new LabelArray( 
+            "loading_log",
+            GUI.root,
             false,     // transparent = true,
             "Log",     //std::string Name = "Label Array",
             15,        // Size = 10,
             -1         // int fixed_w = -1,
                        //std::string Def_text = ""
-        );
-        GUI.add_widget("loading_log", log_temp, GUI.root->widgets );
+        ) );
+        _log_temp->init();
     }
 };
 
 void GUI_States::LoadingScreen::exit(){
-    //GUI.remove_from_layout( GUI.root->widgets["loading_log"]->YG_node, dynamic_cast< UI_LoadingScreen* >( GUI.root.get() )->top );
-    /*
+    
     if( Global.loading_log ){
-        GUI.remove_widget(
-            "loading_log",
-            GUI.root->widgets
+        using LabelArrayData = LabelArray::Data;
+        LabelArray * _tmp_ptr = dynamic_cast<LabelArray*>(
+                GUI.root->get_child( "loading_log" )
         );
+        GUI.memory["loading_log"] = \
+                std::shared_ptr<LabelArrayData>(
+                    new LabelArrayData(_tmp_ptr->save())
+                );
     }
-    */
-    // GUI.widgets["temp_loading_log"] = GUI.widgets["loading_log"];
-    if( Global.loading_log ){
-        GUI.root->widgets["loading_log"]->hide();
-    }
-}; 
+};
 
 void GUI_States::LoadingScreen::react( PrintLine const & e ){
 
-    if( Global.loading_log ){
-        if ( GUI.root->widgets.find("loading_log") == GUI.root->widgets.end() )
-            return;
+    if( Global.loading_log && GUI.root && GUI.root->get_child("loading_log") ){
         //GUI.get< LabelArray >("loading_log")->push_line( (std::string)e.text );
-        dynamic_cast< LabelArray* >( GUI.root->widgets["loading_log"].get() )
+        dynamic_cast< LabelArray* >( GUI.root->get_child("loading_log") )
                 ->push_line( (std::string)e.text );
     }
 };
@@ -109,42 +108,47 @@ void GUI_States::LoadingScreen::react( GUI_Events::SceneLoaded const & ){
 
 void GUI_States::Simulation::entry(){
 
-    const auto& simulation_ui = std::make_shared< UI_Simulation >();
-
+    std::shared_ptr<UI_Simulation> simulation_ui( new UI_Simulation() );
+    simulation_ui->init();
     GUI.set_root( simulation_ui );
+    if( Global.loading_log ){
 
-    const auto& exit_popup = std::make_shared< PopupExit >();
-    GUI.add_widget("exit_popup", exit_popup, GUI.root->widgets );
-    
-    const auto& pause_panel = std::make_shared< PanelPause >();
-    GUI.add_widget("pause_panel", pause_panel, GUI.root->widgets );
-
-    const auto& ca_shp = std::make_shared< Popup_CA_SHP >();
-    GUI.add_widget("ca_shp", ca_shp, GUI.root->widgets );
-
-    const auto& ca_shp1 = std::make_shared< Popup_CA_SHP >();
-    GUI.add_widget("ca_shp1", ca_shp1, GUI.root->widgets );
-
-    const auto& ca_shp2 = std::make_shared< Popup_CA_SHP >();
-    GUI.add_widget("ca_shp2", ca_shp2, GUI.root->widgets );
-
-/*
- const auto& log_temp2 = std::make_shared< LabelArray >(
+        std::shared_ptr<LabelArray> _log_temp( new LabelArray( 
+            "loading_log",
+            GUI.root,
             false,     // transparent = true,
             "Log",     //std::string Name = "Label Array",
             15,        // Size = 10,
             -1         // int fixed_w = -1,
-                       //std::string Def_text = ""
-        );*/
-    //GUI.add_widget("loading_log2", log_temp2, GUI.root->widgets, false );
-    //GUI.add_to_layout( GUI.root->widgets["loading_log2"]->YG_node, dynamic_cast< UI_Simulation* >( GUI.root.get() )->right );
+                    //std::string Def_text = ""
+        ) );
+        _log_temp->init();
+        dynamic_cast<LabelArray*>( GUI.root->get_child( "loading_log" ) )
+        ->load(
+            dynamic_cast<LabelArray::Data*>(
+                GUI.memory["loading_log"].get()
+            )
+        );
+        GUI.memory.erase("loading_log");
+    }
+
+
+    std::shared_ptr<PopupExit> exit_popup( new PopupExit( "PopupExit", GUI.root ) );
+    exit_popup->init();
+    
+    std::shared_ptr<PanelPause> pause_panel( new PanelPause( "PanelPause", GUI.root ) );
+    pause_panel->init();
+
+    std::shared_ptr<Popup_CA_SHP> ca_shp( new Popup_CA_SHP( "Popup_CA_SHP", GUI.root ) );
+    ca_shp->init();
 };
 
 void GUI_States::Simulation::exit(){
 
-    GUI.remove_widget( "pause_panel", GUI.root->widgets );
-
-    GUI.remove_widget( "ca_shp", GUI.root->widgets );
+    GUI.root->get_child( "loading_log" )->set_owner( shared_c_widget(nullptr) );
+    GUI.root->get_child( "PanelPause" )->set_owner( shared_c_widget(nullptr) );
+    GUI.root->get_child( "ca_shp" )->set_owner( shared_c_widget(nullptr) );
+    GUI.root->get_child( "PopupExit" )->set_owner( shared_c_widget(nullptr) );
 };
 
 FSM_INITIAL_STATE( GUI_FSM, GUI_States::Start )

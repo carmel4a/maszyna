@@ -83,6 +83,7 @@ set(SOURCES
 "station.cpp"
 "GUI/GUI.cpp"
 "GUI/GUI_FSM.cpp"
+"GUI/InputScreen.cpp"
 "GUI/OldLayoutSystem.cpp"
 "GUI/CustomWidget.cpp"
 "GUI/UI_Simulation.cpp"

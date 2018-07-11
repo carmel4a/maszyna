@@ -19,17 +19,15 @@
 class PopupExitPanel;
 
 class PopupExit: 
-        public CustomWidget, 
-        public std::enable_shared_from_this< PopupExit >{
+        public CustomWidget{
     friend PopupExitPanel;
     public:
-        PopupExit();
+        PopupExit( std::string Name, shared_c_widget Owner );
         virtual ~PopupExit();
         // PopupExit( const PopupExit & x ) { return }            // TODO;
         // PopupExit* create() const { return new PopupExit(); }; // TODO
         PopupExit* clone() const override { return new PopupExit( *this ); };
 
-        void init() override;
         void make() override;
         void resize( Vector2i v ) override;
         bool may_quit = true;

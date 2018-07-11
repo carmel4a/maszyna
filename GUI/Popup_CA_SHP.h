@@ -16,13 +16,14 @@
 class Popup_CA_SHP:
         public CustomWidget{
     public:
-        Popup_CA_SHP();
+        Popup_CA_SHP(
+                std::string Name,
+                shared_c_widget Owner );
         virtual ~Popup_CA_SHP();
         // Popup_CA_SHP( const Popup_CA_SHP & x ) {} // TODO;           // TODO
         // Popup_CA_SHP* create() const { return new Popup_CA_SHP(); }; // TODO
         Popup_CA_SHP* clone() const override { return new Popup_CA_SHP( *this ); };
         
-        void init() override;
         void make() override;
         
         void update() override;

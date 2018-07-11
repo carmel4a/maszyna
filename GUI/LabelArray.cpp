@@ -21,26 +21,28 @@ using namespace nanogui;
 class CustomWidget;
 
 LabelArray::LabelArray(
-        bool Transparent,
         std::string Name,
+        shared_c_widget Owner,
+        bool Transparent,
+        std::string Header_Name,
         int Size,
         int FixedW,
         int FixedH,
         std::string Def_text
-    ):
-    transparent{ Transparent },
-    name { Name },
-    init_size{ Size },
-    fixed_w{FixedW},
-    fixed_h{FixedH},
-    def_text{ Def_text }
+    ): CustomWidget( Name, Owner )
+     , transparent{ Transparent }
+     , header_name { Header_Name }
+     , init_size{ Size }
+     , fixed_w{FixedW}
+     , fixed_h{FixedH}
+     , def_text{ Def_text }
 {
     mode.set( Mode::LIMITED );
 };
 
 LabelArray::~LabelArray(){};
 
-void LabelArray::init(){
+void LabelArray::make(){
 
     ( transparent )
     ? widget_ = new Widget( GUI.root->widget() )
@@ -50,9 +52,7 @@ void LabelArray::init(){
     scroll_panel->setScroll( 1.0F );
 
     may_update = true;
-};
 
-void LabelArray::make(){
 
     ref< BoxLayout > widget_layout = new BoxLayout( Orientation::Vertical, nanogui::Alignment::Fill, 25 );
     widget_->setLayout( widget_layout.get() );
@@ -139,6 +139,29 @@ void LabelArray::push_line( std::string text ){
     scroll_panel->setScroll( 1.0F );
 };
 
+void LabelArray::load( LabelArray::Data const * t ){
+
+    clear();
+    for( auto const & x : t->labels ){
+        push_line( x );
+    }
+};
+
+LabelArray::Data & LabelArray::save(){
+
+    data.labels.clear();
+    for( auto const & x : label_array ){
+        data.labels.push_back( x->caption() );
+    }
+    return data;
+};
+
+void LabelArray::clear(){
+
+    for( auto const & x : label_array ){
+        widget_->removeChild( x.get() );
+    }
+};
 
 void LoadingLog::update(){ return; };
 

@@ -7,11 +7,33 @@
     http://mozilla.org/MPL/2.0/.
 */
 
+#include <memory>
+
 #include "CustomWidget.h"
 #include "GUI.h"
+#ifndef NDEBUG
+    #include "Logs.h"
+#endif // ! NDEBUG
 
-CustomWidget::CustomWidget()
-        : may_update{false} {
+CustomWidget::CustomWidget(
+        std::string Name,
+        shared_c_widget Owner
+    ) : name{Name}
+      , owner{Owner}
+      , may_update{false} {};
+
+CustomWidget::~CustomWidget(){
+
+    Widget * parent = widget_->parent();
+    if( dynamic_cast<Widget*>(parent) ){
+        parent->removeChild( widget_.get() );
+        GUI.update_layout( parent );
+    }
+    // eg. if it is root
+    if ( owner ) owner->erase_child( name );
+    #ifndef NDEBUG
+        WriteLog( "CustomWidget " + name + " deleted." );
+    #endif // ! NDEBUG
 };
 
 CustomWidget::CustomWidget( const CustomWidget& x ){
@@ -27,6 +49,30 @@ CustomWidget::CustomWidget( const CustomWidget& x ){
 CustomWidget& CustomWidget::operator= ( const CustomWidget& x ){};
 CustomWidget::CustomWidget( CustomWidget&& x ){};
 CustomWidget& CustomWidget::operator= ( CustomWidget&& x ){};
+
+void CustomWidget::init(){
+
+    set_owner( owner );
+    make();
+    GUI.update_layout( widget_.get() );
+    #ifndef NDEBUG
+        WriteLog("CustomWidget" + name + " created.");
+    #endif // ! NDEBUG
+};
+
+void CustomWidget::set_owner( shared_c_widget sp_cw ){
+
+    if( ! sp_cw ){
+        if( owner ) owner->erase_child( name );
+        owner = nullptr;
+    } else {
+        if( owner ){
+            owner->erase_child( name );
+        }
+        owner = sp_cw;
+        owner->add_child( shared_from_this() );
+    }
+};
 
 void CustomWidget::resize( Vector2i v ){
 
@@ -45,13 +91,4 @@ void CustomWidget::hide(){
     GUI.update_layout( widget_.get() );
     widget_->setFocused( false );
     may_update = false;
-};
-
-CustomWidget::operator std::string(){
-    
-    for( auto const& x : *owner ) {
-        if( x.second.get() == this ) return( x.first );
-    }
-    std::string s = "No *CustomWidget fund in owner!";
-    throw s;
 };

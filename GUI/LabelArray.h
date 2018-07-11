@@ -23,8 +23,10 @@ class LabelArray:
         public CustomWidget{
   public:
     LabelArray(
+            std::string name,
+            shared_c_widget Owner,
             bool transparent = true,
-            std::string Name = "Label Array",
+            std::string HeaderName = "Label Array",
             int Size = 10,
             int FixedW = 500,
             int FixedH = -1,
@@ -34,7 +36,6 @@ class LabelArray:
     // LabelArray( const LabelArray & x ) {}                       // TODO;
     // LabelArray* create() const { return new LabelArray(); }; // TODO
     LabelArray* clone() const override { return new LabelArray( *this ); };
-    void init() override;
     void make() override;
     
     void update() override;
@@ -45,7 +46,7 @@ class LabelArray:
     int fixed_w;
     int fixed_h;
     int init_size;
-    std::string name;
+    std::string header_name;
     std::string def_text;
     bool transparent;
 
@@ -54,6 +55,15 @@ class LabelArray:
         LIMITED,
         UNLIMITED
     };
+
+    struct Data : public CustomWidget::Data {
+    
+        std::vector<std::string> labels;
+    } data;
+
+    void load( LabelArray::Data const * t );
+    LabelArray::Data & save();
+
     std::bitset<2> mode;
   protected:
     ref<VScrollPanel> scroll_panel;
