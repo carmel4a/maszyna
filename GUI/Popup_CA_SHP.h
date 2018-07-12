@@ -22,7 +22,7 @@ class Popup_CA_SHP:
         virtual ~Popup_CA_SHP();
         // Popup_CA_SHP( const Popup_CA_SHP & x ) {} // TODO;           // TODO
         // Popup_CA_SHP* create() const { return new Popup_CA_SHP(); }; // TODO
-        Popup_CA_SHP* clone() const override { return new Popup_CA_SHP( *this ); };
+        // Popup_CA_SHP* clone() const override { return new Popup_CA_SHP( *this ); };
         
         void make() override;
         

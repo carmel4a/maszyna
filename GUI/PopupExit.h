@@ -26,7 +26,7 @@ class PopupExit:
         virtual ~PopupExit();
         // PopupExit( const PopupExit & x ) { return }            // TODO;
         // PopupExit* create() const { return new PopupExit(); }; // TODO
-        PopupExit* clone() const override { return new PopupExit( *this ); };
+        // PopupExit* clone() const override { return new PopupExit( *this ); };
 
         void make() override;
         void resize( Vector2i v ) override;

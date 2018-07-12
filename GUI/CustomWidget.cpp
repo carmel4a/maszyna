@@ -36,6 +36,7 @@ CustomWidget::~CustomWidget(){
     #endif // ! NDEBUG
 };
 
+/*
 CustomWidget::CustomWidget( const CustomWidget& x ){
 
     this->may_update = x.may_update;
@@ -49,6 +50,7 @@ CustomWidget::CustomWidget( const CustomWidget& x ){
 CustomWidget& CustomWidget::operator= ( const CustomWidget& x ){};
 CustomWidget::CustomWidget( CustomWidget&& x ){};
 CustomWidget& CustomWidget::operator= ( CustomWidget&& x ){};
+*/
 
 void CustomWidget::init(){
 
@@ -60,23 +62,29 @@ void CustomWidget::init(){
     #endif // ! NDEBUG
 };
 
+CustomWidget * CustomWidget::get_child( std::string widget_name )
+{
+    try{
+        return widgets.at(widget_name).get();
+    } catch (const std::out_of_range& oor) {
+        std::cerr << "Out of Range error: " << oor.what() << '\n' << "No"
+        "widget named " << widget_name << " is registered in " << name << '\n';
+        throw;
+    }
+};
+
 void CustomWidget::set_owner( shared_c_widget sp_cw ){
 
+    if( owner ) owner->erase_child( name );
     if( ! sp_cw ){
-        if( owner ) owner->erase_child( name );
         owner = nullptr;
     } else {
-        if( owner ){
-            owner->erase_child( name );
-        }
         owner = sp_cw;
         owner->add_child( shared_from_this() );
     }
 };
 
-void CustomWidget::resize( Vector2i v ){
-
-};
+void CustomWidget::resize( Vector2i v ){};
 
 void CustomWidget::show(){
 

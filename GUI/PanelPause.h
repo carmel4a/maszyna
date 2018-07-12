@@ -24,7 +24,7 @@ class PanelPause:
         virtual ~PanelPause() = default;
         // PanelPause( const PanelPause & x ) {}                    // TODO;
         // PanelPause* create() const { return new PanelPause(); }; // TODO
-        PanelPause* clone() const override { return new PanelPause( *this ); };
+        // PanelPause* clone() const override { return new PanelPause( *this ); };
 
         void make() override;
         

@@ -35,7 +35,7 @@ class LabelArray:
     virtual ~LabelArray();
     // LabelArray( const LabelArray & x ) {}                       // TODO;
     // LabelArray* create() const { return new LabelArray(); }; // TODO
-    LabelArray* clone() const override { return new LabelArray( *this ); };
+    // LabelArray* clone() const override { return new LabelArray( *this ); };
     void make() override;
     
     void update() override;
