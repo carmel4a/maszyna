@@ -40,31 +40,34 @@ typedef std::unordered_map< std::string, shared_c_widget > widget_map;
  *  std::shared_ptr<Derived> object( new Derived( "name", GUI.root ) );
  *  object.init();
  *  ```
- *  **Note:** Object must be initialized in std::shared_ptr .
+ *  **Notes:** 
+ *  - Object must be initialized in std::shared_ptr .
+ *  - Widget after init WON'T autoupdate. To do that, set \ref may_update to
+ *  `true`.
  * 
  *  [Widget data](\ref CustomWidget::Data)
  *  
- * \todo There should be copy const CustomWidget, but as there are no copy
- * constr for nanogui::Widget. So it is :effort:.
- * ```{.cpp}
- * CustomWidget( const CustomWidget& );
- * CustomWidget& operator= ( const CustomWidget& );
- * CustomWidget( CustomWidget&& );
- * CustomWidget& operator= ( CustomWidget&& );
- * virtual CustomWidget* create() const = 0;
- * virtual CustomWidget* clone() const = 0;
- * ```
+ *  \todo There should be copy const CustomWidget, but as there are no copy
+ *  constr for nanogui::Widget. So it is :effort:.
+ *  ```{.cpp}
+ *  CustomWidget( const CustomWidget& );
+ *  CustomWidget& operator= ( const CustomWidget& );
+ *  CustomWidget( CustomWidget&& );
+ *  CustomWidget& operator= ( CustomWidget&& );
+ *  virtual CustomWidget* create() const = 0;
+ *  virtual CustomWidget* clone() const = 0;
+ *  ```
  * 
  * ### Ownership and Parentship.
  * Parent is responsible for deleting it's childrens. Most common cause is
  * root (RootUI) which "owns" normal widgets. After deletion Root it
  * deletes its childrens.
  * 
- *  \todo Make normal, virtual methods as:
- *  ```{.cpp}
- *  virtual void load( CustomWidget::Data const * t );
- *  virtual CustomWidget::Data const * save();
- *  ```
+ * \todo Make normal, virtual methods as:
+ * ```{.cpp}
+ * virtual void load( CustomWidget::Data const * t );
+ * virtual CustomWidget::Data const * save();
+ * ```
  */
 class CustomWidget
     // that may causes some problems..
@@ -76,26 +79,28 @@ class CustomWidget
             shared_c_widget Owner = std::shared_ptr<CustomWidget>(nullptr)
                               ///< [Owner](\ref owner) is CustomWidget or null, it has a
                               ///< strong ref to this.
-    );  
-
+    );
+                             
+    /// \todo There may be "problem" when something 'll change name in runtime... 
     virtual ~CustomWidget();
-
-    /////////////
-    // Methods //
-    /////////////
 
     /// Initialize.
     /** %Call that after creating instance of object derivering CustomWidget. */
     void init();
     
+    // Childrens //
+
     /// Add child to this node.
+    /** \todo Add contition if widget already not exist. */
     inline void add_child( std::shared_ptr<CustomWidget> sp_cw ) { widgets[sp_cw->name] = sp_cw; };
 
-    /// Get pointer to child.
+    /// Get pointer to child. If no child with `name` was fund, returns `nullptr`.
     CustomWidget * get_child( std::string widget_name );
 
     /// Erase reference to child. It DOESN't delete child, only decrease ref count.
     inline void erase_child( std::string name ) { widgets.erase( name ); };
+
+    // Owner //
 
     /// Sets \ref owner.
     /** It deletes old reference to old owner, and reference to this from owner.
@@ -107,6 +112,8 @@ class CustomWidget
     /// Gets \ref owner.
     /** Propably useless. At leasts now. */
     inline std::shared_ptr<CustomWidget> & get_owner(){ return this->owner; };
+
+    // Widget //
 
     /// Return raw pointer to main [widget](\ref widget_).
     inline nanogui::Widget* widget(){ return widget_.get(); };
@@ -126,7 +133,7 @@ class CustomWidget
      *  this directly. Default it does nothing. In the future there will be Yoga
      *  node calc methods. Set position, and size here.
      */
-    virtual void resize( nanogui::Vector2i v );
+    virtual void resize( nanogui::Vector2i v ){};
 
     /// Change content shown by widget.
     /** Update content of widget, due to onw behaviour.

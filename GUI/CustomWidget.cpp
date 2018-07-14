@@ -15,27 +15,37 @@
     #include "Logs.h"
 #endif // ! NDEBUG
 
+// Widget after init WON'T autoupdate.
 CustomWidget::CustomWidget(
         std::string Name,
         shared_c_widget Owner
     ) : name{Name}
       , owner{Owner}
-      , may_update{false} {};
+      , may_update{false} {
+    #ifndef NDEBUG
+        WriteLog( "CustomWidget " + name + " created." );
+    #endif // ! NDEBUG
+};
 
+// Hope that's all what we need to do...
 CustomWidget::~CustomWidget(){
 
-    Widget * parent = widget_->parent();
-    if( dynamic_cast<Widget*>(parent) ){
+    // Remove nanogui::Widget from parent.
+    auto* parent = dynamic_cast<Widget*>( widget_->parent() );
+    if( parent ) {
         parent->removeChild( widget_.get() );
         GUI.update_layout( parent );
     }
-    // eg. if it is root
+    // Remove self from owner's widget_map.
+    // "If it isn't root:" (roots haven't owner).
     if ( owner ) owner->erase_child( name );
     #ifndef NDEBUG
         WriteLog( "CustomWidget " + name + " deleted." );
     #endif // ! NDEBUG
 };
 
+// someone should implement that shit.
+// GL with copying nanogui::Widget
 /*
 CustomWidget::CustomWidget( const CustomWidget& x ){
 
@@ -54,27 +64,33 @@ CustomWidget& CustomWidget::operator= ( CustomWidget&& x ){};
 
 void CustomWidget::init(){
 
-    set_owner( owner );
+    set_owner( owner ); // should work even if null.
+    // User provided CustomWidget implementation.
+    // From now we may assume, that widget_ is not null...
     make();
     GUI.update_layout( widget_.get() );
     #ifndef NDEBUG
-        WriteLog("CustomWidget" + name + " created.");
+        WriteLog("CustomWidget " + name + " init.");
     #endif // ! NDEBUG
 };
 
-CustomWidget * CustomWidget::get_child( std::string widget_name )
+// dono if it should throw exception, or not..?
+CustomWidget* CustomWidget::get_child( std::string name )
 {
     try{
-        return widgets.at(widget_name).get();
+        return widgets.at( name ).get();
     } catch (const std::out_of_range& oor) {
-        std::cerr << "Out of Range error: " << oor.what() << '\n' << "No"
-        "widget named " << widget_name << " is registered in " << name << '\n';
-        throw;
+        return nullptr;
+        #ifndef DNEBUG
+            std::cerr << "Out of Range error: " << oor.what() << '\n' << "No"
+            "widget named " << name << " is registered in " << name << '\n';
+        #endif // ! DNEBUG
     }
 };
 
 void CustomWidget::set_owner( shared_c_widget sp_cw ){
 
+    // Unregister from owner's widget_map, if present.
     if( owner ) owner->erase_child( name );
     if( ! sp_cw ){
         owner = nullptr;
@@ -83,8 +99,6 @@ void CustomWidget::set_owner( shared_c_widget sp_cw ){
         owner->add_child( shared_from_this() );
     }
 };
-
-void CustomWidget::resize( Vector2i v ){};
 
 void CustomWidget::show(){
 
