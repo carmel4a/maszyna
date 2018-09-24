@@ -30,6 +30,7 @@ http://mozilla.org/MPL/2.0/.
 #include "Timer.h"
 #include "Logs.h"
 
+using simulation::state_serializer;
 
 auto basic_event::make( cParser& Input, state_serializer::scratch_data& Scratchpad )
         -> basic_event*
@@ -247,7 +248,7 @@ basic_event::~basic_event() {
 }
 
 void
-basic_event::deserialize( cParser &Input, scene::scratch_data &Scratchpad ) {
+basic_event::deserialize( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     std::string token;
 
@@ -433,7 +434,7 @@ updatevalues_event::type() const {
 
 // deserialize() subclass details
 void
-updatevalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+updatevalues_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     Input.getTokens( 1, false ); // case sensitive
     Input >> m_input.data_text;
@@ -544,7 +545,7 @@ getvalues_event::type() const {
 
 // deserialize() subclass details
 void
-getvalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+getvalues_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
     // nothing to do here, just preload next token
     Input.getTokens();
 }
@@ -630,7 +631,7 @@ putvalues_event::type() const {
 
 // deserialize() subclass details
 void
-putvalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+putvalues_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     Input.getTokens( 3 );
     // location, previously held in param 3, 4, 5
@@ -795,7 +796,7 @@ copyvalues_event::type() const {
 
 // deserialize() subclass details
 void
-copyvalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+copyvalues_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     m_input.flags = ( flags::text | flags::value_1 | flags::value_2 ); // normalnie trzy
 
@@ -887,7 +888,7 @@ whois_event::type() const {
 
 // deserialize() subclass details
 void
-whois_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+whois_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     m_input.flags = ( flags::text | flags::value_1 | flags::value_2 ); // normalnie trzy
 
@@ -1017,7 +1018,7 @@ logvalues_event::type() const {
 
 // deserialize() subclass details
 void
-logvalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+logvalues_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
     // nothing to do here, just preload next token
     Input.getTokens();
 }
@@ -1085,7 +1086,7 @@ multi_event::type() const {
 
 // deserialize() subclass details
 void
-multi_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+multi_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     m_conditions.has_else = false;
 
@@ -1213,7 +1214,7 @@ sound_event::type() const {
 
 // deserialize() subclass details
 void
-sound_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+sound_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     Input.getTokens();
     // playback mode, previously held in param 0 // 0: wylaczyc, 1: wlaczyc; -1: wlaczyc zapetlone
@@ -1341,7 +1342,7 @@ animation_event::type() const {
 
 // deserialize() subclass details
 void
-animation_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+animation_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     std::string token;
 
@@ -1503,7 +1504,7 @@ lights_event::type() const {
 
 // deserialize() subclass details
 void
-lights_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+lights_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     // TBD, TODO: remove light count limit?
     auto const lightcountlimit { 8 };
@@ -1600,7 +1601,7 @@ switch_event::type() const {
 
 // deserialize() subclass details
 void
-switch_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+switch_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     Input.getTokens();
     // switch state, previously held in param 0
@@ -1679,7 +1680,7 @@ track_event::type() const {
 
 // deserialize() subclass details
 void
-track_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+track_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
 
     Input.getTokens();
     Input >> m_velocity;
@@ -1728,7 +1729,7 @@ voltage_event::type() const {
 
 // deserialize() subclass details
 void
-voltage_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+voltage_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
     // zmiana napięcia w zasilaczu (TractionPowerSource)
     Input.getTokens();
     Input >> m_voltage;
@@ -1791,7 +1792,7 @@ visible_event::type() const {
 
 // deserialize() subclass details
 void
-visible_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+visible_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
     // zmiana wyświetlania obiektu
     Input.getTokens();
     Input >> m_visible;
@@ -1835,7 +1836,7 @@ friction_event::type() const {
 
 // deserialize() subclass details
 void
-friction_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+friction_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
     // zmiana przyczepnosci na scenerii
     Input.getTokens();
     Input >> m_friction;
@@ -1876,7 +1877,7 @@ lua_event::type() const {
 
 // deserialize() subclass details
 void
-lua_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+lua_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
     // preload next token
     Input.getTokens();
 }
@@ -1913,7 +1914,7 @@ message_event::type() const {
 
 // deserialize() subclass details
 void
-message_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+message_event::deserialize_( cParser &Input, state_serializer::scratch_data &Scratchpad ) {
     // wyświetlenie komunikatu
     std::string token;
     while( ( true == Input.getTokens() )

@@ -20,6 +20,10 @@ http://mozilla.org/MPL/2.0/.
 #include "Logs.h"
 #include "sn_utils.h"
 #include "renderer.h"
+// for simulation::state_serializer::scratch_data
+#include "simulationstateserializer.h"
+
+using simulation::state_serializer;
 
 namespace scene {
 
@@ -1192,7 +1196,7 @@ std::vector<std::string> switchtrackbedtextures {
     "zwrotp65r1200pods-new" };
 
 void
-basic_region::insert( shape_node Shape, scratch_data &Scratchpad, bool const Transform ) {
+basic_region::insert( shape_node Shape, state_serializer::scratch_data &Scratchpad, bool const Transform ) {
 
     if( Global.CreateSwitchTrackbeds ) {
 
@@ -1266,7 +1270,7 @@ basic_region::insert( shape_node Shape, scratch_data &Scratchpad, bool const Tra
 
 // inserts provided lines in the region
 void
-basic_region::insert( lines_node Lines, scratch_data &Scratchpad ) {
+basic_region::insert( lines_node Lines, state_serializer::scratch_data &Scratchpad ) {
 
     if( Lines.m_data.vertices.empty() ) { return; }
     // transform point coordinates if needed
