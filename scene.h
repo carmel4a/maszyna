@@ -1,4 +1,4 @@
-/*
+﻿/*
 This Source Code Form is subject to the
 terms of the Mozilla Public License, v.
 2.0. If a copy of the MPL was not
@@ -417,7 +417,9 @@ namespace scene
      private:
         // types
         using section_array = std::array<basic_section *, REGION_SIDE_SECTION_COUNT * REGION_SIDE_SECTION_COUNT>;
-
+        using terrain_array = std::array< std::unique_ptr< Terrain::TerrainSection >,
+                              REGION_SIDE_SECTION_COUNT
+                              * REGION_SIDE_SECTION_COUNT >;
         // methods
         // checks whether specified point is within boundaries of the region
         bool point_inside( glm::dvec3 const &Location );
@@ -435,5 +437,42 @@ namespace scene
         terrain_array terrain;
     };
 }
+
+namespace Terrain
+{
+    class TerrainChunk;
+    class TerrainSection
+    {
+      public:
+        TerrainSection( int max_side_density );
+        int static const side_size_in_meters = 1000;
+        int const max_side_density;
+        std::vector< std::unique_ptr< TerrainChunk > > chunks;
+    };
+    
+    enum TerrainChunkTypes : short
+    {
+        Abstract,
+        Normal,
+        Empty
+    };
+
+    class TerrainChunk
+    {
+        const TerrainChunkTypes type = TerrainChunkTypes::Abstract;
+        const glm::vec3 center;
+        gfx::geometrybank_handle vbo;
+    };
+
+    class EmptyTerrainChunk : TerrainChunk
+    {
+        const TerrainChunkTypes type = TerrainChunkTypes::Empty;
+    };
+
+    class NormalTerrainChunk : TerrainChunk
+    {
+        const TerrainChunkTypes type = TerrainChunkTypes::Normal;
+    };
+} 
 
 #endif //! SCENE_H_24_09_18

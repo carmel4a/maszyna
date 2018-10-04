@@ -15,6 +15,7 @@ http://mozilla.org/MPL/2.0/.
 #include "material.h"
 #include "vertex.h"
 #include "openglgeometrybank.h"
+#include "simulationstateserializer.h"
 
 struct lighting_data {
 
@@ -79,7 +80,8 @@ class shape_node
 {
 
     friend class basic_region; // region might want to modify node content when it's being inserted
-
+    friend class simulation::state_serializer; // debug
+    // friend void simulation::state_serializer::deserialize( cParser );
 public:
 // types
     struct shapenode_data {

@@ -76,5 +76,8 @@ doc/
 CMakeLists.txt.user
 
 *.vcxproj
-
+.vscode
 *.sln
+
+wc.sh
+lib_src

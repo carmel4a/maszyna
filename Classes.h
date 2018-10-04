@@ -76,4 +76,11 @@ enum class TCommandType
 using material_handle = int;
 using texture_handle = int;
 
+namespace Terrain
+{
+    class TerrainChunk;
+    class TerrainSection;
+    class EmptyTerrainChunk;
+};
+
 #endif

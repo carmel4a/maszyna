@@ -7,6 +7,7 @@ obtain one at
 http://mozilla.org/MPL/2.0/.
 */
 
+#include "Classes.h"
 #include "stdafx.h"
 #include "scene.h"
 #include "Traction.h"
@@ -968,6 +969,8 @@ basic_section::cell( glm::dvec3 const &Location ) {
 basic_region::basic_region() {
 
     m_sections.fill( nullptr );
+    for( auto& x : terrain )
+        x = std::make_unique< Terrain::TerrainSection >( 1 );
 }
 
 basic_region::~basic_region() {
@@ -1410,10 +1413,10 @@ basic_region::find_traction( glm::dvec3 const &Point, TTraction const *Other, in
 }
 
 // finds sections inside specified sphere. returns: list of sections
-std::vector<basic_section *> const &
+std::vector<basic_section *> const
 basic_region::sections( glm::dvec3 const &Point, float const Radius ) {
 
-    m_scratchpad.sections.clear();
+    std::vector<basic_section *> sections_scratchpad;
 
     auto const centerx { static_cast<int>( std::floor( Point.x / SECTION_SIZE + REGION_SIDE_SECTION_COUNT / 2 ) ) };
     auto const centerz { static_cast<int>( std::floor( Point.z / SECTION_SIZE + REGION_SIDE_SECTION_COUNT / 2 ) ) };
@@ -1435,11 +1438,11 @@ basic_region::sections( glm::dvec3 const &Point, float const Radius ) {
             if( ( section != nullptr )
              && ( glm::length2( section->area().center - Point ) <= ( ( section->area().radius + padding + Radius ) * ( section->area().radius + padding + Radius ) ) ) ) {
 
-                m_scratchpad.sections.emplace_back( section );
+                sections_scratchpad.emplace_back( section );
             }
         }
     }
-    return m_scratchpad.sections;
+    return sections_scratchpad;
 }
 
 // checks whether specified point is within boundaries of the region
@@ -1679,5 +1682,16 @@ void basic_region::create_map_geometry()
 }
 
 } // scene
+
+namespace Terrain
+{
+    TerrainSection::TerrainSection( int max_side_density )
+            : max_side_density { max_side_density }
+    {
+        chunks.reserve( max_side_density * max_side_density );
+        for( int i = 0; i < max_side_density * max_side_density; ++i )
+            chunks.push_back( std::make_unique< TerrainChunk >() );
+    };
+}
 
 //---------------------------------------------------------------------------
