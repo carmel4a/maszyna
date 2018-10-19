@@ -417,7 +417,7 @@ namespace scene
      private:
         // types
         using section_array = std::array<basic_section *, REGION_SIDE_SECTION_COUNT * REGION_SIDE_SECTION_COUNT>;
-        using terrain_array = std::array< std::unique_ptr< Terrain::TerrainSection >,
+        using terrain_array = std::array< std::unique_ptr< Terrain::Section >,
                               REGION_SIDE_SECTION_COUNT
                               * REGION_SIDE_SECTION_COUNT >;
         // methods
@@ -440,40 +440,44 @@ namespace scene
 
 namespace Terrain
 {
-    class TerrainChunk;
-    class TerrainSection
+    class Chunk;
+    class Section
     {
       public:
-        TerrainSection( int max_side_density );
+        Section( int max_side_density );
         int static const side_size_in_meters = 1000;
         int const max_side_density;
-        std::vector< std::unique_ptr< TerrainChunk > > chunks;
+        std::vector< std::unique_ptr< Chunk > > chunks;
     };
     
-    enum TerrainChunkTypes : short
+    enum class ChunkTypes : short
     {
         Abstract,
         Normal,
         Empty
     };
 
-    class TerrainChunk
+    class Chunk
     {
-        TerrainChunk( TerrainChunkTypes );
-        const TerrainChunkTypes type;
+      public:
+        Chunk( ChunkTypes );
+      protected:
+        const ChunkTypes type;
         const glm::vec3 center;
         gfx::geometrybank_handle vbo;
     };
 
-    class EmptyTerrainChunk : TerrainChunk
+    class EmptyChunk : public Chunk
     {
-        EmptyTerrainChunk();
+      public:
+        EmptyChunk();
     };
 
-    class NormalTerrainChunk : TerrainChunk
+    class NormalChunk : public Chunk
     {
-        NormalTerrainChunk();
+      public:
+        NormalChunk();
     };
-} 
+}
 
 #endif //! SCENE_H_24_09_18

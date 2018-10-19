@@ -78,9 +78,10 @@ using texture_handle = int;
 
 namespace Terrain
 {
-    class TerrainChunk;
-    class TerrainSection;
-    class EmptyTerrainChunk;
+    class Chunk;
+    class Section;
+    class EmptyChunk;
+    class NormalChunk;
 };
 
 #endif

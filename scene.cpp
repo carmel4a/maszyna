@@ -970,7 +970,7 @@ basic_region::basic_region() {
 
     m_sections.fill( nullptr );
     for( auto& x : terrain )
-        x = std::make_unique< Terrain::TerrainSection >( 1 );
+        x = std::make_unique< Terrain::Section >( 1 );
 }
 
 basic_region::~basic_region() {
@@ -1681,26 +1681,26 @@ void basic_region::create_map_geometry()
         }
 }
 
-} // scene
+}
 
 namespace Terrain
 {
-    TerrainSection::TerrainSection( int max_side_density )
+    Section::Section( int max_side_density )
             : max_side_density { max_side_density }
     {
         chunks.reserve( max_side_density * max_side_density );
         for( int i = 0; i < max_side_density * max_side_density; ++i )
-            chunks.push_back( std::make_unique< EmptyTerrainChunk >() );
-}
-
-    TerrainChunk::TerrainChunk( TerrainChunkTypes type )
+            chunks.emplace_back( new EmptyChunk() );
+    }
+    
+    Chunk::Chunk( ChunkTypes type )
             : type{ type }
             , center {}
             , vbo {} {}
 
-    EmptyTerrainChunk::EmptyTerrainChunk()
-            : TerrainChunk( TerrainChunkTypes::Empty ) {}
+    EmptyChunk::EmptyChunk()
+            : Chunk( ChunkTypes::Empty ) {}
 
-    NormalTerrainChunk::NormalTerrainChunk()
-            : TerrainChunk( TerrainChunkTypes::Normal ) {}
+    NormalChunk::NormalChunk()
+            : Chunk( ChunkTypes::Normal ) {}
 }
