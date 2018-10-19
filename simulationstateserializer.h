@@ -9,8 +9,8 @@ http://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#include "Classes.h"
 #include "parser.h"
-#include "scene.h"
 
 namespace simulation {
 

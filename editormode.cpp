@@ -19,6 +19,7 @@ http://mozilla.org/MPL/2.0/.
 #include "Timer.h"
 #include "Console.h"
 #include "renderer.h"
+#include "audiorenderer.h"
 
 bool
 editor_mode::editormode_input::init() {
