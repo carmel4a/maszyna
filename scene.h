@@ -459,19 +459,20 @@ namespace Terrain
 
     class TerrainChunk
     {
-        const TerrainChunkTypes type = TerrainChunkTypes::Abstract;
+        TerrainChunk( TerrainChunkTypes );
+        const TerrainChunkTypes type;
         const glm::vec3 center;
         gfx::geometrybank_handle vbo;
     };
 
     class EmptyTerrainChunk : TerrainChunk
     {
-        const TerrainChunkTypes type = TerrainChunkTypes::Empty;
+        EmptyTerrainChunk();
     };
 
     class NormalTerrainChunk : TerrainChunk
     {
-        const TerrainChunkTypes type = TerrainChunkTypes::Normal;
+        NormalTerrainChunk();
     };
 } 
 

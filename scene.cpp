@@ -1690,8 +1690,17 @@ namespace Terrain
     {
         chunks.reserve( max_side_density * max_side_density );
         for( int i = 0; i < max_side_density * max_side_density; ++i )
-            chunks.push_back( std::make_unique< TerrainChunk >() );
-    };
+            chunks.push_back( std::make_unique< EmptyTerrainChunk >() );
 }
 
-//---------------------------------------------------------------------------
+    TerrainChunk::TerrainChunk( TerrainChunkTypes type )
+            : type{ type }
+            , center {}
+            , vbo {} {}
+
+    EmptyTerrainChunk::EmptyTerrainChunk()
+            : TerrainChunk( TerrainChunkTypes::Empty ) {}
+
+    NormalTerrainChunk::NormalTerrainChunk()
+            : TerrainChunk( TerrainChunkTypes::Normal ) {}
+}
