@@ -129,11 +129,11 @@ void map::render(scene::basic_region *Region)
 
         m_section_handles.clear();
 
-        for (int row = 0; row < scene::EU07_REGIONSIDESECTIONCOUNT; row++)
+        for (int row = 0; row < scene::REGION_SIDE_SECTION_COUNT; row++)
         {
-            for (int column = 0; column < scene::EU07_REGIONSIDESECTIONCOUNT; column++)
+            for (int column = 0; column < scene::REGION_SIDE_SECTION_COUNT; column++)
             {
-                scene::basic_section *s = Region->get_section(row * scene::EU07_REGIONSIDESECTIONCOUNT + column);
+                scene::basic_section *s = Region->get_section(row * scene::REGION_SIDE_SECTION_COUNT + column);
                 if (s && frustum.sphere_inside(s->area().center, s->area().radius) > 0.f)
                 {
                     const gfx::geometrybank_handle handle = s->get_map_geometry();

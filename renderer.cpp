@@ -1,4 +1,4 @@
-﻿/*
+/*
 This Source Code Form is subject to the
 terms of the Mozilla Public License, v.
 2.0. If a copy of the MPL was not
@@ -570,12 +570,12 @@ void opengl_renderer::Render_pass(rendermode const Mode)
 		if (Global.gfx_shadowmap_enabled)
 			setup_shadow_map(m_shadow_tex.get(), m_shadowpass);
 
-		Render(simulation::Region);
+		Render(simulation::Region.get());
 
 		// ...translucent parts
 		glDebug("render translucent region");
 		setup_drawing(true);
-		Render_Alpha(simulation::Region);
+		Render_Alpha(simulation::Region.get());
 
 		// precipitation; done at end, only before cab render
 		Render_precipitation();
@@ -664,7 +664,7 @@ void opengl_renderer::Render_pass(rendermode const Mode)
 
 		scene_ubs.projection = OpenGLMatrices.data(GL_PROJECTION);
 		scene_ubo->update(scene_ubs);
-		Render(simulation::Region);
+        Render(simulation::Region.get());
 
 		// setup_drawing(true);
 		// glDepthMask(GL_TRUE);
@@ -742,9 +742,9 @@ void opengl_renderer::Render_pass(rendermode const Mode)
 		setup_drawing(false);
 		setup_shadow_map(m_shadow_tex.get(), m_shadowpass);
 
-		scene_ubs.projection = OpenGLMatrices.data(GL_PROJECTION);
-		scene_ubo->update(scene_ubs);
-		Render(simulation::Region);
+        scene_ubs.projection = OpenGLMatrices.data(GL_PROJECTION);
+        scene_ubo->update(scene_ubs);
+        Render(simulation::Region.get());
 
 		m_env_fb->unbind();
 
@@ -795,7 +795,7 @@ void opengl_renderer::Render_pass(rendermode const Mode)
 
 		scene_ubs.projection = OpenGLMatrices.data(GL_PROJECTION);
 		scene_ubo->update(scene_ubs);
-		Render(simulation::Region);
+		Render(simulation::Region.get());
 
 		break;
 	}
@@ -1596,9 +1596,9 @@ void opengl_renderer::Render(scene::basic_region *Region)
 	m_cellqueue.clear();
 	// build a list of region sections to render
 	glm::vec3 const cameraposition{m_renderpass.camera.position()};
-	auto const camerax = static_cast<int>(std::floor(cameraposition.x / scene::EU07_SECTIONSIZE + scene::EU07_REGIONSIDESECTIONCOUNT / 2));
-	auto const cameraz = static_cast<int>(std::floor(cameraposition.z / scene::EU07_SECTIONSIZE + scene::EU07_REGIONSIDESECTIONCOUNT / 2));
-	int const segmentcount = 2 * static_cast<int>(std::ceil(m_renderpass.draw_range * Global.fDistanceFactor / scene::EU07_SECTIONSIZE));
+	auto const camerax = static_cast<int>(std::floor(cameraposition.x / scene::SECTION_SIZE + scene::REGION_SIDE_SECTION_COUNT / 2));
+	auto const cameraz = static_cast<int>(std::floor(cameraposition.z / scene::SECTION_SIZE + scene::REGION_SIDE_SECTION_COUNT / 2));
+	int const segmentcount = 2 * static_cast<int>(std::ceil(m_renderpass.draw_range * Global.fDistanceFactor / scene::SECTION_SIZE));
 	int const originx = camerax - segmentcount / 2;
 	int const originz = cameraz - segmentcount / 2;
 
@@ -1608,7 +1608,7 @@ void opengl_renderer::Render(scene::basic_region *Region)
 		{
 			continue;
 		}
-		if (row >= scene::EU07_REGIONSIDESECTIONCOUNT)
+		if (row >= scene::REGION_SIDE_SECTION_COUNT)
 		{
 			break;
 		}
@@ -1618,11 +1618,11 @@ void opengl_renderer::Render(scene::basic_region *Region)
 			{
 				continue;
 			}
-			if (column >= scene::EU07_REGIONSIDESECTIONCOUNT)
+			if (column >= scene::REGION_SIDE_SECTION_COUNT)
 			{
 				break;
 			}
-			auto *section{Region->m_sections[row * scene::EU07_REGIONSIDESECTIONCOUNT + column]};
+			auto *section{Region->m_sections[row * scene::REGION_SIDE_SECTION_COUNT + column]};
 			if ((section != nullptr) && (m_renderpass.camera.visible(section->m_area)))
 			{
 				m_sectionqueue.emplace_back(section);

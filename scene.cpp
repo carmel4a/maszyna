@@ -1,4 +1,4 @@
-﻿/*
+/*
 This Source Code Form is subject to the
 terms of the Mozilla Public License, v.
 2.0. If a copy of the MPL was not
@@ -1645,10 +1645,10 @@ void basic_region::create_map_geometry()
 {
     m_map_geometrybank = GfxRenderer.Create_Bank();
 
-    for (int row = 0; row < EU07_REGIONSIDESECTIONCOUNT; row++)
-        for (int column = 0; column < EU07_REGIONSIDESECTIONCOUNT; column++)
+    for (int row = 0; row < REGION_SIDE_SECTION_COUNT; row++)
+        for (int column = 0; column < REGION_SIDE_SECTION_COUNT; column++)
         {
-            basic_section *s = m_sections[row * EU07_REGIONSIDESECTIONCOUNT + column];
+            basic_section *s = m_sections[row * REGION_SIDE_SECTION_COUNT + column];
             if (s)
                 s->create_map_geometry(m_map_geometrybank);
         }
