@@ -203,7 +203,7 @@ void
 eu07_application::exit() {
 
     SafeDelete( simulation::Train );
-    SafeDelete( simulation::Region );
+    simulation::Region.reset( nullptr );
 
     ui_layer::shutdown();
 
