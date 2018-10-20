@@ -967,11 +967,10 @@ basic_section::cell( glm::dvec3 const &Location ) {
 
 
 
-basic_region::basic_region() {
-
+basic_region::basic_region()
+        : terrain_manager{ std::make_unique< Terrain::Manager>() }
+{
     m_sections.fill( nullptr );
-    for( auto& x : terrain )
-        x = std::make_unique< Terrain::Section >( 1 );
 }
 
 basic_region::~basic_region() {

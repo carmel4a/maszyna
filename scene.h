@@ -431,7 +431,7 @@ namespace scene
         section_array m_sections;
         region_scratchpad m_scratchpad;
         gfx::geometrybank_handle m_map_geometrybank;
-        terrain_array terrain;
+        std::unique_ptr< Terrain::Manager> terrain_manager;
     };
 }
 

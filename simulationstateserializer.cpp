@@ -125,6 +125,7 @@ state_serializer::deserialize( cParser &Input ) {
         token = Input.getToken<std::string>();
     }
     
+    Region->terrain()->deserialize( Input );
 
     if( !scratchpad.initialized )
     {
