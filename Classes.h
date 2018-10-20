@@ -45,8 +45,8 @@ class shape_node;
 class lines_node;
 
 namespace scene {
-struct node_data;
-class basic_node;
+    struct node_data;
+    class basic_node;
 }
 
 namespace Mtable
@@ -79,6 +79,7 @@ using texture_handle = int;
 namespace Terrain
 {
     class Chunk;
+    class Manager;
     class Section;
     class EmptyChunk;
     class NormalChunk;
