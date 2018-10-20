@@ -417,9 +417,6 @@ namespace scene
      private:
         // types
         using section_array = std::array<basic_section *, REGION_SIDE_SECTION_COUNT * REGION_SIDE_SECTION_COUNT>;
-        using terrain_array = std::array< std::unique_ptr< Terrain::Section >,
-                              REGION_SIDE_SECTION_COUNT
-                              * REGION_SIDE_SECTION_COUNT >;
         // methods
         // checks whether specified point is within boundaries of the region
         bool point_inside( glm::dvec3 const &Location );
@@ -435,48 +432,6 @@ namespace scene
         region_scratchpad m_scratchpad;
         gfx::geometrybank_handle m_map_geometrybank;
         terrain_array terrain;
-    };
-}
-
-namespace Terrain
-{
-    class Chunk;
-    class Section
-    {
-      public:
-        Section( int max_side_density );
-        int static const side_size_in_meters = 1000;
-        int const max_side_density;
-        std::vector< std::unique_ptr< Chunk > > chunks;
-    };
-    
-    enum class ChunkTypes : short
-    {
-        Abstract,
-        Normal,
-        Empty
-    };
-
-    class Chunk
-    {
-      public:
-        Chunk( ChunkTypes );
-      protected:
-        const ChunkTypes type;
-        const glm::vec3 center;
-        gfx::geometrybank_handle vbo;
-    };
-
-    class EmptyChunk : public Chunk
-    {
-      public:
-        EmptyChunk();
-    };
-
-    class NormalChunk : public Chunk
-    {
-      public:
-        NormalChunk();
     };
 }
 

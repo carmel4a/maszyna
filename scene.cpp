@@ -24,6 +24,7 @@ http://mozilla.org/MPL/2.0/.
 #include "renderer.h"
 // for simulation::state_serializer::scratch_data
 #include "simulationstateserializer.h"
+#include "Terrain.h"
 
 using simulation::state_serializer;
 
@@ -1681,26 +1682,4 @@ void basic_region::create_map_geometry()
         }
 }
 
-}
-
-namespace Terrain
-{
-    Section::Section( int max_side_density )
-            : max_side_density { max_side_density }
-    {
-        chunks.reserve( max_side_density * max_side_density );
-        for( int i = 0; i < max_side_density * max_side_density; ++i )
-            chunks.emplace_back( new EmptyChunk() );
-    }
-    
-    Chunk::Chunk( ChunkTypes type )
-            : type{ type }
-            , center {}
-            , vbo {} {}
-
-    EmptyChunk::EmptyChunk()
-            : Chunk( ChunkTypes::Empty ) {}
-
-    NormalChunk::NormalChunk()
-            : Chunk( ChunkTypes::Normal ) {}
 }
