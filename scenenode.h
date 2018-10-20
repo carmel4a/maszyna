@@ -80,7 +80,6 @@ class shape_node
 {
 
     friend class basic_region; // region might want to modify node content when it's being inserted
-    friend class simulation::state_serializer; // debug
     // friend void simulation::state_serializer::deserialize( cParser );
 public:
 // types
@@ -136,9 +135,18 @@ public:
     // set origin point
     void
         origin( glm::dvec3 Origin );
+
     // data access
-    shapenode_data const &
-        data() const;
+    auto get_data() const -> const shapenode_data&
+    { return m_data; };
+    auto get_data() -> shapenode_data&
+    { return m_data; };
+
+    // name access
+    auto get_name() const -> const std::string&
+    { return m_name; };
+    auto get_name() -> std::string&
+    { return m_name; };
 
 private:
 // members
@@ -158,14 +166,6 @@ void
 shape_node::origin( glm::dvec3 Origin ) {
     m_data.origin = Origin;
 }
-// data access
-inline
-shape_node::shapenode_data const &
-shape_node::data() const {
-    return m_data;
-}
-
-
 
 // holds a group of untextured lines
 class lines_node

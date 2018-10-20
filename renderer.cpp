@@ -1930,7 +1930,7 @@ void opengl_renderer::draw(std::vector<gfx::geometrybank_handle>::iterator it, s
 
 void opengl_renderer::Render(scene::shape_node const &Shape, bool const Ignorerange)
 {
-	auto const &data{Shape.data()};
+    auto const& data{ Shape.get_data() };
 
 	if (false == Ignorerange)
 	{

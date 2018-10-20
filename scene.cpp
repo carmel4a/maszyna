@@ -285,16 +285,16 @@ basic_cell::insert( shape_node Shape ) {
     // re-calculate cell radius, in case shape geometry extends outside the cell's boundaries
     m_area.radius = std::max<float>(
         m_area.radius,
-        glm::length( m_area.center - Shape.data().area.center ) + Shape.data().area.radius );
+        glm::length( m_area.center - Shape.get_data().area.center ) + Shape.get_data().area.radius );
 
-    auto const &shapedata { Shape.data() };
+    auto const& shapedata { Shape.get_data() };
     auto &shapes = (
         shapedata.translucent ?
             m_shapestranslucent :
             m_shapesopaque );
     for( auto &targetshape : shapes ) {
         // try to merge shapes with matching view ranges...
-        auto const &targetshapedata { targetshape.data() };
+        const auto& targetshapedata { targetshape.get_data() };
         if( ( shapedata.rangesquared_min == targetshapedata.rangesquared_min )
          && ( shapedata.rangesquared_max == targetshapedata.rangesquared_max )
         // ...and located close to each other (within arbitrary limit of 25m)
@@ -792,7 +792,7 @@ basic_section::export_as_text( std::ostream &Output ) const {
 void
 basic_section::insert( shape_node Shape ) {
 
-    auto const &shapedata = Shape.data();
+    const auto& shapedata = Shape.get_data();
 
     // re-calculate section radius, in case shape geometry extends outside the section's boundaries
     m_area.radius = std::max<float>(
@@ -1224,7 +1224,7 @@ basic_region::insert( shape_node Shape, state_serializer::scratch_data &Scratchp
 
     if( Global.CreateSwitchTrackbeds ) {
 
-        auto const materialname{ GfxRenderer.Material( Shape.data().material ).name };
+        auto const materialname{ GfxRenderer.Material( Shape.get_data().material ).name };
         for( auto const &switchtrackbedtexture : switchtrackbedtextures ) {
             if( materialname.find( switchtrackbedtexture ) != std::string::npos ) {
                 // geometry with blacklisted texture, part of old switch trackbed; ignore it
