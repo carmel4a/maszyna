@@ -16,6 +16,11 @@ http://mozilla.org/MPL/2.0/.
 
 namespace gfx {
 
+basic_vertex( glm::vec3 position,  glm::vec3 normal,  glm::vec2 texture )
+        : position( position )
+        , normal( normal )
+        , texture( texture ) {}
+
 void
 basic_vertex::serialize( std::ostream &s ) const {
 
@@ -143,6 +148,14 @@ void calculate_tangent(vertex_array &vertices, int type)
             (glm::dot(glm::cross(n, t), t2) < 0.0F) ? -1.0F : 1.0F);
     }
 }
+
+geometry_handle::geometry_handle()
+        : bank { 0 }
+        , chunk { 0 } {}
+
+geometry_handle( std::uint32_t bank, std::uint32_t chunk )
+        : bank { bank }
+        , chunk { chunk } {}
 
 // generic geometry bank class, allows storage, update and drawing of geometry chunks
 
@@ -420,6 +433,11 @@ geometrybank_manager::create_bank() {
     m_geometrybanks.emplace_back( std::make_shared<opengl_vbogeometrybank>(), std::chrono::steady_clock::time_point() );
     // NOTE: handle is effectively (index into chunk array + 1) this leaves value of 0 to serve as error/empty handle indication
     return { static_cast<std::uint32_t>( m_geometrybanks.size() ), 0 };
+}
+
+void geometrybank_manager::delete_bank( gfx::geometrybank_handle handle )
+{
+    m_geometrybanks.erase( bank( handle ) );
 }
 
 // creates a new geometry chunk of specified type from supplied vertex data, in specified bank. returns: handle to the chunk or NULL
