@@ -52,11 +52,20 @@ namespace Terrain
             terrain_vector m_list;
             std::mutex mutex;
         };
+
+        inline void render_lock()
+        { renderer_lock = true; };
+        inline void render_unlock()
+        { renderer_lock = false; };
+        inline bool is_render_locked()
+        { return renderer_lock; }
+
       private:
         using terrain_array =
                 std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
 
         terrain_array terrain;
+        bool renderer_lock = false;
     };
 
     class Section
