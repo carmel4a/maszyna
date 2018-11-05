@@ -64,6 +64,8 @@ namespace Terrain
         using terrain_array =
                 std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
 
+        /// Half side of update sections square.
+        constexpr static short update_range { 3 };
         terrain_array terrain;
         bool renderer_lock = false;
     };
