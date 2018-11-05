@@ -1,4 +1,4 @@
-﻿/*
+/*
 This Source Code Form is subject to the
 terms of the Mozilla Public License, v.
 2.0. If a copy of the MPL was not
@@ -16,10 +16,10 @@ http://mozilla.org/MPL/2.0/.
 
 namespace gfx {
 
-basic_vertex( glm::vec3 position,  glm::vec3 normal,  glm::vec2 texture )
-        : position( position )
-        , normal( normal )
-        , texture( texture ) {}
+basic_vertex::basic_vertex( glm::vec3 position,  glm::vec3 normal,  glm::vec2 texture )
+        : position { position }
+        , normal { normal }
+        , texture { texture } {}
 
 void
 basic_vertex::serialize( std::ostream &s ) const {
@@ -153,7 +153,7 @@ geometry_handle::geometry_handle()
         : bank { 0 }
         , chunk { 0 } {}
 
-geometry_handle( std::uint32_t bank, std::uint32_t chunk )
+geometry_handle::geometry_handle( std::uint32_t bank, std::uint32_t chunk )
         : bank { bank }
         , chunk { chunk } {}
 
@@ -435,9 +435,9 @@ geometrybank_manager::create_bank() {
     return { static_cast<std::uint32_t>( m_geometrybanks.size() ), 0 };
 }
 
-void geometrybank_manager::delete_bank( gfx::geometrybank_handle handle )
+bool geometrybank_manager::release_bank( gfx::geometrybank_handle handle )
 {
-    m_geometrybanks.erase( bank( handle ) );
+    return m_garbagecollector.force_resource_release( handle.bank );
 }
 
 // creates a new geometry chunk of specified type from supplied vertex data, in specified bank. returns: handle to the chunk or NULL

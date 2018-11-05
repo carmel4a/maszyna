@@ -1,4 +1,4 @@
-﻿/*
+/*
 This Source Code Form is subject to the
 terms of the Mozilla Public License, v.
 2.0. If a copy of the MPL was not
@@ -192,7 +192,7 @@ class geometrybank_manager
     gfx::geometrybank_handle
         create_bank();
     
-    void delete_bank( gfx::geometrybank_handle );
+    bool release_bank( gfx::geometrybank_handle );
     // creates a new geometry chunk of specified type from supplied vertex data, in specified bank. returns: handle to the chunk or NULL
     gfx::geometry_handle
         create_chunk( gfx::vertex_array const &Vertices, gfx::geometrybank_handle const &Geometry, int const Type );
@@ -230,7 +230,7 @@ class geometrybank_manager
     -> geometrybanktimepointpair_sequence::value_type&
     { return m_geometrybanks[ Geometry.bank - 1 ]; }
 
-    inline bank( gfx::geometry_handle const Geometry ) const
+    inline auto bank( gfx::geometry_handle const Geometry ) const
     -> const geometrybanktimepointpair_sequence::value_type&
     { return m_geometrybanks[ Geometry.bank - 1 ]; }
 };
