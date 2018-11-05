@@ -63,8 +63,20 @@ public:
                 m_resourcesweepindex + m_unusedresourcesweepsize >= m_container.size() ?
                     0 : // if the next sweep chunk is beyond actual data, so start anew
                     m_resourcesweepindex + m_unusedresourcesweepsize );
-    
             return releasecount; }
+    
+
+    bool force_resource_release( unsigned int id )
+    {
+        const auto blank_time_stamp = std::chrono::steady_clock::time_point();
+        if( m_container[ id ].second != blank_time_stamp )
+        {
+            m_container[ id ].first->release();
+            m_container[ id ].second = blank_time_stamp;
+            return true;
+        }
+        return false;
+    }
 
     std::chrono::steady_clock::time_point
         timestamp() const {
