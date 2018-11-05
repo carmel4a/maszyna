@@ -17,15 +17,22 @@ http://mozilla.org/MPL/2.0/.
 #include "Classes.h"
 #include "scene.h" // For `scene` namespace consts.
 
+/// Namespace for terrain entities.
 namespace Terrain
 {
+    /// Entry point to Terrain management.
+    /** \note no copyable. */
     class Manager
     {
+        // TBD: move get/reset geometry buffer to private
+        // friend Section::load;
+        // friend Section::unload;
       public:
         Manager();
         Manager( Manager& ) = delete;
         Manager& operator=( Manager& ) = delete;
-        bool deserialize( cParser& input );
+        /// Deserialize terrain from provided parser.
+        bool deserialize( cParser& input ); // TO IMPLEMENT
       private:
         using terrain_array =
                 std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
