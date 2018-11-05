@@ -9,6 +9,10 @@ http://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#include <string>
+#include <cstdlib>
+#include <chrono>
+
 enum class resource_state {
     none,
     loading,
