@@ -1,4 +1,4 @@
-﻿/*
+/*
 This Source Code Form is subject to the
 terms of the Mozilla Public License, v.
 2.0. If a copy of the MPL was not
@@ -27,9 +27,14 @@ using simulation::state_serializer;
 
 namespace scene
 {
-    int const CELL_SIZE = 250;
-    int const SECTION_SIZE = 1000;
-    int const REGION_SIDE_SECTION_COUNT = 500; // number of sections along a side of square region
+    constexpr int CELL_SIZE = 250;
+    /// Signle section's side size in meters.
+    constexpr int SECTION_SIZE = 1000;
+    /// Number of sections along a side of square region.
+    constexpr int REGION_SIDE_SECTION_COUNT = 500;
+    /// Total number of sections.
+    constexpr int SECTIONS_COUNT =
+            REGION_SIDE_SECTION_COUNT * REGION_SIDE_SECTION_COUNT;
 
     // basic element of rudimentary partitioning scheme for the section. fixed size, no further subdivision
     // TBD, TODO: replace with quadtree scheme?

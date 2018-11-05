@@ -27,9 +27,9 @@ namespace Terrain
         Manager& operator=( Manager& ) = delete;
         bool deserialize( cParser& input );
       private:
-        using terrain_array = std::array< std::unique_ptr< Terrain::Section >,
-                              scene::REGION_SIDE_SECTION_COUNT
-                              * scene::REGION_SIDE_SECTION_COUNT >;
+        using terrain_array =
+                std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
+
         terrain_array terrain;
     };
 
