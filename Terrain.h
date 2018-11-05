@@ -73,12 +73,27 @@ namespace Terrain
         inline auto to_unload() -> TerrainVector&
         { return state_lists.m_to_unload; };
 
+        // Geometry bank management
+        inline auto get_next_geometry_bank() -> gfx::geometry_handle
+        { return state_lists.get_next_geometry_bank(); };
+        inline void release_bank( gfx::geometry_handle handle )
+        { state_lists.release_bank( handle.bank ); };
+        inline void release_bank( unsigned int i )
+        { state_lists.release_bank( i ); };
+
         class StateLists
         {
             friend Manager;
+            auto get_next_geometry_bank() -> gfx::geometry_handle;
+            void release_bank( gfx::geometry_handle handle );
+            void release_bank( unsigned int i );
+
             TerrainVector m_to_unload;
             TerrainVector m_active;
             TerrainVector m_to_load;
+
+            std::vector< gfx::geometry_handle > active_geometry_banks;
+            std::vector< unsigned int > unreserved_banks;
         } state_lists;
       private:
         using terrain_array =
@@ -96,6 +111,9 @@ namespace Terrain
         Section( int max_side_density );
         int static const side_size_in_meters = 1000;
         int const max_side_density;
+
+      private:
+        gfx::geometrybank_handle geometry_bank_handle;
         std::vector< std::unique_ptr< Chunk > > chunks;
     };
     

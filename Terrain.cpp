@@ -17,9 +17,17 @@ namespace Terrain
 {
     Manager::Manager()
     {
-        for( auto& x : terrain )
-            x = std::make_unique< Terrain::Section >( 1 );
+        auto& banks = state_lists.active_geometry_banks;
+        const unsigned int bank_no = ( update_range + 1 ) * ( update_range + 1 );
+        banks.reserve( bank_no );
+        state_lists.unreserved_banks.reserve( bank_no );
+        for( unsigned int i = 0; i < bank_no; ++i )
+        {
+            banks[ i ] = GfxRenderer.Create_Bank();
+            state_lists.unreserved_banks.push_back( i );
+        }
     }
+
     bool Manager::deserialize( cParser& input )
     {
         /*
@@ -70,24 +78,40 @@ namespace Terrain
                                 zs[sx+sy*ss_count][ssx+ssy*w] = zs[ sx-1 + sy*ss_count ][ (w-1) + ssy*w ];
                                 continue;
                             }
-                            if( ssy == 0 ) // if section y isnt 0
-                            {
-                                zs[sx+sy*ss_count][ssx+ssy*w] = zs[ sx + (sy-1)*ss_count ][ssx + (w-1)*w];
-                                continue;
-                            }
-                            zs[sx + sy*ss_count][ssx+ssy*w] = random();
-                        }
-
-        unsigned int section_id = 0;
-        state_serializer::scratch_data trash{};
-
-        for( auto& x : simulation::Region->get_all_sections() )
+    auto Manager::StateLists::get_next_geometry_bank() -> gfx::geometry_handle
+    {
+        gfx::geometry_handle return_object;
+        if( unreserved_banks.size() > 1 )
         {
-            const float size = scene::SECTION_SIZE / (float) sub_sections;
-            const int size_of_tex = 2; // m
-            const int samples_per_km = size / size_of_tex; // 2m per tex
-            if( !x ) { ++section_id; continue; }
-            glm::dvec3 origin = (glm::dvec3) glm::ceil( glm::vec3( (glm::vec3) x->area().center - glm::vec3( 500.0, 0.0, 500.0 ) ) * 0.001f )*1000.0;
+            auto return_object = active_geometry_banks[ unreserved_banks.back() ];
+            unreserved_banks.pop_back();
+            return return_object;
+        } else
+        {
+            active_geometry_banks.push_back( GfxRenderer.Create_Bank() );
+            return active_geometry_banks.back();
+        }
+    }
+
+    void Manager::StateLists::release_bank( gfx::geometry_handle handle )
+    { release_bank( handle.bank ); }
+
+    void Manager::StateLists::release_bank( unsigned int i )
+    {
+        unsigned int it = 0;
+        bool fund = false;
+        while( it < active_geometry_banks.size() )
+        {
+            if( active_geometry_banks[it].bank == i )
+            {
+                fund = true;
+                break;
+            } else ++it;
+        }
+        if( !fund ) return;
+        GfxRenderer.Release_Bank( active_geometry_banks[it] );
+        unreserved_banks.push_back( it );
+    }
             
             auto s_x = section_id % scene::REGION_SIDE_SECTION_COUNT;
             auto s_y = section_id / scene::REGION_SIDE_SECTION_COUNT;
