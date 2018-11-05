@@ -13,6 +13,8 @@ http://mozilla.org/MPL/2.0/.
 #define TERRAIN_H_19_10_18
 
 #include <vector>
+#include <unordered_map>
+#include <mutex>
 
 #include "Classes.h"
 #include "scene.h" // For `scene` namespace consts.
@@ -31,8 +33,25 @@ namespace Terrain
         Manager();
         Manager( Manager& ) = delete;
         Manager& operator=( Manager& ) = delete;
+        using terrain_vector = std::unordered_map< unsigned int, Section* >;
+
         /// Deserialize terrain from provided parser.
         bool deserialize( cParser& input ); // TO IMPLEMENT
+
+        class TerrainVector
+        {
+            friend Manager;
+          public:
+            inline auto list() -> terrain_vector& { return m_list; }
+            inline auto list() const -> const terrain_vector& { return m_list; }
+            inline void lock()
+            { while( ! mutex.try_lock() ) continue; };
+            inline void unlock()
+            { mutex.unlock(); };
+          private:
+            terrain_vector m_list;
+            std::mutex mutex;
+        };
       private:
         using terrain_array =
                 std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
