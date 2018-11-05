@@ -60,6 +60,26 @@ namespace Terrain
         inline bool is_render_locked()
         { return renderer_lock; }
 
+        inline auto active() const -> const TerrainVector&
+        { return state_lists.m_active; };
+        inline auto active() -> TerrainVector&
+        { return state_lists.m_active; };
+        inline auto to_load() const -> const TerrainVector&
+        { return state_lists.m_to_load; };
+        inline auto to_load() -> TerrainVector&
+        { return state_lists.m_to_load; };
+        inline auto to_unload() const -> const TerrainVector&
+        { return state_lists.m_to_unload; };
+        inline auto to_unload() -> TerrainVector&
+        { return state_lists.m_to_unload; };
+
+        class StateLists
+        {
+            friend Manager;
+            TerrainVector m_to_unload;
+            TerrainVector m_active;
+            TerrainVector m_to_load;
+        } state_lists;
       private:
         using terrain_array =
                 std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
