@@ -10,7 +10,7 @@ http://mozilla.org/MPL/2.0/.
 #pragma once
 
 #ifndef TERRAIN_H_19_10_18
-#define SCENE_H_19_10_18
+#define TERRAIN_H_19_10_18
 
 #include <vector>
 
@@ -72,4 +72,4 @@ namespace Terrain
     };
 }
 
-#endif // !SCENE_H_19_10_18
+#endif // !TERRAIN_H_19_10_18
