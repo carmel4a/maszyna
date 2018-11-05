@@ -8,14 +8,12 @@ Session.vim
 .netrwhist
 *~
 
-
 ### CMake ###
 CMakeCache.txt
 CMakeFiles
 Makefile
 cmake_install.cmake
 install_manifest.txt
-
 
 ### C++ ###
 # Compiled Object files
@@ -62,22 +60,33 @@ format_all_files.py
 EU07.tds
 *.opendb
 *.db
+#ref/
+*.aps
+
+#dirs
+builds/
+build/
+doc/
 .vs/
 Debug/
 tmp/
 bin/
 ipch/
-#ref/
-*.aps
-
-builds/
-doc/
+.vscode
+.project
+nanogui*
+fonts
 
 CMakeLists.txt.user
 
 *.vcxproj
-.vscode
 *.sln
 
+#random files
 wc.sh
 lib_src
+?
+errors.txt
+log.txt
+GUI*
+compile_commands*
