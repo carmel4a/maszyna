@@ -1410,6 +1410,11 @@ gfx::geometrybank_handle opengl_renderer::Create_Bank()
 	return m_geometry.create_bank();
 }
 
+bool opengl_renderer::Release_Bank( gfx::geometrybank_handle handle )
+{
+    return m_geometry.release_bank( handle );
+}
+
 // creates a new geometry chunk of specified type from supplied vertex data, in specified bank. returns: handle to the chunk or NULL
 gfx::geometry_handle opengl_renderer::Insert(gfx::vertex_array &Vertices, gfx::geometrybank_handle const &Geometry, int const Type)
 {

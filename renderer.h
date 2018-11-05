@@ -141,7 +141,8 @@ class opengl_renderer
 	// geometry methods
 	// NOTE: hands-on geometry management is exposed as a temporary measure; ultimately all visualization data should be generated/handled automatically by the renderer itself
 	// creates a new geometry bank. returns: handle to the bank or NULL
-	gfx::geometrybank_handle Create_Bank();
+    gfx::geometrybank_handle Create_Bank();
+    bool Release_Bank( gfx::geometrybank_handle );
 	// creates a new geometry chunk of specified type from supplied vertex data, in specified bank. returns: handle to the chunk or NULL
 	gfx::geometry_handle Insert(gfx::vertex_array &Vertices, gfx::geometrybank_handle const &Geometry, int const Type);
 	// replaces data of specified chunk with the supplied vertex data, starting from specified offset
