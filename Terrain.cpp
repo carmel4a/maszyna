@@ -28,9 +28,26 @@ namespace Terrain
         }
     }
 
+    Manager::~Manager()
+    {
+        // Send end signal to child threads.
+        kill_threads = true;
+        // Wait to join child threads.
+        for( auto& t : threads ) t.join();
+    }
+
     bool Manager::deserialize( cParser& input )
     {
+        threads.emplace_back( &Manager::main_terrain_thread, this );
         return true;
+    }
+
+    void Manager::main_terrain_thread()
+    {
+        // Thread main loop
+        while( !kill_threads )
+        {
+        }
     }
 
     auto Manager::StateLists::get_next_geometry_bank() -> gfx::geometry_handle

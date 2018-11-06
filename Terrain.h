@@ -14,6 +14,7 @@ http://mozilla.org/MPL/2.0/.
 
 #include <vector>
 #include <unordered_map>
+#include <thread>
 #include <mutex>
 
 #include "Classes.h"
@@ -31,6 +32,7 @@ namespace Terrain
         // friend Section::unload;
       public:
         Manager();
+        ~Manager();
         Manager( Manager& ) = delete;
         Manager& operator=( Manager& ) = delete;
         using terrain_vector = std::unordered_map< unsigned int, Section* >;
@@ -99,9 +101,16 @@ namespace Terrain
         using terrain_array =
                 std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
 
+        // Threads
+        void main_terrain_thread();
+
         /// Half side of update sections square.
         constexpr static short update_range { 3 };
+
         terrain_array terrain;
+
+        std::vector< std::thread > threads;
+        bool kill_threads = false;
         bool renderer_lock = false;
     };
 
