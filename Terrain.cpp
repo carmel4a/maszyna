@@ -21,6 +21,10 @@ namespace Terrain
 {
     Manager::Manager()
     {
+        // Init Section list
+        // \note IDs of sections start at 0
+        for( int id = 0; id < terrain.size(); ++id )
+            terrain[ id ].reset( new Terrain::Section( 100, id ) );
         auto& banks = state_lists.active_geometry_banks;
         const unsigned int bank_no = ( update_range + 1 ) * ( update_range + 1 );
         banks.reserve( bank_no );
