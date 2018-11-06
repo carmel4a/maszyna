@@ -7,10 +7,10 @@ obtain one at
 http://mozilla.org/MPL/2.0/.
 */
 
-#pragma once
-
 #ifndef TERRAIN_H_19_10_18
 #define TERRAIN_H_19_10_18
+
+#pragma once
 
 #include <vector>
 #include <unordered_map>
