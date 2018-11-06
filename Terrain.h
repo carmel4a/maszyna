@@ -120,6 +120,7 @@ namespace Terrain
         Section( int max_side_density, int id );
 
         auto id() const -> const int { return m_id; }
+        bool load( int LOD = 0 );
         bool unload();
 
         void insert_triangle( scene::shape_node );

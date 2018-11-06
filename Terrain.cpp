@@ -100,6 +100,131 @@ namespace Terrain
         m_area.radius = { 707.10678118 }; // radius of the bounding sphere
     }
 
+    bool Section::load( int LOD )
+    {
+        while( true )
+        {
+            if ( ! simulation::Region->terrain()->is_render_locked() )
+            {
+                geometry_bank_handle =
+                        simulation::Region->terrain()->get_next_geometry_bank();
+                break;
+            }
+            else continue;
+        }
+
+        m_shapes.emplace_back();
+        auto& s = m_shapes.back();
+        auto tex = GfxRenderer.Fetch_Material( "ground-yellowbrown" );
+        const float size = scene::SECTION_SIZE / (float) max_side_density;
+        const int   size_of_tex = 2; // m
+        const float samples_per_km = size / (float) size_of_tex;
+        s.get_data().rangesquared_min = 0;
+        s.get_data().rangesquared_max = 10000'0000;
+
+        s.get_data().lighting.ambient.r = 0.025f;
+        s.get_data().lighting.ambient.g = 0.025f;
+        s.get_data().lighting.ambient.b = 0.025f;
+        s.get_data().lighting.ambient.a = 1.0f;
+
+        s.get_data().lighting.diffuse.r = 0.5f;
+        s.get_data().lighting.diffuse.g = 0.5f;
+        s.get_data().lighting.diffuse.b = 0.5f;
+        s.get_data().lighting.diffuse.a = 1.0f;
+
+        s.get_data().lighting.specular.r = 0.010f;
+        s.get_data().lighting.specular.g = 0.010f;
+        s.get_data().lighting.specular.b = 0.010f;
+        s.get_data().lighting.specular.a = 1.0f;
+
+        s.get_data().material = tex;
+        // s.get_data().material = GfxRenderer.Fetch_Material( "grass/grass04" );
+        s.get_data().translucent = false;
+        
+        world_vertex* v = nullptr;
+
+        const float d = 0.5f * scene::SECTION_SIZE;
+        for( int chunk_y = 0; chunk_y < max_side_density; ++chunk_y )
+            for( int chunk_x = 0; chunk_x < max_side_density; ++chunk_x )
+            {
+                s.get_data().vertices.emplace_back();
+                v = &s.get_data().vertices.back();
+                v->position.x = chunk_x * size - d;
+                v->position.y = 0.0f;
+                v->position.z = chunk_y * size - d;
+                v->texture.s  = 0.0f;
+                v->texture.t  = 0.0f;
+
+                v->normal.x   = 0.0f;
+                v->normal.y   = 1.0f;
+                v->normal.z   = 0.0f;
+                s.get_data().vertices.emplace_back();
+                v = &s.get_data().vertices.back();
+                v->position.x = chunk_x * size - d;
+                v->position.y = 0.0f;
+                v->position.z = (chunk_y + 1) * size - d;
+                v->texture.s  = 0.0f;
+                v->texture.t  = 1.0f * samples_per_km;
+
+                v->normal.x   = 0.0f;
+                v->normal.y   = 1.0f;
+                v->normal.z   = 0.0f;
+                s.get_data().vertices.emplace_back();
+                v = &s.get_data().vertices.back();
+
+                v->position.x = (chunk_x + 1) * size - d;
+                v->position.y = 0.0f;
+                v->position.z = chunk_y * size - d;
+                v->texture.s  = 1.0f * samples_per_km;
+                v->texture.t  = 0.0f;
+
+                v->normal.x   = 0.0f;
+                v->normal.y   = 1.0f;
+                v->normal.z   = 0.0f;
+                /////////
+                s.get_data().vertices.emplace_back();
+                v = &s.get_data().vertices.back();
+
+                v->position.x = (chunk_x + 1) * size - d;
+                v->position.y = 0.0f;
+                v->position.z = chunk_y * size - d;
+                v->texture.s  = 1.0f * samples_per_km;
+                v->texture.t  = 0.0f;            
+
+                v->normal.x   = 0.0f;
+                v->normal.y   = 1.0f;
+                v->normal.z   = 0.0f;
+                s.get_data().vertices.emplace_back();
+                v = &s.get_data().vertices.back();
+
+                v->position.x = chunk_x * size - d;
+                v->position.y = 0.0f;
+                v->position.z = (chunk_y + 1) * size - d;
+                v->texture.s  = 0.0f;
+                v->texture.t  = 1.0f * samples_per_km;
+
+                v->normal.x   = 0.0f;
+                v->normal.y   = 1.0f;
+                v->normal.z   = 0.0f;
+                s.get_data().vertices.emplace_back();
+                v = &s.get_data().vertices.back();
+
+                v->position.x = (chunk_x + 1) * size - d;
+                v->position.y = 0.0f;
+                v->position.z = (chunk_y + 1) * size - d;
+                v->texture.s  = 1.0f * samples_per_km;
+                v->texture.t  = 1.0f * samples_per_km;
+
+                v->normal.x   = 0.0f;
+                v->normal.y   = 1.0f;
+                v->normal.z   = 0.0f;
+            }
+        m_shapes.back().compute_radius();
+        m_shapes.back().origin( {0.f, 0.f, 0.f} );
+        m_shapes.back().create_geometry( geometry_bank_handle );
+        return true;
+    }
+
     bool Section::unload()
     {
         while( true )
