@@ -100,6 +100,21 @@ namespace Terrain
         m_area.radius = { 707.10678118 }; // radius of the bounding sphere
     }
 
+    bool Section::unload()
+    {
+        while( true )
+        {
+            if ( ! simulation::Region->terrain()->is_render_locked() ) { m_shapes.clear();; break; }
+            else continue;
+        }
+        while( true )
+        {
+            if ( ! simulation::Region->terrain()->is_render_locked() ) { simulation::Region->terrain()->release_bank( geometry_bank_handle );; break; }
+            else continue;
+        }
+        return true;
+    }
+
     void Section::insert_triangle( scene::shape_node shape )
     {
         shape.compute_radius();
