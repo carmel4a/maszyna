@@ -100,6 +100,15 @@ namespace Terrain
         m_area.radius = { 707.10678118 }; // radius of the bounding sphere
     }
 
+    void Section::insert_triangle( scene::shape_node shape )
+    {
+        shape.compute_radius();
+        shape.origin( {0.f, 0.f, 0.f} );
+
+        m_shapes.push_back( shape );
+        m_shapes.back().create_geometry( geometry_bank_handle );
+    }
+
     int const Section::side_size_in_meters { scene::SECTION_SIZE };
 
     Chunk::Chunk( ChunkTypes type )
