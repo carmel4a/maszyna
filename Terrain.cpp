@@ -8,11 +8,15 @@ http://mozilla.org/MPL/2.0/.
 */
 
 #include <memory>
+#include <thread>
 
 #include "Classes.h"
 #include "Terrain.h"
 #include "renderer.h" // for GfxRenderer
 #include "simulation.h" // for simulation::Region
+#include "Globals.h" // for camera position
+#include "scene.h" // for scene namespace consts
+
 namespace Terrain
 {
     Manager::Manager()
