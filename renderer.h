@@ -142,6 +142,7 @@ class opengl_renderer
 	// NOTE: hands-on geometry management is exposed as a temporary measure; ultimately all visualization data should be generated/handled automatically by the renderer itself
 	// creates a new geometry bank. returns: handle to the bank or NULL
     gfx::geometrybank_handle Create_Bank();
+    /// Forces instantly release the given geometry bank.
     bool Release_Bank( gfx::geometrybank_handle );
 	// creates a new geometry chunk of specified type from supplied vertex data, in specified bank. returns: handle to the chunk or NULL
 	gfx::geometry_handle Insert(gfx::vertex_array &Vertices, gfx::geometrybank_handle const &Geometry, int const Type);
@@ -252,6 +253,8 @@ class opengl_renderer
 	void Render(scene::basic_region *Region);
 	void Render(section_sequence::iterator First, section_sequence::iterator Last);
 	void Render(cell_sequence::iterator First, cell_sequence::iterator Last);
+	void Render( std::unordered_map< unsigned int,
+                                     Terrain::Section* >& active_sections );
     void Render(scene::shape_node const &Shape, bool const Ignorerange);
 	void Render(TAnimModel *Instance);
 	bool Render(TDynamicObject *Dynamic);

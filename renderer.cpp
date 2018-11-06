@@ -21,6 +21,7 @@ http://mozilla.org/MPL/2.0/.
 #include "simulationtime.h"
 #include "application.h"
 #include "AnimModel.h"
+#include "Terrain.h"
 
 opengl_renderer GfxRenderer;
 
@@ -1641,6 +1642,9 @@ void opengl_renderer::Render(scene::basic_region *Region)
 	{
 		Update_Lights(simulation::Lights);
 
+        Region->terrain()->render_lock();
+		Render( Region->terrain()->active().list() );
+        Region->terrain()->render_unlock();
 		Render(std::begin(m_sectionqueue), std::end(m_sectionqueue));
 		// draw queue is filled while rendering sections
 		if (EditorModeFlag)
@@ -1910,6 +1914,42 @@ void opengl_renderer::Render(cell_sequence::iterator First, cell_sequence::itera
 
 		++first;
 	}
+}
+
+void opengl_renderer::Render( std::unordered_map<
+        unsigned int, Terrain::Section* >& active_sections )
+{	
+	switch (m_renderpass.draw_mode)
+	{
+		case rendermode::color:
+		{
+            std::vector< Terrain::Section* > visible_sections;
+            for( const auto& id_section_pair : active_sections )
+            {
+                const auto& section = id_section_pair.second;
+                if( m_renderpass.camera.visible( section->area() ) )
+                {
+                    ::glPushMatrix();
+                    auto const originoffset =
+                            section->area().center
+                            - m_renderpass.camera.position();
+                    ::glTranslated( originoffset.x,
+                                    originoffset.y,
+                                    originoffset.z );
+                    for( const auto& shape : section->shapes() )
+                        Render( shape, true );
+                    // post-render cleanup
+                    ::glPopMatrix();
+                }
+            }
+			break; 
+		}
+		case rendermode::shadows:
+		case rendermode::pickscenery:
+		case rendermode::reflections:
+		case rendermode::pickcontrols:
+		default: break;
+    }
 }
 
 void opengl_renderer::Draw_Geometry(std::vector<gfx::geometrybank_handle>::iterator begin, std::vector<gfx::geometrybank_handle>::iterator end)
