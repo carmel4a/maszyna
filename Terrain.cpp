@@ -44,9 +44,125 @@ namespace Terrain
 
     void Manager::main_terrain_thread()
     {
+        constexpr short range = 2 * update_range + 1;
+
+        constexpr int section_side       = scene::SECTION_SIZE;
+        constexpr int section_s_num      = scene::REGION_SIDE_SECTION_COUNT;
+        constexpr int half_section_s_num = section_s_num / 2;
+    
+        static int old_camera_start_section_id = -1;
+
         // Thread main loop
         while( !kill_threads )
         {
+            // Position relative to origin (0, 0).
+            const auto& camera_global_pos = Global.pCamera.Pos;
+            /* camera start section is relative to origin. It is not equal
+            to `terrain` array, so future origin is needed. So, for center of Region
+            we have (254, 254) km */
+            const int camera_start_section_x
+                    { (int) camera_global_pos.x / section_side };
+            const int camera_start_section_y
+                    { (int) camera_global_pos.z / section_side };
+            const int camera_start_section_id = camera_start_section_x
+                    + camera_start_section_y * section_s_num;
+            if( camera_start_section_id == old_camera_start_section_id )
+                continue;
+
+            old_camera_start_section_id = camera_start_section_id;
+            const int x_origin = camera_start_section_x + half_section_s_num;
+            const int y_origin = camera_start_section_y + half_section_s_num;
+
+            active().lock();
+            for( const auto& id_and_section : active().list() )
+            {
+                const int  id      = id_and_section.first;
+                const auto section = id_and_section.second;
+                const int  x_coord = id % section_s_num;
+                const int  y_coord = id / section_s_num;
+                if( std::abs( x_origin - x_coord ) > ( update_range + 1 )
+                 || std::abs( y_origin - y_coord ) > ( update_range + 1 ) )
+                {
+                    to_unload().lock();
+                    to_unload().list()[ id ] = section;
+                    to_unload().unlock();
+                }
+            }
+            active().unlock();
+            to_load().lock();
+            for( int y_it = -1 * range/2; y_it < range; ++y_it )
+            {
+                if ( y_origin + y_it  < 0 || y_origin + y_it  > section_s_num ) continue;
+                for( int x_it = -1 * range/2; x_it < range; ++x_it )
+                {
+                    if ( x_origin + x_it  < 0 || x_origin + x_it  > section_s_num ) continue;
+                    const int id {
+                            ( x_origin + x_it )
+                            + ( y_origin + y_it ) * section_s_num };
+                    to_load().list()[ id ] = terrain[ id ].get();
+                }
+            }
+            to_load().unlock();
+
+            std::vector< unsigned int > to_del_form_active;
+            std::vector< unsigned int > to_add_to_active;
+            // Jeśli główny wątek renderuje nic nie wypierdalaj.
+            if( ! renderer_lock )
+            {
+                to_unload().lock();
+                for( auto& x : to_unload().list() )
+                {
+                    while( true )
+                    {
+                        if ( ! renderer_lock ) { x.second->unload(); break; }
+                        else continue;
+                    }
+                    while( true )
+                    {
+                        if ( ! renderer_lock ) { to_del_form_active.push_back( x.first ); break; }
+                        else continue;
+                    }
+                }
+                to_unload().list().clear();
+                to_unload().unlock();
+            }
+
+            to_load().lock();
+            for( auto& x : to_load().list() )
+            {
+                while( true )
+                {
+                    if ( ! renderer_lock ) { x.second->load(); break; }
+                    else continue;
+                }
+                while( true )
+                {
+                    if ( ! renderer_lock ) { to_add_to_active.push_back( x.second->id() ); break; }
+                    else continue;
+                }
+            }
+            to_load().list().clear();
+            to_load().unlock();
+
+            active().lock();
+            for( const auto& x : to_del_form_active )
+            {
+                while( true )
+                {
+                    if ( ! renderer_lock ) { active().list().erase( x ); break; }
+                    else continue;
+                }
+            }
+
+            for( const auto& x : to_add_to_active )
+            {
+                while( true )
+                {
+                    if ( ! renderer_lock ) { active().list()[ x ] = terrain[ x ].get(); break; }
+                    else continue;
+                }
+            }
+            active().unlock();
         }
     }
 
