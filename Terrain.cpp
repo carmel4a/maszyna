@@ -85,14 +85,23 @@ namespace Terrain
         unreserved_banks.push_back( it );
     }
 
-    Section::Section( int max_side_density )
+    Section::Section( int max_side_density, int id )
             : max_side_density { max_side_density }
+            , m_id { id }
+            , geometry_bank_handle {  }
     {
-        chunks.reserve( max_side_density * max_side_density );
-        for( int i = 0; i < max_side_density * max_side_density; ++i )
-            chunks.emplace_back( new EmptyChunk() );
+        const int x = id % scene::REGION_SIDE_SECTION_COUNT;
+        const int y = id / scene::REGION_SIDE_SECTION_COUNT;
+        m_area.center = { 
+                ( (double) ( x - scene::REGION_SIDE_SECTION_COUNT / 2 ) ) * scene::SECTION_SIZE + 0.5 * (double) scene::SECTION_SIZE,
+                0.0f,
+                ( (double) ( y - scene::REGION_SIDE_SECTION_COUNT / 2 ) ) * scene::SECTION_SIZE + 0.5 * (double) scene::SECTION_SIZE
+        };
+        m_area.radius = { 707.10678118 }; // radius of the bounding sphere
     }
-    
+
+    int const Section::side_size_in_meters { scene::SECTION_SIZE };
+
     Chunk::Chunk( ChunkTypes type )
             : type{ type }
             , center {}

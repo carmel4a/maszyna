@@ -117,12 +117,20 @@ namespace Terrain
     class Section
     {
       public:
-        Section( int max_side_density );
-        int static const side_size_in_meters = 1000;
-        int const max_side_density;
+        Section( int max_side_density, int id );
+
+        auto id() const -> const int { return m_id; }
+
+        inline auto area() const -> const scene::bounding_area& { return m_area; }
+        inline auto shapes() const -> const std::vector< scene::shape_node >& { return m_shapes; }
 
       private:
-        gfx::geometrybank_handle geometry_bank_handle;
+        int m_id;
+        gfx::geometrybank_handle                geometry_bank_handle;
+        scene::bounding_area                    m_area;
+        std::vector< scene::shape_node >        m_shapes;
+        static const int                        side_size_in_meters;
+        const int                               max_side_density;
         std::vector< std::unique_ptr< Chunk > > chunks;
     };
     
