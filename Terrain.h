@@ -76,7 +76,7 @@ namespace Terrain
 
         /// Serialize terrain to provided parser.
         /** Possbile side efects in filesystem. */
-        bool serialize( cParser& input ) {}; // TO IMPLEMENT
+        bool serialize( cParser& input ) { return false; }; // TO IMPLEMENT
 
       // Geometry bank management
         inline auto get_next_geometry_bank() -> gfx::geometry_handle

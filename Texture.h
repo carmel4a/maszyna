@@ -59,7 +59,7 @@ struct opengl_texture {
 
 	GLenum target = GL_TEXTURE_2D;
     static std::array<GLuint, gl::MAX_TEXTURES + 2> units;
-    auto get_data() const -> const std::vector<char>& { return data; }
+    auto get_data() const -> const std::vector<unsigned char>& { return data; }
 private:
 // methods
     void make_stub();
