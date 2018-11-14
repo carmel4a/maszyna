@@ -99,6 +99,16 @@ namespace Terrain
             std::vector< gfx::geometry_handle > active_geometry_banks;
             std::vector< unsigned int > unreserved_banks;
         } state_lists;
+
+        struct Mutexes
+        {
+            std::mutex active_list_swap;
+            std::mutex section_unload;
+        };
+
+      // Data
+        Mutexes mutexes;
+
       private:
         using terrain_array =
                 std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
