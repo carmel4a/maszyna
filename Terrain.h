@@ -40,9 +40,6 @@ namespace Terrain
         Manager( Manager& ) = delete;
         Manager& operator=( Manager& ) = delete;
 
-        /// Deserialize terrain from provided parser.
-        bool deserialize( cParser& input ); // TO IMPLEMENT
-
       // Types
         class TerrainContainerResource
         {
@@ -73,6 +70,13 @@ namespace Terrain
             std::mutex section_unload;
         };
 
+      // Serialization
+        /// Deserialize terrain from provided parser.
+        bool deserialize( cParser& input ); // TO IMPLEMENT
+
+        /// Serialize terrain to provided parser.
+        /** Possbile side efects in filesystem. */
+        bool serialize( cParser& input ) {}; // TO IMPLEMENT
 
       // Geometry bank management
         inline auto get_next_geometry_bank() -> gfx::geometry_handle
