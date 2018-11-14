@@ -27,18 +27,18 @@ namespace Terrain
         // \note IDs of sections start at 0
         for( int id = 0; id < terrain.size(); ++id )
             terrain[ id ].reset( new Terrain::Section( 100, id ) );
-        auto& banks = state_lists.active_geometry_banks;
         const unsigned int bank_no = ( update_range + 1 ) * ( update_range + 1 );
 
+        auto& banks = geometry_banks.active_geometry_banks;
         // Reserve required memory.
         banks.reserve( bank_no );
-        state_lists.unreserved_banks.reserve( bank_no );
+        geometry_banks.unreserved_banks.reserve( bank_no );
 
         // Banks creation.
         for( unsigned int i = 0; i < bank_no; ++i )
         {
             banks[ i ] = GfxRenderer.Create_Bank();
-            state_lists.unreserved_banks.push_back( i );
+            geometry_banks.unreserved_banks.push_back( i );
         }
     }
 
@@ -154,7 +154,7 @@ namespace Terrain
         }
     }
 
-    auto Manager::StateLists::get_next_geometry_bank() -> gfx::geometry_handle
+    auto Manager::GeometryBanksManager::get_next_geometry_bank() -> gfx::geometry_handle
     {
         gfx::geometry_handle return_object;
         if( unreserved_banks.size() > 1 )
@@ -169,10 +169,10 @@ namespace Terrain
         }
     }
 
-    void Manager::StateLists::release_bank( gfx::geometry_handle handle )
+    void Manager::GeometryBanksManager::release_bank( gfx::geometry_handle handle )
     { release_bank( handle.bank ); }
 
-    void Manager::StateLists::release_bank( unsigned int i )
+    void Manager::GeometryBanksManager::release_bank( unsigned int i )
     {
         unsigned int it = 0;
         bool fund = false;

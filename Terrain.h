@@ -43,63 +43,29 @@ namespace Terrain
         /// Deserialize terrain from provided parser.
         bool deserialize( cParser& input ); // TO IMPLEMENT
 
-        class TerrainVector
+      // Types
+        class TerrainContainerResource
         {
             friend Manager;
           public:
-            inline auto list() -> terrain_vector& { return m_list; }
-            inline auto list() const -> const terrain_vector& { return m_list; }
-            inline void lock()
-            { while( ! mutex.try_lock() ) continue; };
-            inline void unlock()
-            { mutex.unlock(); };
+            inline auto list() -> SectionsContainer& { return m_list; }
+            inline auto list() const -> const SectionsContainer& { return m_list; }
+            operator std::mutex&() { return mutex; }
           private:
             SectionsContainer m_list;
             std::mutex mutex;
         };
 
-        inline void render_lock()
-        { renderer_lock = true; };
-        inline void render_unlock()
-        { renderer_lock = false; };
-        inline bool is_render_locked()
-        { return renderer_lock; }
-
-        inline auto active() const -> const TerrainVector&
-        { return state_lists.m_active; };
-        inline auto active() -> TerrainVector&
-        { return state_lists.m_active; };
-        inline auto to_load() const -> const TerrainVector&
-        { return state_lists.m_to_load; };
-        inline auto to_load() -> TerrainVector&
-        { return state_lists.m_to_load; };
-        inline auto to_unload() const -> const TerrainVector&
-        { return state_lists.m_to_unload; };
-        inline auto to_unload() -> TerrainVector&
-        { return state_lists.m_to_unload; };
-
-        // Geometry bank management
-        inline auto get_next_geometry_bank() -> gfx::geometry_handle
-        { return state_lists.get_next_geometry_bank(); };
-        inline void release_bank( gfx::geometry_handle handle )
-        { state_lists.release_bank( handle.bank ); };
-        inline void release_bank( unsigned int i )
-        { state_lists.release_bank( i ); };
-
-        class StateLists
+        class GeometryBanksManager
         {
             friend Manager;
             auto get_next_geometry_bank() -> gfx::geometry_handle;
             void release_bank( gfx::geometry_handle handle );
             void release_bank( unsigned int i );
 
-            TerrainVector m_to_unload;
-            TerrainVector m_active;
-            TerrainVector m_to_load;
-
             std::vector< gfx::geometry_handle > active_geometry_banks;
             std::vector< unsigned int > unreserved_banks;
-        } state_lists;
+        };
 
         struct Mutexes
         {
@@ -107,7 +73,17 @@ namespace Terrain
             std::mutex section_unload;
         };
 
+
+      // Geometry bank management
+        inline auto get_next_geometry_bank() -> gfx::geometry_handle
+        { return geometry_banks.get_next_geometry_bank(); };
+        inline void release_bank( gfx::geometry_handle handle )
+        { geometry_banks.release_bank( handle.bank ); };
+        inline void release_bank( unsigned int i )
+        { geometry_banks.release_bank( i ); };
+
       // Data
+        GeometryBanksManager geometry_banks;
         Mutexes mutexes;
 
       private:
