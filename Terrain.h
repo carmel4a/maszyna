@@ -124,7 +124,6 @@ namespace Terrain
 
         std::vector< std::thread > threads;
         bool kill_threads = false;
-        bool renderer_lock = false;
     };
 
     class Section

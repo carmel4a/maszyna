@@ -9,6 +9,8 @@ http://mozilla.org/MPL/2.0/.
 
 #include "stdafx.h"
 
+#include <mutex>
+
 #include "renderer.h"
 #include "color.h"
 #include "Globals.h"
@@ -1642,9 +1644,13 @@ void opengl_renderer::Render(scene::basic_region *Region)
 	{
 		Update_Lights(simulation::Lights);
 
-        Region->terrain()->render_lock();
-		Render( Region->terrain()->active().list() );
-        Region->terrain()->render_unlock();
+        {
+            const auto& terrain { Region->terrain() };
+            std::scoped_lock< std::mutex, std::mutex > lock (
+                    terrain->mutexes.active_list_swap,
+                    terrain->mutexes.section_unload );
+            Render( terrain->active_sections() );
+        }
 		Render(std::begin(m_sectionqueue), std::end(m_sectionqueue));
 		// draw queue is filled while rendering sections
 		if (EditorModeFlag)

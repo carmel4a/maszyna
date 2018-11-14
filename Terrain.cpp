@@ -9,6 +9,8 @@ http://mozilla.org/MPL/2.0/.
 
 #include <memory>
 #include <thread>
+#include <limits> // for std::numeric_limits
+#include <mutex>
 
 #include "Classes.h"
 #include "Terrain.h"
@@ -82,8 +84,9 @@ namespace Terrain
             const int x_origin = camera_start_section_x + half_section_s_num;
             const int y_origin = camera_start_section_y + half_section_s_num;
 
-            active().lock();
-            for( const auto& id_and_section : active().list() )
+            /* If difference of x OR y coord of camera and section is bigger
+            than update range - unload section. */
+            for( const auto& id_and_section : m_active_sections )
             {
                 const int  id      = id_and_section.first;
                 const auto section = id_and_section.second;
@@ -92,13 +95,14 @@ namespace Terrain
                 if( std::abs( x_origin - x_coord ) > ( update_range + 1 )
                  || std::abs( y_origin - y_coord ) > ( update_range + 1 ) )
                 {
-                    to_unload().lock();
-                    to_unload().list()[ id ] = section;
-                    to_unload().unlock();
+                    std::scoped_lock< std::mutex > lock ( mutexes.section_unload );
+                    section->unload();
+                    if( temp_active_sections.find( id )
+                        != temp_active_sections.end() )
+                    temp_active_sections.erase( id );
                 }
             }
-            active().unlock();
-            to_load().lock();
+
             for( int y_it = -1 * range/2; y_it < range; ++y_it )
             {
                 if ( y_origin + y_it  < 0 || y_origin + y_it  > section_s_num ) continue;
@@ -108,70 +112,21 @@ namespace Terrain
                     const int id {
                             ( x_origin + x_it )
                             + ( y_origin + y_it ) * section_s_num };
-                    to_load().list()[ id ] = terrain[ id ].get();
-                }
-            }
-            to_load().unlock();
-
-            std::vector< unsigned int > to_del_form_active;
-            std::vector< unsigned int > to_add_to_active;
-            // Jeśli główny wątek renderuje nic nie wypierdalaj.
-            if( ! renderer_lock )
-            {
-                to_unload().lock();
-                for( auto& x : to_unload().list() )
-                {
-                    while( true )
-                    {
-                        if ( ! renderer_lock ) { x.second->unload(); break; }
-                        else continue;
-                    }
-                    while( true )
-                    {
-                        if ( ! renderer_lock ) { to_del_form_active.push_back( x.first ); break; }
-                        else continue;
-                    }
-                }
-                to_unload().list().clear();
-                to_unload().unlock();
-            }
-
-            to_load().lock();
-            for( auto& x : to_load().list() )
-            {
-                while( true )
-                {
-                    if ( ! renderer_lock ) { x.second->load(); break; }
-                    else continue;
-                }
-                while( true )
-                {
-                    if ( ! renderer_lock ) { to_add_to_active.push_back( x.second->id() ); break; }
-                    else continue;
-                }
-            }
-            to_load().list().clear();
-            to_load().unlock();
-
-            active().lock();
-            for( const auto& x : to_del_form_active )
-            {
-                while( true )
-                {
-                    if ( ! renderer_lock ) { active().list().erase( x ); break; }
-                    else continue;
+                    
+                    /* \todo check if renderer doesn't actually rendere old
+                    sections. if it do, new section may be added inside of vbo,
+                    not at the end and renderer may thread new data as old
+                    shape. or something like that */
+                    terrain[ id ]->load();
+                    temp_active_sections[ id ] = terrain[ id ].get();
                 }
             }
 
-            for( const auto& x : to_add_to_active )
             {
-                while( true )
-                {
-                    if ( ! renderer_lock ) { active().list()[ x ] = terrain[ x ].get(); break; }
-                    else continue;
-                }
+                std::scoped_lock< std::mutex > lock ( mutexes.active_list_swap );
+                m_active_sections.swap( temp_active_sections );
             }
-            active().unlock();
+            temp_active_sections.clear();
         }
     }
 
@@ -227,16 +182,9 @@ namespace Terrain
 
     bool Section::load( int LOD )
     {
-        while( true )
-        {
-            if ( ! simulation::Region->terrain()->is_render_locked() )
-            {
-                geometry_bank_handle =
-                        simulation::Region->terrain()->get_next_geometry_bank();
-                break;
-            }
-            else continue;
-        }
+
+        geometry_bank_handle =
+                simulation::Region->terrain()->get_next_geometry_bank();
 
         m_shapes.emplace_back();
         auto& s = m_shapes.back();
@@ -352,16 +300,8 @@ namespace Terrain
 
     bool Section::unload()
     {
-        while( true )
-        {
-            if ( ! simulation::Region->terrain()->is_render_locked() ) { m_shapes.clear();; break; }
-            else continue;
-        }
-        while( true )
-        {
-            if ( ! simulation::Region->terrain()->is_render_locked() ) { simulation::Region->terrain()->release_bank( geometry_bank_handle );; break; }
-            else continue;
-        }
+        m_shapes.clear();
+        simulation::Region->terrain()->release_bank( geometry_bank_handle );
         return true;
     }
 
