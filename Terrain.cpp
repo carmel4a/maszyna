@@ -27,10 +27,10 @@ namespace Terrain
         // \note IDs of sections start at 0
         for( int id = 0; id < terrain.size(); ++id )
             terrain[ id ].reset( new Terrain::Section( 100, id ) );
-        const unsigned int bank_no = ( update_range + 1 ) * ( update_range + 1 );
 
         auto& banks = geometry_banks.active_geometry_banks;
         // Reserve required memory.
+        const unsigned int bank_no = ( update_range ) * ( update_range ) + 5;
         banks.reserve( bank_no );
         geometry_banks.unreserved_banks.reserve( bank_no );
 
