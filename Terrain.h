@@ -99,9 +99,6 @@ namespace Terrain
         using terrain_array =
                 std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
 
-        // Threads
-        void main_terrain_thread();
-
       // Data
         /// Half side of update sections square.
         constexpr static short update_range { 3 };
@@ -109,6 +106,8 @@ namespace Terrain
         SectionsContainer m_active_sections;
         terrain_array terrain;
 
+      // Threads
+        void main_terrain_thread();
         std::vector< std::thread > threads;
         bool kill_threads = false;
     };
