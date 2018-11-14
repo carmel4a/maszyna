@@ -23,6 +23,9 @@ http://mozilla.org/MPL/2.0/.
 /// Namespace for terrain entities.
 namespace Terrain
 {
+    using SectionsContainer = std::unordered_map<
+            unsigned int,
+            Terrain::Section* >;
     /// Entry point to Terrain management.
     /** \note no copyable. */
     class Manager
@@ -35,7 +38,6 @@ namespace Terrain
         ~Manager();
         Manager( Manager& ) = delete;
         Manager& operator=( Manager& ) = delete;
-        using terrain_vector = std::unordered_map< unsigned int, Section* >;
 
         /// Deserialize terrain from provided parser.
         bool deserialize( cParser& input ); // TO IMPLEMENT
@@ -51,7 +53,7 @@ namespace Terrain
             inline void unlock()
             { mutex.unlock(); };
           private:
-            terrain_vector m_list;
+            SectionsContainer m_list;
             std::mutex mutex;
         };
 
@@ -107,6 +109,7 @@ namespace Terrain
         /// Half side of update sections square.
         constexpr static short update_range { 3 };
 
+        SectionsContainer m_active_sections;
         terrain_array terrain;
 
         std::vector< std::thread > threads;

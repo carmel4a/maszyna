@@ -59,6 +59,7 @@ namespace Terrain
         constexpr int half_section_s_num = section_s_num / 2;
     
         static int old_camera_start_section_id = -1;
+        SectionsContainer temp_active_sections;
 
         // Thread main loop
         while( !kill_threads )

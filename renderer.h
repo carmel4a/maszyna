@@ -28,6 +28,7 @@ http://mozilla.org/MPL/2.0/.
 #include "gl/glsl_common.h"
 #include "gl/pbo.h"
 #include "Track.h"
+#include "Terrain.h" // for SectionsContainer
 
 #define EU07_USE_PICKING_FRAMEBUFFER
 //#define EU07_USE_DEBUG_SHADOWMAP
@@ -253,8 +254,7 @@ class opengl_renderer
 	void Render(scene::basic_region *Region);
 	void Render(section_sequence::iterator First, section_sequence::iterator Last);
 	void Render(cell_sequence::iterator First, cell_sequence::iterator Last);
-	void Render( std::unordered_map< unsigned int,
-                                     Terrain::Section* >& active_sections );
+	void Render( const Terrain::SectionsContainer& active_sections );
     void Render(scene::shape_node const &Shape, bool const Ignorerange);
 	void Render(TAnimModel *Instance);
 	bool Render(TDynamicObject *Dynamic);

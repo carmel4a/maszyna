@@ -1916,8 +1916,7 @@ void opengl_renderer::Render(cell_sequence::iterator First, cell_sequence::itera
 	}
 }
 
-void opengl_renderer::Render( std::unordered_map<
-        unsigned int, Terrain::Section* >& active_sections )
+void opengl_renderer::Render( const Terrain::SectionsContainer& active_sections )
 {	
 	switch (m_renderpass.draw_mode)
 	{
