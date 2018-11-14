@@ -6,8 +6,8 @@ set(DEPS_DIR ${DEPS_DIR} "${CMAKE_SOURCE_DIR}/ref")
 project("eu07")
 
 set(CMAKE_CXX_STANDARD 17)
-include_directories("." "Console" "McZapkie" "gl" "ref/glad/include")
-file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h" "gl/*.h")
+include_directories("." "Console" "McZapkie" "gl" "ref/glad/include" "Terrain")
+file(GLOB HEADERS "*.h" "Console/*.h" "McZapkie/*.h" "gl/*.h" "Terrain/*.h")
 
 set(SOURCES
 "Texture.cpp"
@@ -70,7 +70,7 @@ set(SOURCES
 
 "scene.cpp"
 "scenenode.cpp"
-"Terrain.cpp"
+"Terrain/Terrain.cpp"
 
 "simulation.cpp"
 "vertex.cpp"
