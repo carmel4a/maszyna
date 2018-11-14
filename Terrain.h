@@ -86,6 +86,10 @@ namespace Terrain
         inline void release_bank( unsigned int i )
         { geometry_banks.release_bank( i ); };
 
+      // Section access
+        inline auto active_sections() const -> const SectionsContainer&
+        { return m_active_sections; };
+
       // Data
         GeometryBanksManager geometry_banks;
         Mutexes mutexes;
@@ -115,15 +119,17 @@ namespace Terrain
       // Special member functions
         Section( int max_side_density, int id );
 
-        auto id() const -> const int { return m_id; }
+      // Getters
+        inline auto id() const -> const int { return m_id; }
+        inline auto area() const -> const scene::bounding_area& { return m_area; }
+        inline auto shapes() const -> const std::vector< scene::shape_node >& { return m_shapes; }
+
       // Serialization
         bool load( int LOD = 0 );
         bool unload();
 
       // Data management
         void insert_triangle( scene::shape_node );
-        inline auto area() const -> const scene::bounding_area& { return m_area; }
-        inline auto shapes() const -> const std::vector< scene::shape_node >& { return m_shapes; }
 
       private:
       // Data
