@@ -80,33 +80,35 @@ namespace Terrain
         // Half of Region sections side number.
         constexpr int half_section_s_num = section_s_num / 2;
     
-        static int old_camera_start_section_id = -1;
+        static unsigned int old_camera_start_section_id =
+                std::numeric_limits<unsigned int>::max();
+
         SectionsContainer temp_active_sections;
 
         // Thread main loop
         while( !kill_threads )
         {
-            const auto& camera_global_pos = Global.pCamera.Pos;
             // (Global) Position relative to origin (0, 0).
+            const auto& camera_pos = Global.pCamera.Pos;
+
+            auto start_section = [&section_side]( int a ) -> int
+            { return (int) a / section_side; };
 
             // Camera Starting Section
+            const int s_section_x { start_section( camera_pos.x ) };
+            const int s_section_y { start_section( camera_pos.z ) };
+            const int s_section_id = s_section_x + s_section_y * section_s_num;
 
             // If user didn't moved to other section, there's nothing to do.
-            /* camera start section is relative to origin. It is not equal
-            to `terrain` array, so future origin is needed. So, for center of Region
-            we have (254, 254) km */
-            const int camera_start_section_x
-                    { (int) camera_global_pos.x / section_side };
-            const int camera_start_section_y
-                    { (int) camera_global_pos.z / section_side };
-            const int camera_start_section_id = camera_start_section_x
-                    + camera_start_section_y * section_s_num;
-            if( camera_start_section_id == old_camera_start_section_id )
-                continue;
+            if( s_section_id == old_camera_start_section_id ) continue;
 
-            old_camera_start_section_id = camera_start_section_id;
-            const int x_origin = camera_start_section_x + half_section_s_num;
-            const int y_origin = camera_start_section_y + half_section_s_num;
+            old_camera_start_section_id = s_section_id;
+
+            /* camera start section is relative to origin. It is not equal
+            to `terrain` array, so this move of origin is needed. So, for center
+            of Region we have (250, 250) km */
+            const int x_origin = s_section_x + half_section_s_num;
+            const int y_origin = s_section_y + half_section_s_num;
 
             /* If difference of x OR y coord of camera and section is bigger
             than update range - unload section. */
@@ -116,8 +118,8 @@ namespace Terrain
                 const auto section = id_and_section.second;
                 const int  x_coord = id % section_s_num;
                 const int  y_coord = id / section_s_num;
-                if( std::abs( x_origin - x_coord ) > ( update_range + 1 )
-                 || std::abs( y_origin - y_coord ) > ( update_range + 1 ) )
+                if( std::abs( x_origin - x_coord ) > ( update_range )
+                 || std::abs( y_origin - y_coord ) > ( update_range ) )
                 {
                     std::scoped_lock< std::mutex > lock ( mutexes.section_unload );
                     section->unload();
