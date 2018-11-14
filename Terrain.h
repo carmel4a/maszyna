@@ -34,6 +34,7 @@ namespace Terrain
         // friend Section::load;
         // friend Section::unload;
       public:
+      // Special member functions
         Manager();
         ~Manager();
         Manager( Manager& ) = delete;
@@ -110,12 +111,14 @@ namespace Terrain
         Mutexes mutexes;
 
       private:
+      // Types
         using terrain_array =
                 std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
 
         // Threads
         void main_terrain_thread();
 
+      // Data
         /// Half side of update sections square.
         constexpr static short update_range { 3 };
 
@@ -129,17 +132,21 @@ namespace Terrain
     class Section
     {
       public:
+      // Special member functions
         Section( int max_side_density, int id );
 
         auto id() const -> const int { return m_id; }
+      // Serialization
         bool load( int LOD = 0 );
         bool unload();
 
+      // Data management
         void insert_triangle( scene::shape_node );
         inline auto area() const -> const scene::bounding_area& { return m_area; }
         inline auto shapes() const -> const std::vector< scene::shape_node >& { return m_shapes; }
 
       private:
+      // Data
         int m_id;
         gfx::geometrybank_handle                geometry_bank_handle;
         scene::bounding_area                    m_area;

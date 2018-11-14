@@ -29,8 +29,12 @@ namespace Terrain
             terrain[ id ].reset( new Terrain::Section( 100, id ) );
         auto& banks = state_lists.active_geometry_banks;
         const unsigned int bank_no = ( update_range + 1 ) * ( update_range + 1 );
+
+        // Reserve required memory.
         banks.reserve( bank_no );
         state_lists.unreserved_banks.reserve( bank_no );
+
+        // Banks creation.
         for( unsigned int i = 0; i < bank_no; ++i )
         {
             banks[ i ] = GfxRenderer.Create_Bank();
@@ -48,16 +52,32 @@ namespace Terrain
 
     bool Manager::deserialize( cParser& input )
     {
+        // rest of deserialization. load from file, heightmap?
         threads.emplace_back( &Manager::main_terrain_thread, this );
         return true;
     }
 
     void Manager::main_terrain_thread()
     {
+        // Update square side.
+        /**
+         *  ...........
+         *  .."""|""".. ^ ^
+         *  .."""|""".. | |  update_range = 3
+         *  .."""|""".. | V
+         *  ..---X---.. |    range = 7
+         *  .."""|""".. |
+         *  .."""|""".. |
+         *  .."""|""".. V
+         *  ...........
+         */
         constexpr short range = 2 * update_range + 1;
 
+        // Section side size (in meters).
         constexpr int section_side       = scene::SECTION_SIZE;
+        // Region sections side number.
         constexpr int section_s_num      = scene::REGION_SIDE_SECTION_COUNT;
+        // Half of Region sections side number.
         constexpr int half_section_s_num = section_s_num / 2;
     
         static int old_camera_start_section_id = -1;
@@ -66,8 +86,12 @@ namespace Terrain
         // Thread main loop
         while( !kill_threads )
         {
-            // Position relative to origin (0, 0).
             const auto& camera_global_pos = Global.pCamera.Pos;
+            // (Global) Position relative to origin (0, 0).
+
+            // Camera Starting Section
+
+            // If user didn't moved to other section, there's nothing to do.
             /* camera start section is relative to origin. It is not equal
             to `terrain` array, so future origin is needed. So, for center of Region
             we have (254, 254) km */
