@@ -71,6 +71,7 @@ set(SOURCES
 "scene.cpp"
 "scenenode.cpp"
 "Terrain/Terrain.cpp"
+"Terrain/Chunk.cpp"
 
 "simulation.cpp"
 "vertex.cpp"
