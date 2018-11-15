@@ -6,6 +6,8 @@ distributed with this file, You can
 obtain one at
 http://mozilla.org/MPL/2.0/.
 */
+/** \file
+*/
 
 #ifndef TERRAIN_H_19_10_18
 #define TERRAIN_H_19_10_18
@@ -19,6 +21,7 @@ http://mozilla.org/MPL/2.0/.
 
 #include "Classes.h"
 #include "scene.h" // For `scene` namespace consts.
+#include "Terrain/Chunk.h" // Currently to delete.
 
 /// Namespace for terrain entities.
 namespace Terrain
@@ -139,35 +142,6 @@ namespace Terrain
         static const int                        side_size_in_meters;
         const int                               max_side_density;
         std::vector< std::unique_ptr< Chunk > > chunks;
-    };
-    
-    enum class ChunkTypes : short
-    {
-        Abstract,
-        Normal,
-        Empty
-    };
-
-    class Chunk
-    {
-      public:
-        Chunk( ChunkTypes );
-      protected:
-        const ChunkTypes type;
-        const glm::vec3 center;
-        gfx::geometrybank_handle vbo;
-    };
-
-    class EmptyChunk : public Chunk
-    {
-      public:
-        EmptyChunk();
-    };
-
-    class NormalChunk : public Chunk
-    {
-      public:
-        NormalChunk();
     };
 }
 

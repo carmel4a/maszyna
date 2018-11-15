@@ -341,15 +341,4 @@ namespace Terrain
     }
 
     int const Section::side_size_in_meters { scene::SECTION_SIZE };
-
-    Chunk::Chunk( ChunkTypes type )
-            : type{ type }
-            , center {}
-            , vbo {} {}
-
-    EmptyChunk::EmptyChunk()
-            : Chunk( ChunkTypes::Empty ) {}
-
-    NormalChunk::NormalChunk()
-            : Chunk( ChunkTypes::Normal ) {}
 }
