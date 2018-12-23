@@ -1,7 +1,7 @@
 #pragma once
 
-#include "object.h"
-#include "bindable.h"
+#include "./object.h"
+#include "./bindable.h"
 
 namespace gl
 {

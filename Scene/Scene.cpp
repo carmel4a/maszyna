@@ -9,7 +9,7 @@ http://mozilla.org/MPL/2.0/.
 
 #include "Classes.h"
 #include "stdafx.h"
-#include "scene.h"
+#include "Scene.h"
 #include "Traction.h"
 
 #include "simulation.h"
@@ -958,11 +958,11 @@ basic_section::cell( glm::dvec3 const &Location ) {
 
     auto const column = static_cast<int>( std::floor( ( Location.x - ( m_area.center.x - SECTION_SIZE / 2 ) ) / CELL_SIZE ) );
     auto const row = static_cast<int>( std::floor( ( Location.z - ( m_area.center.z - SECTION_SIZE / 2 ) ) / CELL_SIZE ) );
-
+    constexpr int cells_number = SECTION_SIZE / CELL_SIZE;
     return
         m_cells[
-              clamp( row,    0, ( SECTION_SIZE / CELL_SIZE ) - 1 ) * ( SECTION_SIZE / CELL_SIZE )
-            + clamp( column, 0, ( SECTION_SIZE / CELL_SIZE ) - 1 ) ] ;
+              clamp( row,    0, cells_number - 1 ) * cells_number
+            + clamp( column, 0, cells_number - 1 ) ] ;
 }
 
 
@@ -1653,8 +1653,8 @@ basic_region::section( glm::dvec3 const &Location ) {
 
     auto &section =
         m_sections[
-              clamp( row,    0, REGION_SIDE_SECTION_COUNT - 1 ) * REGION_SIDE_SECTION_COUNT
-            + clamp( column, 0, REGION_SIDE_SECTION_COUNT - 1 ) ] ;
+              clamp( row,    0, (int) REGION_SIDE_SECTION_COUNT - 1 ) * REGION_SIDE_SECTION_COUNT
+            + clamp( column, 0, (int) REGION_SIDE_SECTION_COUNT - 1 ) ] ;
 
     if( section == nullptr ) {
         // there's no guarantee the section exists at this point, so check and if needed, create it

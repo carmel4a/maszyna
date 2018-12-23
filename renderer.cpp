@@ -24,6 +24,7 @@ http://mozilla.org/MPL/2.0/.
 #include "application.h"
 #include "AnimModel.h"
 #include "Terrain.h"
+#include "Terrain/Section.h"
 
 opengl_renderer GfxRenderer;
 
@@ -1946,41 +1947,6 @@ void opengl_renderer::Render(cell_sequence::iterator First, cell_sequence::itera
 
 		++first;
 	}
-}
-
-void opengl_renderer::Render( const Terrain::SectionsContainer& active_sections )
-{	
-	switch (m_renderpass.draw_mode)
-	{
-		case rendermode::color:
-		{
-            std::vector< Terrain::Section* > visible_sections;
-            for( const auto& id_section_pair : active_sections )
-            {
-                const auto& section = id_section_pair.second;
-                if( m_renderpass.camera.visible( section->area() ) )
-                {
-                    ::glPushMatrix();
-                    auto const originoffset =
-                            section->area().center
-                            - m_renderpass.camera.position();
-                    ::glTranslated( originoffset.x,
-                                    originoffset.y,
-                                    originoffset.z );
-                    for( const auto& shape : section->shapes() )
-                        Render( shape, true );
-                    // post-render cleanup
-                    ::glPopMatrix();
-                }
-            }
-			break; 
-		}
-		case rendermode::shadows:
-		case rendermode::pickscenery:
-		case rendermode::reflections:
-		case rendermode::pickcontrols:
-		default: break;
-    }
 }
 
 void opengl_renderer::Draw_Geometry(std::vector<gfx::geometrybank_handle>::iterator begin, std::vector<gfx::geometrybank_handle>::iterator end)

@@ -12,30 +12,17 @@ http://mozilla.org/MPL/2.0/.
 #ifndef SCENE_H_24_09_18
 #define SCENE_H_24_09_18
 
-#include <vector>
-#include <deque>
-#include <array>
-#include <stack>
-#include <unordered_set>
+#include "SceneConfig.h"
 
-#include "Classes.h"
-#include "scenenode.h" // for bounding_area
+#include "../stdafx.h"
+#include "../Classes.h"
+#include "../scenenode.h" // for bounding_area
 // for simulation::state_serializer::scratch_data
-#include "simulationstateserializer.h"
-
+#include "../simulationstateserializer.h"
 using simulation::state_serializer;
 
 namespace scene
 {
-    constexpr int CELL_SIZE = 250;
-    /// Signle section's side size in meters.
-    constexpr int SECTION_SIZE = 1000;
-    /// Number of sections along a side of square region.
-    constexpr int REGION_SIDE_SECTION_COUNT = 500;
-    /// Total number of sections.
-    constexpr int SECTIONS_COUNT =
-            REGION_SIDE_SECTION_COUNT * REGION_SIDE_SECTION_COUNT;
-
     // basic element of rudimentary partitioning scheme for the section. fixed size, no further subdivision
     // TBD, TODO: replace with quadtree scheme?
     class basic_cell

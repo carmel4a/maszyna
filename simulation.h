@@ -17,7 +17,7 @@ http://mozilla.org/MPL/2.0/.
 #include "Event.h"
 #include "Track.h" // for TEnvironmentType, path_table
 #include "Traction.h" // for traction_table
-#include "scene.h" // for basic_region
+#include "Scene/Scene.h" // for basic_region
 
 namespace simulation {
 

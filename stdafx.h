@@ -3,6 +3,10 @@
 // are changed infrequently
 //
 
+/** @file
+ * 
+ */
+
 #ifndef STDAFX_H
 #define STDAFX_H
 
@@ -78,7 +82,7 @@
 #endif // _windows
 #endif // build_static
 
-#include "glad/glad.h"
+#include "ref/glad/include/glad/glad.h"
 
 #define GLFW_INCLUDE_NONE
 //#define GLFW_INCLUDE_GLU
@@ -95,6 +99,7 @@
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+///
 int const null_handle = 0;
 
 #include "openglmatrixstack.h"

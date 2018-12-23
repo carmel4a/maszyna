@@ -6,143 +6,139 @@ distributed with this file, You can
 obtain one at
 http://mozilla.org/MPL/2.0/.
 */
-/** \file
-*/
+/** @file
+ * 
+ */
+
+/** @defgroup Terrain Terrain
+ * 
+ *  Terrain (ground level, water, buildings, static objects) is divided on
+ *  Section s.
+ *  
+ *  Section consist of array of quads (2 triangles). Manager::max_side_density
+ *  determines maximum number of quads. Terrain::Section should replace
+ *  scene::Section. */
 
 #ifndef TERRAIN_H_19_10_18
 #define TERRAIN_H_19_10_18
 
 #pragma once
 
-#include <vector>
-#include <unordered_map>
-#include <thread>
-#include <mutex>
-
-#include "Classes.h"
-#include "scene.h" // For `scene` namespace consts.
-#include "Terrain/Chunk.h" // Currently to delete.
+#include "./TerrainContainer.h"
+#include "./GeometryBanksManager.h"
+#include "./Types.h"
+#include "../stdafx.h"
+#include "../Scene/SceneConfig.h"
 
 /// Namespace for terrain entities.
+/** @addtogroup Terrain */
 namespace Terrain
 {
-    using SectionsContainer = std::unordered_map<
-            unsigned int,
-            Terrain::Section* >;
+    class TerrainTask
+    {
+      public:
+        TerrainTask() = default;
+        void run();
+    };
+
     /// Entry point to Terrain management.
-    /** \note no copyable. */
+    /** @note no copyable.
+     *  @todo move get/reset geometry buffer to private, like:
+     *  ```C++
+     *      friend Section::load;
+     *      friend Section::unload;
+     *  ```
+     *  @todo Move thread creation to (no existing) global thread manager.
+     *  @addtogroup Terrain */
     class Manager
     {
-        // TBD: move get/reset geometry buffer to private
-        // friend Section::load;
-        // friend Section::unload;
       public:
-      // Special member functions
+      ///@{ @name Special member functions
+        /// Default constructor.
+        /** Fills @ref terrain array with newly created Secton s.
+         *  
+         *  Creates required [geometry banks](@ref geometry_banks). */
         Manager();
+
+        /// Destructor
+        /** Joins created threads. */
         ~Manager();
+
+        /// Prevention of copying.
         Manager( Manager& ) = delete;
-        Manager& operator=( Manager& ) = delete;
 
-      // Types
-        class TerrainContainerResource
-        {
-            friend Manager;
-          public:
-            inline auto list() -> SectionsContainer& { return m_list; }
-            inline auto list() const -> const SectionsContainer& { return m_list; }
-            operator std::mutex&() { return mutex; }
-          private:
-            SectionsContainer m_list;
-            std::mutex mutex;
-        };
+        /// Prevention of copying.
+        Manager& operator=( Manager& ) = delete; ///@}
 
-        class GeometryBanksManager
-        {
-            friend Manager;
-            auto get_next_geometry_bank() -> gfx::geometry_handle;
-            void release_bank( gfx::geometry_handle handle );
-            void release_bank( unsigned int i );
-
-            std::vector< gfx::geometry_handle > active_geometry_banks;
-            std::vector< unsigned int > unreserved_banks;
-        };
-
+      ///@{ @name Types
+        /// Struct to store mutexes.
         struct Mutexes
         {
-            std::mutex active_list_swap;
-            std::mutex section_unload;
-        };
+            /// Guard swap @ref m_active_sections.
+            /** Is locked on swap shared [sections list](@ref m_active_sections)
+            with [renderer](@ref opengl_renderer). */
+            std::mutex active_list_swap,
+                       section_unload;
+        }; ///@}
 
-      // Serialization
+      ///@{ @name Serialization
         /// Deserialize terrain from provided parser.
-        bool deserialize( cParser& input ); // TO IMPLEMENT
+        /** @param input - input from where Manager should read data.
+         *  @return if deserialization was successfull.
+         *  @todo To implement. */
+        bool deserialize( cParser& input );
 
         /// Serialize terrain to provided parser.
-        /** Possbile side efects in filesystem. */
-        bool serialize( cParser& input ) { return false; }; // TO IMPLEMENT
+        /** Possbile side efects in filesystem.
+         *  @param output - where data will be stored. May be stdout and a file.
+         *  @return if serialization was successfull.
+         *  @todo To implement. */
+        bool serialize( cParser& output ) { return false; }; ///@}
 
-      // Geometry bank management
-        inline auto get_next_geometry_bank() -> gfx::geometry_handle
-        { return geometry_banks.get_next_geometry_bank(); };
-        inline void release_bank( gfx::geometry_handle handle )
-        { geometry_banks.release_bank( handle.bank ); };
-        inline void release_bank( unsigned int i )
-        { geometry_banks.release_bank( i ); };
+      ///@{ @name Getters
+        ///
+        inline auto geometry_bank_manager() -> GeometryBanksManager&;
 
-      // Section access
-        inline auto active_sections() const -> const SectionsContainer&
-        { return m_active_sections; };
+        /// Gets @ref m_active_sections.
+        /** @return container of pairs witch id, and pointer, to `active
+         *  sections`. */
+        inline auto active_sections() const -> const SectionsContainer&; ///@}
 
-      // Data
-        GeometryBanksManager geometry_banks;
-        Mutexes mutexes;
+      ///@{ @name Data
+        /// Public mutexes.
+        /** Currenlty used by renderer. */
+        Mutexes mutexes; ///@}
 
       private:
-      // Types
-        using terrain_array =
-                std::array< std::unique_ptr< Section >, scene::SECTIONS_COUNT >;
-
-      // Data
+      ///@{ @name Consts
+        /// Max quads number on side of a Section.
+        static const unsigned max_side_density;
         /// Half side of update sections square.
-        constexpr static short update_range { 3 };
+        static const unsigned update_range;
 
-        SectionsContainer m_active_sections;
-        terrain_array terrain;
+        /// Max banks number used by terrain manager.
+        static const unsigned banks_number;
+        /// Number of additional banks used when banks_number isn't sufficient.
+        static const unsigned additional_banks; ///@}
 
-      // Threads
+      ///@{ @name Data
+        /// Geometry banks used by Section s.
+        GeometryBanksManager m_geometry_bank_manager;
+        ///
+        TerrainContainer terrain;
+        SectionsContainer m_active_sections; ///@}
+
+      /// @{ Threads
         void main_terrain_thread();
         std::vector< std::thread > threads;
-        bool kill_threads = false;
+        bool kill_threads; ///@}
     };
 
-    class Section
-    {
-      public:
-      // Special member functions
-        Section( int max_side_density, int id );
+    inline auto Manager::geometry_bank_manager() -> GeometryBanksManager&
+    { return m_geometry_bank_manager; }
 
-      // Getters
-        inline auto id() const -> const int { return m_id; }
-        inline auto area() const -> const scene::bounding_area& { return m_area; }
-        inline auto shapes() const -> const std::vector< scene::shape_node >& { return m_shapes; }
-
-      // Serialization
-        bool load( int LOD = 0 );
-        bool unload();
-
-      // Data management
-        void insert_triangle( scene::shape_node );
-
-      private:
-      // Data
-        int m_id;
-        gfx::geometrybank_handle                geometry_bank_handle;
-        scene::bounding_area                    m_area;
-        std::vector< scene::shape_node >        m_shapes;
-        static const int                        side_size_in_meters;
-        const int                               max_side_density;
-        std::vector< std::unique_ptr< Chunk > > chunks;
-    };
+    inline auto Manager::active_sections() const -> const SectionsContainer&
+    { return m_active_sections; }
 }
 
 #endif // !TERRAIN_H_19_10_18

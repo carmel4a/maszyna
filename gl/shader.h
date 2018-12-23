@@ -55,6 +55,8 @@ namespace gl
             defaultparam_e defaultparam;
         };
 
+        static std::string read_file(const std::string &filename);
+
         std::unordered_map<std::string, texture_entry> texture_conf;
         std::unordered_map<std::string, param_entry> param_conf;
         std::string name;
@@ -65,8 +67,6 @@ namespace gl
         void expand_includes(std::string &str);
         void parse_texture_entries(std::string &str);
         void parse_param_entries(std::string &str);
-
-        std::string read_file(const std::string &filename);
 
         static std::unordered_map<std::string, components_e> components_mapping;
         static std::unordered_map<std::string, defaultparam_e> defaultparams_mapping;

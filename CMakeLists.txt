@@ -68,10 +68,15 @@ set(SOURCES
 "uart.cpp"
 "messaging.cpp"
 
-"scene.cpp"
+"Renderer/Renderer_Section.cpp"
+
+"Scene/Scene.cpp"
 "scenenode.cpp"
 "Terrain/Terrain.cpp"
+"Terrain/TerrainContainer.cpp"
+"Terrain/Section.cpp"
 "Terrain/Chunk.cpp"
+"Terrain/GeometryBanksManager.cpp"
 
 "simulation.cpp"
 "vertex.cpp"
