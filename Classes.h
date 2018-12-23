@@ -44,9 +44,11 @@ class sound_table;
 class shape_node;
 class lines_node;
 
-namespace scene {
+namespace scene
+{
     struct node_data;
     class basic_node;
+    using group_handle = std::size_t;
 }
 
 namespace Mtable
