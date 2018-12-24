@@ -18,7 +18,7 @@ http://mozilla.org/MPL/2.0/.
 
 class TTractionPowerSource;
 
-class TTraction : public scene::basic_node
+class TTraction : public Scene::basic_node
 {
     friend opengl_renderer;
 
@@ -52,7 +52,7 @@ class TTraction : public scene::basic_node
     glm::dvec3 m_origin;
     gfx::geometry_handle m_geometry;
 
-    explicit TTraction( scene::node_data const &Nodedata );
+    explicit TTraction( Scene::node_data const &Nodedata );
 
     void Load( cParser *parser, glm::dvec3 const &pOrigin );
     // set origin point

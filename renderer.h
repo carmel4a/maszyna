@@ -69,7 +69,7 @@ class opengl_camera
         update_frustum(frustumtest_proj, m_modelview);
 	}
 	void update_frustum(glm::mat4 const &Projection, glm::mat4 const &Modelview);
-	bool visible(scene::bounding_area const &Area) const;
+	bool visible(Scene::bounding_area const &Area) const;
 	bool visible(TDynamicObject const *Dynamic) const;
 	inline glm::dvec3 const &position() const
 	{
@@ -170,7 +170,7 @@ class opengl_renderer
 	{
 		return m_pickcontrolitem;
 	}
-    scene::basic_node const *get_picked_node() const
+    Scene::basic_node const *get_picked_node() const
 	{
 		return m_picksceneryitem;
 	}
@@ -188,7 +188,7 @@ class opengl_renderer
 	std::string const &info_stats() const;
 
     void pick_control(std::function<void(TSubModel const *)> callback);
-    void pick_node(std::function<void(scene::basic_node *)> callback);
+    void pick_node(std::function<void(Scene::basic_node *)> callback);
 
 	// members
     GLenum static const sunlight{0};
@@ -221,8 +221,8 @@ class opengl_renderer
 		int drawcalls{0};
 	};
 
-	using section_sequence = std::vector<scene::basic_section *>;
-	using distancecell_pair = std::pair<double, scene::basic_cell *>;
+	using section_sequence = std::vector<Scene::basic_section *>;
+	using distancecell_pair = std::pair<double, Scene::basic_cell *>;
 	using cell_sequence = std::vector<distancecell_pair>;
 
 	struct renderpass_config
@@ -249,25 +249,25 @@ class opengl_renderer
 	// creates dynamic environment cubemap
 	bool Render_reflections();
 	bool Render(world_environment *Environment);
-	void Render(scene::basic_region *Region);
+	void Render(Scene::basic_region *Region);
 	void Render(section_sequence::iterator First, section_sequence::iterator Last);
 	void Render(cell_sequence::iterator First, cell_sequence::iterator Last);
-    void Render(scene::shape_node const &Shape, bool const Ignorerange);
+    void Render(Scene::shape_node const &Shape, bool const Ignorerange);
 	void Render(TAnimModel *Instance);
 	bool Render(TDynamicObject *Dynamic);
     bool Render(TModel3d *Model, material_data const *Material, float const Squaredistance, Math3D::vector3 const &Position, glm::vec3 const &Angle);
 	bool Render(TModel3d *Model, material_data const *Material, float const Squaredistance);
 	void Render(TSubModel *Submodel);
 	void Render(TTrack *Track);
-	void Render(scene::basic_cell::path_sequence::const_iterator First, scene::basic_cell::path_sequence::const_iterator Last);
+	void Render(Scene::basic_cell::path_sequence::const_iterator First, Scene::basic_cell::path_sequence::const_iterator Last);
 	bool Render_cab(TDynamicObject const *Dynamic, float const Lightlevel, bool const Alpha = false);
 	void Render(TMemCell *Memcell);
 	void Render_precipitation();
-	void Render_Alpha(scene::basic_region *Region);
+	void Render_Alpha(Scene::basic_region *Region);
 	void Render_Alpha(cell_sequence::reverse_iterator First, cell_sequence::reverse_iterator Last);
 	void Render_Alpha(TAnimModel *Instance);
 	void Render_Alpha(TTraction *Traction);
-    void Render_Alpha(scene::lines_node const &Lines);
+    void Render_Alpha(Scene::lines_node const &Lines);
 	bool Render_Alpha(TDynamicObject *Dynamic);
     bool Render_Alpha(TModel3d *Model, material_data const *Material, float const Squaredistance, Math3D::vector3 const &Position, glm::vec3 const &Angle);
 	bool Render_Alpha(TModel3d *Model, material_data const *Material, float const Squaredistance);
@@ -329,8 +329,8 @@ class opengl_renderer
 	renderpass_config m_cabshadowpass; // parameters of most recent cab shadowmap pass
 	std::vector<TSubModel const *> m_pickcontrolsitems;
 	TSubModel const *m_pickcontrolitem{nullptr};
-    std::vector<scene::basic_node *> m_picksceneryitems;
-    scene::basic_node *m_picksceneryitem{nullptr};
+    std::vector<Scene::basic_node *> m_picksceneryitems;
+    Scene::basic_node *m_picksceneryitem{nullptr};
     glm::vec3 m_worldmousecoordinates { 0.f };
 #ifdef EU07_USE_DEBUG_CAMERA
 	renderpass_config m_worldcamera; // debug item
@@ -346,7 +346,7 @@ class opengl_renderer
     glm::mat4 ortho_frustumtest_projection(float left, float right, float bottom, float top, float z_near, float z_far);
 
     std::vector<std::function<void(TSubModel const *)>> m_control_pick_requests;
-    std::vector<std::function<void(scene::basic_node *)>> m_node_pick_requests;
+    std::vector<std::function<void(Scene::basic_node *)>> m_node_pick_requests;
 
 	std::unique_ptr<gl::shader> m_vertex_shader;
 

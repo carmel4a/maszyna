@@ -122,14 +122,14 @@ class TAnimAdvanced
 };
 
 // opakowanie modelu, określające stan egzemplarza
-class TAnimModel : public scene::basic_node {
+class TAnimModel : public Scene::basic_node {
 
     friend opengl_renderer;
     friend itemproperties_panel;
 
 public:
 // constructors
-    explicit TAnimModel( scene::node_data const &Nodedata );
+    explicit TAnimModel( Scene::node_data const &Nodedata );
 // destructor
     ~TAnimModel();
 // methods

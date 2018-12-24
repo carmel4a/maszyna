@@ -11,15 +11,15 @@ http://mozilla.org/MPL/2.0/.
 
 #include "scenenode.h"
 
-namespace scene {
+namespace Scene {
 
 // TODO: move the snapshot to history stack
 struct node_snapshot {
 
-    scene::basic_node *node;
+    Scene::basic_node *node;
     std::string data;
 
-    node_snapshot( scene::basic_node *Node ) :
+    node_snapshot( Scene::basic_node *Node ) :
         node( Node ) {
         if( Node != nullptr ) {
             Node->export_as_text( data ); } };
@@ -33,18 +33,18 @@ class basic_editor {
 public:
 // methods
     void
-        translate( scene::basic_node *Node, glm::dvec3 const &Location, bool const Snaptoground );
+        translate( Scene::basic_node *Node, glm::dvec3 const &Location, bool const Snaptoground );
     void
-        translate( scene::basic_node *Node, float const Offset );
+        translate( Scene::basic_node *Node, float const Offset );
     void
-        rotate( scene::basic_node *Node, glm::vec3 const &Angle, float const Quantization );
+        rotate( Scene::basic_node *Node, glm::vec3 const &Angle, float const Quantization );
 
 private:
 // methods
     void
-        translate_node( scene::basic_node *Node, glm::dvec3 const &Location );
+        translate_node( Scene::basic_node *Node, glm::dvec3 const &Location );
     void
-        translate_node( scene::basic_node *Node, float const Offset );
+        translate_node( Scene::basic_node *Node, float const Offset );
     void
         translate_instance( TAnimModel *Instance, glm::dvec3 const &Location );
     void
@@ -54,11 +54,11 @@ private:
     void
         translate_memorycell( TMemCell *Memorycell, float const Offset );
     void
-        rotate_node( scene::basic_node *Node, glm::vec3 const &Angle );
+        rotate_node( Scene::basic_node *Node, glm::vec3 const &Angle );
     void
         rotate_instance( TAnimModel *Instance, glm::vec3 const &Angle );
 };
 
-} // scene
+} // Scene
 
 //---------------------------------------------------------------------------

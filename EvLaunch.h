@@ -14,11 +14,11 @@ http://mozilla.org/MPL/2.0/.
 #include "Classes.h"
 #include "scenenode.h"
 
-class TEventLauncher : public scene::basic_node {
+class TEventLauncher : public Scene::basic_node {
 
 public:
 // constructor
-    explicit TEventLauncher( scene::node_data const &Nodedata ) : basic_node( Nodedata ) {}
+    explicit TEventLauncher( Scene::node_data const &Nodedata ) : basic_node( Nodedata ) {}
     // legacy constructor
     TEventLauncher() = default;
 

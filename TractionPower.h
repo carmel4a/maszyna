@@ -13,11 +13,11 @@ http://mozilla.org/MPL/2.0/.
 #include "scenenode.h"
 #include "Names.h"
 
-class TTractionPowerSource : public scene::basic_node {
+class TTractionPowerSource : public Scene::basic_node {
 
 public:
 // constructor
-    TTractionPowerSource( scene::node_data const &Nodedata );
+    TTractionPowerSource( Scene::node_data const &Nodedata );
 // methods
     void Init(double const u, double const i);
     bool Load(cParser *parser);

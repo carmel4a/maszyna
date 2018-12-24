@@ -13,12 +13,12 @@ http://mozilla.org/MPL/2.0/.
 #include "Event.h"
 #include "MemCell.h"
 
-namespace scene {
+namespace Scene {
 
 node_groups Groups;
 
 // requests creation of a new node group. returns: handle to the group
-scene::group_handle
+Scene::group_handle
 node_groups::create() {
 
     m_activegroup.push( create_handle() );
@@ -27,7 +27,7 @@ node_groups::create() {
 }
 
 // indicates creation of current group ended. returns: handle to the parent group or null_handle if group stack is empty
-scene::group_handle
+Scene::group_handle
 node_groups::close() {
 
     if( false == m_activegroup.empty() ) {
@@ -61,7 +61,7 @@ node_groups::handle() const {
 
 // places provided node in specified group
 void
-node_groups::insert( scene::group_handle const Group, scene::basic_node *Node ) {
+node_groups::insert( Scene::group_handle const Group, Scene::basic_node *Node ) {
 
     // TBD, TODO: automatically unregister the node from its current group?
     Node->group( Group );
@@ -77,7 +77,7 @@ node_groups::insert( scene::group_handle const Group, scene::basic_node *Node ) 
 
 // places provided event in specified group
 void
-node_groups::insert( scene::group_handle const Group, basic_event *Event ) {
+node_groups::insert( Scene::group_handle const Group, basic_event *Event ) {
 
     // TBD, TODO: automatically unregister the event from its current group?
     Event->group( Group );
@@ -137,6 +137,6 @@ node_groups::create_handle() {
             m_activegroup.top() );
 }
 
-} // scene
+} // Scene
 
 //---------------------------------------------------------------------------

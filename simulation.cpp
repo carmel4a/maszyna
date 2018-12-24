@@ -38,7 +38,7 @@ light_array Lights;
 sound_table Sounds;
 lua Lua;
 
-scene::basic_region *Region { nullptr };
+Scene::basic_region *Region { nullptr };
 TTrain *Train { nullptr };
 
 bool is_ready { false };

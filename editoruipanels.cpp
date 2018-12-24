@@ -20,7 +20,7 @@ http://mozilla.org/MPL/2.0/.
 #include "utilities.h"
 
 void
-itemproperties_panel::update( scene::basic_node const *Node ) {
+itemproperties_panel::update( Scene::basic_node const *Node ) {
 
     if( false == is_open ) { return; }
 
@@ -185,7 +185,7 @@ itemproperties_panel::update_group() {
         return;
     }
 
-    auto const &nodegroup { scene::Groups.group( grouphandle ) };
+    auto const &nodegroup { Scene::Groups.group( grouphandle ) };
 
     if( m_grouphandle != grouphandle ) {
         // calculate group name from shared prefix of item names

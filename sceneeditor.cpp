@@ -18,10 +18,10 @@ http://mozilla.org/MPL/2.0/.
 #include "AnimModel.h"
 #include "renderer.h"
 
-namespace scene {
+namespace Scene {
 
 void
-basic_editor::translate( scene::basic_node *Node, glm::dvec3 const &Location, bool const Snaptoground ) {
+basic_editor::translate( Scene::basic_node *Node, glm::dvec3 const &Location, bool const Snaptoground ) {
 
     auto const initiallocation { Node->location() };
     auto targetlocation { Location };
@@ -38,7 +38,7 @@ basic_editor::translate( scene::basic_node *Node, glm::dvec3 const &Location, bo
         // translate entire group
         // TODO: contextual switch between group and item translation
         // TODO: translation of affected/relevant events
-        auto &nodegroup { scene::Groups.group( Node->group() ).nodes };
+        auto &nodegroup { Scene::Groups.group( Node->group() ).nodes };
         std::for_each(
             std::begin( nodegroup ), std::end( nodegroup ),
             [&]( auto *node ) {
@@ -47,7 +47,7 @@ basic_editor::translate( scene::basic_node *Node, glm::dvec3 const &Location, bo
 }
 
 void
-basic_editor::translate( scene::basic_node *Node, float const Offset ) {
+basic_editor::translate( Scene::basic_node *Node, float const Offset ) {
 
     // NOTE: offset scaling is calculated early so the same multiplier can be applied to potential whole group
     auto location { Node->location() };
@@ -61,7 +61,7 @@ basic_editor::translate( scene::basic_node *Node, float const Offset ) {
         // translate entire group
         // TODO: contextual switch between group and item translation
         // TODO: translation of affected/relevant events
-        auto &nodegroup { scene::Groups.group( Node->group() ).nodes };
+        auto &nodegroup { Scene::Groups.group( Node->group() ).nodes };
         std::for_each(
             std::begin( nodegroup ), std::end( nodegroup ),
             [&]( auto *node ) {
@@ -70,7 +70,7 @@ basic_editor::translate( scene::basic_node *Node, float const Offset ) {
 }
 
 void
-basic_editor::translate_node( scene::basic_node *Node, glm::dvec3 const &Location ) {
+basic_editor::translate_node( Scene::basic_node *Node, glm::dvec3 const &Location ) {
 
     if( typeid( *Node ) == typeid( TAnimModel ) ) {
         translate_instance( static_cast<TAnimModel *>( Node ), Location );
@@ -81,7 +81,7 @@ basic_editor::translate_node( scene::basic_node *Node, glm::dvec3 const &Locatio
 }
 
 void
-basic_editor::translate_node( scene::basic_node *Node, float const Offset ) {
+basic_editor::translate_node( Scene::basic_node *Node, float const Offset ) {
 
     if( typeid( *Node ) == typeid( TAnimModel ) ) {
         translate_instance( static_cast<TAnimModel *>( Node ), Offset );
@@ -124,7 +124,7 @@ basic_editor::translate_memorycell( TMemCell *Memorycell, float const Offset ) {
 }
 
 void
-basic_editor::rotate( scene::basic_node *Node, glm::vec3 const &Angle, float const Quantization ) {
+basic_editor::rotate( Scene::basic_node *Node, glm::vec3 const &Angle, float const Quantization ) {
 
     glm::vec3 rotation { 0, Angle.y, 0 };
 
@@ -150,7 +150,7 @@ basic_editor::rotate( scene::basic_node *Node, glm::vec3 const &Angle, float con
         // TODO: contextual switch between group and item rotation
         // TODO: translation of affected/relevant events
         auto const rotationcenter { Node->location() };
-        auto &nodegroup { scene::Groups.group( Node->group() ).nodes };
+        auto &nodegroup { Scene::Groups.group( Node->group() ).nodes };
         std::for_each(
             std::begin( nodegroup ), std::end( nodegroup ),
             [&]( auto *node ) {
@@ -166,7 +166,7 @@ basic_editor::rotate( scene::basic_node *Node, glm::vec3 const &Angle, float con
 }
 
 void
-basic_editor::rotate_node( scene::basic_node *Node, glm::vec3 const &Angle ) {
+basic_editor::rotate_node( Scene::basic_node *Node, glm::vec3 const &Angle ) {
 
     if( typeid( *Node ) == typeid( TAnimModel ) ) {
         rotate_instance( static_cast<TAnimModel *>( Node ), Angle );
@@ -185,6 +185,6 @@ basic_editor::rotate_instance( TAnimModel *Instance, glm::vec3 const &Angle ) {
     Instance->Angles( targetangle );
 }
 
-} // scene
+} // Scene
 
 //---------------------------------------------------------------------------

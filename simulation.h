@@ -52,7 +52,7 @@ extern light_array Lights;
 extern sound_table Sounds;
 extern lua Lua;
 
-extern scene::basic_region *Region;
+extern Scene::basic_region *Region;
 extern TTrain *Train;
 
 extern bool is_ready;

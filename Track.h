@@ -19,7 +19,7 @@ http://mozilla.org/MPL/2.0/.
 #include "scenenode.h"
 #include "Names.h"
 
-namespace scene {
+namespace Scene {
 class basic_cell;
 }
 
@@ -87,7 +87,7 @@ class TSwitchExtension
         };
     };
     bool bMovement = false; // czy w trakcie animacji
-    scene::basic_cell *pOwner = nullptr; // TODO: convert this to observer pattern
+    Scene::basic_cell *pOwner = nullptr; // TODO: convert this to observer pattern
     TTrack *pNextAnim = nullptr; // następny tor do animowania
     basic_event *evPlus = nullptr,
            *evMinus = nullptr; // zdarzenia sygnalizacji rozprucia
@@ -143,7 +143,7 @@ private:
 };
 
 // trajektoria ruchu - opakowanie
-class TTrack : public scene::basic_node
+class TTrack : public Scene::basic_node
 {
     friend opengl_renderer;
     // NOTE: temporary arrangement
@@ -215,7 +215,7 @@ public:
     bool ScannedFlag = false; // McZapkie: do zaznaczania kolorem torów skanowanych przez AI
     TGroundNode *nFouling[ 2 ] = { nullptr, nullptr }; // współrzędne ukresu albo oporu kozła
 
-    explicit TTrack( scene::node_data const &Nodedata );
+    explicit TTrack( Scene::node_data const &Nodedata );
     virtual ~TTrack();
 
     void Init();
@@ -277,7 +277,7 @@ public:
     void create_map_geometry(std::vector<gfx::basic_vertex> &Bank);
     void RenderDynSounds(); // odtwarzanie dźwięków pojazdów jest niezależne od ich wyświetlania
 
-    void RaOwnerSet( scene::basic_cell *o ) {
+    void RaOwnerSet( Scene::basic_cell *o ) {
         if( SwitchExtension ) { SwitchExtension->pOwner = o; } };
     bool InMovement(); // czy w trakcie animacji?
     void RaAssign( TAnimModel *am, basic_event *done, basic_event *joined );

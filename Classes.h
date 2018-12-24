@@ -41,7 +41,7 @@ class instance_table;
 class vehicle_table;
 struct light_array;
 
-namespace scene {
+namespace Scene {
 struct node_data;
 class basic_node;
 using group_handle = std::size_t;

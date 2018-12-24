@@ -85,7 +85,7 @@ basic_event::event_conditions::test() const {
     if( flags & ( flags::text | flags::value_1 | flags::value_2 ) ) {
         // porównanie wartości
         for( auto &cellwrapper : *cells ) {
-            auto *cell { static_cast<TMemCell *>( std::get<scene::basic_node *>( cellwrapper ) ) };
+            auto *cell { static_cast<TMemCell *>( std::get<Scene::basic_node *>( cellwrapper ) ) };
             if( cell == nullptr ) {
 //                ErrorLog( "Event " + asName + " trying conditional_memcompare with nonexistent memcell" );
                 continue; // though this is technically error, we treat it as a success to maintain backward compatibility
@@ -208,7 +208,7 @@ basic_event::~basic_event() {
 }
 
 void
-basic_event::deserialize( cParser &Input, scene::scratch_data &Scratchpad ) {
+basic_event::deserialize( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     std::string token;
 
@@ -273,7 +273,7 @@ basic_event::export_as_text( std::ostream &Output ) const {
     else {
         auto targetidx { 0 };
         for( auto &target : m_targets ) {
-            auto *targetnode { std::get<scene::basic_node *>( target ) };
+            auto *targetnode { std::get<Scene::basic_node *>( target ) };
             Output
                 << ( targetnode != nullptr ? targetnode->name() : std::get<std::string>( target ) )
                 << ( ++targetidx < m_targets.size() ? '|' : ' ' );
@@ -362,12 +362,12 @@ basic_event::is_keyword( std::string const &Token ) {
 TMemCell const *
 input_event::input_data::data_cell() const {
 
-    return static_cast<TMemCell const *>( std::get<scene::basic_node *>( data_source ) );
+    return static_cast<TMemCell const *>( std::get<Scene::basic_node *>( data_source ) );
 }
 TMemCell *
 input_event::input_data::data_cell() {
 
-    return static_cast<TMemCell *>( std::get<scene::basic_node *>( data_source ) );
+    return static_cast<TMemCell *>( std::get<Scene::basic_node *>( data_source ) );
 }
 
 
@@ -394,7 +394,7 @@ updatevalues_event::type() const {
 
 // deserialize() subclass details
 void
-updatevalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+updatevalues_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     Input.getTokens( 1, false ); // case sensitive
     Input >> m_input.data_text;
@@ -437,7 +437,7 @@ updatevalues_event::run_() {
         + ( ( m_input.flags & flags::value_2 ) ? to_string( m_input.data_value_2, 2 ) : "X" ) + "]" );
     // TODO: dump status of target cells after the operation
     for( auto &target : m_targets ) {
-        auto *targetcell { static_cast<TMemCell *>( std::get<scene::basic_node *>( target ) ) };
+        auto *targetcell { static_cast<TMemCell *>( std::get<Scene::basic_node *>( target ) ) };
         if( targetcell == nullptr ) { continue; }
         targetcell->UpdateValues(
             m_input.data_text,
@@ -483,7 +483,7 @@ getvalues_event::init() {
     init_targets( simulation::Memory, "memory cell" );
     // custom target initialization code
     for( auto &target : m_targets ) {
-        auto *targetcell { static_cast<TMemCell *>( std::get<scene::basic_node *>( target ) ) };
+        auto *targetcell { static_cast<TMemCell *>( std::get<Scene::basic_node *>( target ) ) };
         if( targetcell == nullptr ) { continue; }
         if( targetcell->IsVelocity() ) {
             // jeśli odczyt komórki a komórka zawiera komendę SetVelocity albo ShuntVelocity
@@ -505,7 +505,7 @@ getvalues_event::type() const {
 
 // deserialize() subclass details
 void
-getvalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+getvalues_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
     // nothing to do here, just preload next token
     Input.getTokens();
 }
@@ -591,7 +591,7 @@ putvalues_event::type() const {
 
 // deserialize() subclass details
 void
-putvalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+putvalues_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     Input.getTokens( 3 );
     // location, previously held in param 3, 4, 5
@@ -740,8 +740,8 @@ copyvalues_event::init() {
     // skopiowanie komórki do innej
     init_targets( simulation::Memory, "memory cell" );
     // source cell
-    std::get<scene::basic_node *>( m_input.data_source ) = simulation::Memory.find( std::get<std::string>( m_input.data_source ) );
-    if( std::get<scene::basic_node *>( m_input.data_source ) == nullptr ) {
+    std::get<Scene::basic_node *>( m_input.data_source ) = simulation::Memory.find( std::get<std::string>( m_input.data_source ) );
+    if( std::get<Scene::basic_node *>( m_input.data_source ) == nullptr ) {
         m_ignored = true; // deaktywacja
         ErrorLog( "Bad event: \"" + m_name + "\" (type: " + type() + ") can't find memory cell \"" + std::get<std::string>( m_input.data_source ) + "\"" );
     }
@@ -756,7 +756,7 @@ copyvalues_event::type() const {
 
 // deserialize() subclass details
 void
-copyvalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+copyvalues_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     m_input.flags = ( flags::text | flags::value_1 | flags::value_2 ); // normalnie trzy
 
@@ -789,7 +789,7 @@ copyvalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad 
 void
 copyvalues_event::run_() {
     // skopiowanie wartości z innej komórki
-    auto const *datasource { static_cast<TMemCell *>( std::get<scene::basic_node *>( m_input.data_source ) ) };
+    auto const *datasource { static_cast<TMemCell *>( std::get<Scene::basic_node *>( m_input.data_source ) ) };
     m_input.data_text = datasource->Text();
     m_input.data_value_1 = datasource->Value1();
     m_input.data_value_2 = datasource->Value2();
@@ -800,7 +800,7 @@ copyvalues_event::run_() {
         + ( ( m_input.flags & flags::value_2 ) ? to_string( m_input.data_value_2, 2 ) : "X" ) + "]" );
     // TODO: dump status of target cells after the operation
     for( auto &target : m_targets ) {
-        auto *targetcell { static_cast<TMemCell *>( std::get<scene::basic_node *>( target ) ) };
+        auto *targetcell { static_cast<TMemCell *>( std::get<Scene::basic_node *>( target ) ) };
         if( targetcell == nullptr ) { continue; }
         targetcell->UpdateValues(
             m_input.data_text,
@@ -822,7 +822,7 @@ copyvalues_event::run_() {
 void
 copyvalues_event::export_as_text_( std::ostream &Output ) const {
 
-    auto const *datasource { static_cast<TMemCell *>( std::get<scene::basic_node *>( m_input.data_source ) ) };
+    auto const *datasource { static_cast<TMemCell *>( std::get<Scene::basic_node *>( m_input.data_source ) ) };
     Output
         << ( datasource != nullptr ?
                 datasource->name() :
@@ -848,7 +848,7 @@ whois_event::type() const {
 
 // deserialize() subclass details
 void
-whois_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+whois_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     m_input.flags = ( flags::text | flags::value_1 | flags::value_2 ); // normalnie trzy
 
@@ -877,7 +877,7 @@ void
 whois_event::run_() {
 
     for( auto &target : m_targets ) {
-        auto *targetcell { static_cast<TMemCell *>( std::get<scene::basic_node *>( target ) ) };
+        auto *targetcell { static_cast<TMemCell *>( std::get<Scene::basic_node *>( target ) ) };
         if( targetcell == nullptr ) { continue; }
         // event effect code
         if( m_input.flags & flags::load ) {
@@ -978,7 +978,7 @@ logvalues_event::type() const {
 
 // deserialize() subclass details
 void
-logvalues_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+logvalues_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
     // nothing to do here, just preload next token
     Input.getTokens();
 }
@@ -994,7 +994,7 @@ logvalues_event::run_() {
     else {
         // jeśli była podana nazwa komórki
         for( auto &target : m_targets ) {
-            auto *targetcell { static_cast<TMemCell *>( std::get<scene::basic_node *>( target ) ) };
+            auto *targetcell { static_cast<TMemCell *>( std::get<Scene::basic_node *>( target ) ) };
             if( targetcell == nullptr ) { continue; }
             WriteLog(
                 "Memcell \"" + targetcell->name() + "\": ["
@@ -1046,7 +1046,7 @@ multi_event::type() const {
 
 // deserialize() subclass details
 void
-multi_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+multi_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     m_conditions.has_else = false;
 
@@ -1174,7 +1174,7 @@ sound_event::type() const {
 
 // deserialize() subclass details
 void
-sound_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+sound_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     Input.getTokens();
     // playback mode, previously held in param 0 // 0: wylaczyc, 1: wlaczyc; -1: wlaczyc zapetlone
@@ -1276,7 +1276,7 @@ animation_event::init() {
     // locate and set up animated submodels
     m_animationcontainers.clear();
     for( auto &target : m_targets ) {
-        auto *targetmodel { static_cast<TAnimModel *>( std::get<scene::basic_node *>( target ) ) };
+        auto *targetmodel { static_cast<TAnimModel *>( std::get<Scene::basic_node *>( target ) ) };
         if( targetmodel == nullptr ) { continue; }
         auto *targetcontainer{ targetmodel->GetContainer( m_animationsubmodel ) };
         if( targetcontainer == nullptr ) {
@@ -1302,7 +1302,7 @@ animation_event::type() const {
 
 // deserialize() subclass details
 void
-animation_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+animation_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     std::string token;
 
@@ -1388,7 +1388,7 @@ animation_event::run_() {
     if( m_animationtype == 4 ) {
         // vmd mode targets the entire model
         for( auto &target : m_targets ) {
-            auto *targetmodel = static_cast<TAnimModel *>( std::get<scene::basic_node *>( target ) );
+            auto *targetmodel = static_cast<TAnimModel *>( std::get<Scene::basic_node *>( target ) );
             if( targetmodel == nullptr ) { continue; }
             // event effect code
             targetmodel->AnimationVND(
@@ -1464,7 +1464,7 @@ lights_event::type() const {
 
 // deserialize() subclass details
 void
-lights_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+lights_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     // TBD, TODO: remove light count limit?
     auto const lightcountlimit { 8 };
@@ -1494,7 +1494,7 @@ void
 lights_event::run_() {
 
     for( auto &target : m_targets ) {
-        auto *targetmodel = static_cast<TAnimModel *>( std::get<scene::basic_node *>( target ) );
+        auto *targetmodel = static_cast<TAnimModel *>( std::get<Scene::basic_node *>( target ) );
         if( targetmodel == nullptr ) { continue; }
         // event effect code
         for( auto lightidx = 0; lightidx < iMaxNumLights; ++lightidx ) {
@@ -1533,7 +1533,7 @@ switch_event::init() {
     init_targets( simulation::Paths, "track" );
     // custom target initialization code
     for( auto &target : m_targets ) {
-        auto *targettrack = static_cast<TTrack *>( std::get<scene::basic_node *>( target ) );
+        auto *targettrack = static_cast<TTrack *>( std::get<Scene::basic_node *>( target ) );
         if( targettrack == nullptr ) { continue; }
         // dowiązanie toru
         if( targettrack->iAction == 0 ) {
@@ -1561,7 +1561,7 @@ switch_event::type() const {
 
 // deserialize() subclass details
 void
-switch_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+switch_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     Input.getTokens();
     // switch state, previously held in param 0
@@ -1586,7 +1586,7 @@ void
 switch_event::run_() {
 
     for( auto &target : m_targets ) {
-        auto *targettrack { static_cast<TTrack *>( std::get<scene::basic_node *>( target ) ) };
+        auto *targettrack { static_cast<TTrack *>( std::get<Scene::basic_node *>( target ) ) };
         if( targettrack == nullptr ) { continue; }
         // event effect code
         targettrack->Switch(
@@ -1624,7 +1624,7 @@ track_event::init() {
     init_targets( simulation::Paths, "track" );
     // custom target initialization code
     for( auto &target : m_targets ) {
-        auto *targettrack = static_cast<TTrack *>( std::get<scene::basic_node *>( target ) );
+        auto *targettrack = static_cast<TTrack *>( std::get<Scene::basic_node *>( target ) );
         if( targettrack == nullptr ) { continue; }
         // flaga zmiany prędkości toru jest istotna dla skanowania
         targettrack->iAction |= 0x200;
@@ -1640,7 +1640,7 @@ track_event::type() const {
 
 // deserialize() subclass details
 void
-track_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+track_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     Input.getTokens();
     Input >> m_velocity;
@@ -1654,7 +1654,7 @@ track_event::run_() {
 
     WriteLog( "Type: TrackVel - [" + to_string( m_velocity, 2 ) + "]" );
     for( auto &target : m_targets ) {
-        auto *targettrack = static_cast<TTrack *>( std::get<scene::basic_node *>( target ) );
+        auto *targettrack = static_cast<TTrack *>( std::get<Scene::basic_node *>( target ) );
         if( targettrack == nullptr ) { continue; }
         // event effect code
         targettrack->VelocitySet( m_velocity );
@@ -1689,7 +1689,7 @@ voltage_event::type() const {
 
 // deserialize() subclass details
 void
-voltage_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+voltage_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
     // zmiana napięcia w zasilaczu (TractionPowerSource)
     Input.getTokens();
     Input >> m_voltage;
@@ -1703,7 +1703,7 @@ voltage_event::run_() {
     // zmiana napięcia w zasilaczu (TractionPowerSource)
     WriteLog( "Type: Voltage [" + to_string( m_voltage, 2 ) + "]" );
     for( auto &target : m_targets ) {
-        auto *targetpowersource = static_cast<TTractionPowerSource *>( std::get<scene::basic_node *>( target ) );
+        auto *targetpowersource = static_cast<TTractionPowerSource *>( std::get<Scene::basic_node *>( target ) );
         if( targetpowersource == nullptr ) { continue; }
         // na razie takie chamskie ustawienie napięcia zasilania
         targetpowersource->VoltageSet( m_voltage );
@@ -1724,7 +1724,7 @@ void
 visible_event::init() {
     // ukrycie albo przywrócenie obiektu
     for( auto &target : m_targets ) {
-        auto &targetnode{ std::get<scene::basic_node *>( target ) };
+        auto &targetnode{ std::get<Scene::basic_node *>( target ) };
         auto &targetname{ std::get<std::string>( target ) };
         // najpierw model
         targetnode = simulation::Instances.find( targetname );
@@ -1752,7 +1752,7 @@ visible_event::type() const {
 
 // deserialize() subclass details
 void
-visible_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+visible_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
     // zmiana wyświetlania obiektu
     Input.getTokens();
     Input >> m_visible;
@@ -1765,7 +1765,7 @@ void
 visible_event::run_() {
 
     for( auto &target : m_targets ) {
-        auto *targetnode = std::get<scene::basic_node *>( target );
+        auto *targetnode = std::get<Scene::basic_node *>( target );
         if( targetnode == nullptr ) { continue; }
         // event effect code
         targetnode->visible( m_visible );
@@ -1796,7 +1796,7 @@ friction_event::type() const {
 
 // deserialize() subclass details
 void
-friction_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+friction_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
     // zmiana przyczepnosci na scenerii
     Input.getTokens();
     Input >> m_friction;
@@ -1837,7 +1837,7 @@ lua_event::type() const {
 
 // deserialize() subclass details
 void
-lua_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+lua_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
     // preload next token
     Input.getTokens();
 }
@@ -1874,7 +1874,7 @@ message_event::type() const {
 
 // deserialize() subclass details
 void
-message_event::deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) {
+message_event::deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) {
     // wyświetlenie komunikatu
     std::string token;
     while( ( true == Input.getTokens() )
@@ -1900,7 +1900,7 @@ message_event::export_as_text_( std::ostream &Output ) const {
 //---------------------------------------------------------------------------
 
 basic_event *
-make_event( cParser &Input, scene::scratch_data &Scratchpad ) {
+make_event( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     auto const name = ToLower( Input.getToken<std::string>() );
     auto const type = Input.getToken<std::string>();

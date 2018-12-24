@@ -45,7 +45,7 @@ void opengl_camera::update_frustum(glm::mat4 const &Projection, glm::mat4 const 
 }
 
 // returns true if specified object is within camera frustum, false otherwise
-bool opengl_camera::visible(scene::bounding_area const &Area) const
+bool opengl_camera::visible(Scene::bounding_area const &Area) const
 {
 	return (m_frustum.sphere_inside(Area.center, Area.radius) > 0.f);
 }
@@ -1615,16 +1615,16 @@ opengl_texture &opengl_renderer::Texture(texture_handle const Texture) const
 	return m_textures.texture(Texture);
 }
 
-void opengl_renderer::Render(scene::basic_region *Region)
+void opengl_renderer::Render(Scene::basic_region *Region)
 {
 
 	m_sectionqueue.clear();
 	m_cellqueue.clear();
 	// build a list of region sections to render
 	glm::vec3 const cameraposition{m_renderpass.camera.position()};
-	auto const camerax = static_cast<int>(std::floor(cameraposition.x / scene::EU07_SECTIONSIZE + scene::EU07_REGIONSIDESECTIONCOUNT / 2));
-	auto const cameraz = static_cast<int>(std::floor(cameraposition.z / scene::EU07_SECTIONSIZE + scene::EU07_REGIONSIDESECTIONCOUNT / 2));
-	int const segmentcount = 2 * static_cast<int>(std::ceil(m_renderpass.draw_range * Global.fDistanceFactor / scene::EU07_SECTIONSIZE));
+	auto const camerax = static_cast<int>(std::floor(cameraposition.x / Scene::EU07_SECTIONSIZE + Scene::EU07_REGIONSIDESECTIONCOUNT / 2));
+	auto const cameraz = static_cast<int>(std::floor(cameraposition.z / Scene::EU07_SECTIONSIZE + Scene::EU07_REGIONSIDESECTIONCOUNT / 2));
+	int const segmentcount = 2 * static_cast<int>(std::ceil(m_renderpass.draw_range * Global.fDistanceFactor / Scene::EU07_SECTIONSIZE));
 	int const originx = camerax - segmentcount / 2;
 	int const originz = cameraz - segmentcount / 2;
 
@@ -1634,7 +1634,7 @@ void opengl_renderer::Render(scene::basic_region *Region)
 		{
 			continue;
 		}
-		if (row >= scene::EU07_REGIONSIDESECTIONCOUNT)
+		if (row >= Scene::EU07_REGIONSIDESECTIONCOUNT)
 		{
 			break;
 		}
@@ -1644,11 +1644,11 @@ void opengl_renderer::Render(scene::basic_region *Region)
 			{
 				continue;
 			}
-			if (column >= scene::EU07_REGIONSIDESECTIONCOUNT)
+			if (column >= Scene::EU07_REGIONSIDESECTIONCOUNT)
 			{
 				break;
 			}
-			auto *section{Region->m_sections[row * scene::EU07_REGIONSIDESECTIONCOUNT + column]};
+			auto *section{Region->m_sections[row * Scene::EU07_REGIONSIDESECTIONCOUNT + column]};
 			if ((section != nullptr) && (m_renderpass.camera.visible(section->m_area)))
 			{
 				m_sectionqueue.emplace_back(section);
@@ -1954,7 +1954,7 @@ void opengl_renderer::draw(std::vector<gfx::geometrybank_handle>::iterator it, s
 	Draw_Geometry(it, end);
 }
 
-void opengl_renderer::Render(scene::shape_node const &Shape, bool const Ignorerange)
+void opengl_renderer::Render(Scene::shape_node const &Shape, bool const Ignorerange)
 {
 	auto const &data{Shape.data()};
 
@@ -2588,7 +2588,7 @@ void opengl_renderer::Render(TTrack *Track)
 }
 
 // experimental, does track rendering in two passes, to take advantage of reduced texture switching
-void opengl_renderer::Render(scene::basic_cell::path_sequence::const_iterator First, scene::basic_cell::path_sequence::const_iterator Last)
+void opengl_renderer::Render(Scene::basic_cell::path_sequence::const_iterator First, Scene::basic_cell::path_sequence::const_iterator Last)
 {
 
 	// setup
@@ -2873,7 +2873,7 @@ void opengl_renderer::Render_precipitation()
 	::glPopMatrix();
 }
 
-void opengl_renderer::Render_Alpha(scene::basic_region *Region)
+void opengl_renderer::Render_Alpha(Scene::basic_region *Region)
 {
 
 	// sort the nodes based on their distance to viewer
@@ -3054,9 +3054,9 @@ void opengl_renderer::Render_Alpha(TTraction *Traction)
 	++m_debugstats.drawcalls;
 }
 
-void opengl_renderer::Render_Alpha(scene::lines_node const &Lines)
+void opengl_renderer::Render_Alpha(Scene::lines_node const &Lines)
 {
-	glDebug("Render_Alpha scene::lines_node");
+	glDebug("Render_Alpha Scene::lines_node");
 
 	auto const &data{Lines.data()};
 
@@ -3434,7 +3434,7 @@ void opengl_renderer::Update_Pick_Node()
 		if (m_picking_node_pbo->read_data(1, 1, pickreadout))
 		{
 			auto const nodeindex = pick_index(glm::ivec3{pickreadout[0], pickreadout[1], pickreadout[2]});
-			scene::basic_node *node{nullptr};
+			Scene::basic_node *node{nullptr};
 			if ((nodeindex > 0) && (nodeindex <= m_picksceneryitems.size()))
 			{
 				node = m_picksceneryitems[nodeindex - 1];
@@ -3470,7 +3470,7 @@ void opengl_renderer::pick_control(std::function<void(TSubModel const *)> callba
 	m_control_pick_requests.push_back(callback);
 }
 
-void opengl_renderer::pick_node(std::function<void(scene::basic_node *)> callback)
+void opengl_renderer::pick_node(std::function<void(Scene::basic_node *)> callback)
 {
 	m_node_pick_requests.push_back(callback);
 }
@@ -3623,7 +3623,7 @@ void opengl_renderer::Update(double const Deltatime)
 		pick_control([](const TSubModel *) {});
 	// temporary conditions for testing. eventually will be coupled with editor mode
 	if ((true == Global.ControlPicking) && (true == DebugModeFlag) && (true == FreeFlyModeFlag))
-		pick_node([](scene::basic_node *) {});
+		pick_node([](Scene::basic_node *) {});
 
 	// dump last opengl error, if any
 	auto const glerror = ::glGetError();

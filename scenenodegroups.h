@@ -11,11 +11,11 @@ http://mozilla.org/MPL/2.0/.
 
 #include "scenenode.h"
 
-namespace scene {
+namespace Scene {
 
 struct basic_group {
 // members
-    std::vector<scene::basic_node *> nodes;
+    std::vector<Scene::basic_node *> nodes;
     std::vector<basic_event *> events;
 };
 
@@ -38,13 +38,13 @@ public:
         handle() const;
     // places provided node in specified group
     void
-        insert( scene::group_handle const Group, scene::basic_node *Node );
+        insert( Scene::group_handle const Group, Scene::basic_node *Node );
     // places provided event in specified group
     void
-        insert( scene::group_handle const Group, basic_event *Event );
+        insert( Scene::group_handle const Group, basic_event *Event );
     // grants direct access to specified group
-    scene::basic_group &
-        group( scene::group_handle const Group ) {
+    Scene::basic_group &
+        group( Scene::group_handle const Group ) {
             return m_groupmap[ Group ]; }
     // sends basic content of the class in legacy (text) format to provided stream
     void
@@ -52,7 +52,7 @@ public:
 
 private:
 // types
-    using group_map = std::unordered_map<scene::group_handle, scene::basic_group>;
+    using group_map = std::unordered_map<Scene::group_handle, Scene::basic_group>;
 // methods
     // removes specified group from the group list and group information from the group's nodes
     void
@@ -62,11 +62,11 @@ private:
         create_handle();
 // members
     group_map m_groupmap; // map of established node groups
-    std::stack<scene::group_handle> m_activegroup; // helper, group to be assigned to newly created nodes
+    std::stack<Scene::group_handle> m_activegroup; // helper, group to be assigned to newly created nodes
 };
 
 extern node_groups Groups;
 
-} // scene
+} // Scene
 
 //---------------------------------------------------------------------------

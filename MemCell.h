@@ -13,11 +13,11 @@ http://mozilla.org/MPL/2.0/.
 #include "scenenode.h"
 #include "Names.h"
 
-class TMemCell : public scene::basic_node {
+class TMemCell : public Scene::basic_node {
 
 public:
 // constructors
-    explicit TMemCell( scene::node_data const &Nodedata );
+    explicit TMemCell( Scene::node_data const &Nodedata );
 // methods
     void
         UpdateValues( std::string const &szNewText, double const fNewValue1, double const fNewValue2, int const CheckMask );

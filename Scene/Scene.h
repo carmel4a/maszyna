@@ -24,7 +24,7 @@ http://mozilla.org/MPL/2.0/.
 #include "sound.h"
 
 class opengl_renderer;
-namespace scene {
+namespace Scene {
 
 struct scratch_data {
 
@@ -168,9 +168,9 @@ private:
     void
         launch_event( TEventLauncher *Launcher );
     void
-        enclose_area( scene::basic_node *Node );
+        enclose_area( Scene::basic_node *Node );
 // members
-    scene::bounding_area m_area { glm::dvec3(), static_cast<float>( 0.5 * M_SQRT2 * EU07_CELLSIZE ) };
+    Scene::bounding_area m_area { glm::dvec3(), static_cast<float>( 0.5 * M_SQRT2 * EU07_CELLSIZE ) };
     bool m_active { false }; // whether the cell holds any actual data content
     shapenode_sequence m_shapesopaque; // opaque pieces of geometry
     shapenode_sequence m_shapestranslucent; // translucent pieces of geometry
@@ -293,7 +293,7 @@ private:
 // members
     // placement and visibility
 
-    scene::bounding_area m_area { glm::dvec3(), static_cast<float>( 0.5 * M_SQRT2 * EU07_SECTIONSIZE ) };
+    Scene::bounding_area m_area { glm::dvec3(), static_cast<float>( 0.5 * M_SQRT2 * EU07_SECTIONSIZE ) };
     // content
     cell_array m_cells; // partitioning scheme
     shapenode_sequence m_shapes; // large pieces of opaque geometry and (legacy) terrain
@@ -427,6 +427,6 @@ private:
 
 };
 
-} // scene
+} // Scene
 
 //---------------------------------------------------------------------------

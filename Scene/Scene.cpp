@@ -21,7 +21,7 @@ http://mozilla.org/MPL/2.0/.
 #include "sn_utils.h"
 #include "renderer.h"
 
-namespace scene {
+namespace Scene {
 
 std::string const EU07_FILEEXTENSION_REGION { ".sbt" };
 std::uint32_t const EU07_FILEHEADER { MAKE_ID4( 'E','U','0','7' ) };
@@ -630,7 +630,7 @@ basic_cell::launch_event( TEventLauncher *Launcher ) {
 
 // adjusts cell bounding area to enclose specified node
 void
-basic_cell::enclose_area( scene::basic_node *Node ) {
+basic_cell::enclose_area( Scene::basic_node *Node ) {
 
     m_area.radius = std::max(
         m_area.radius,
@@ -1654,6 +1654,6 @@ void basic_region::create_map_geometry()
         }
 }
 
-} // scene
+} // Scene
 
 //---------------------------------------------------------------------------

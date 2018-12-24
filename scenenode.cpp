@@ -33,7 +33,7 @@ lighting_data::deserialize( std::istream &Input ) {
     specular = sn_utils::d_vec4( Input );
 }
 
-namespace scene {
+namespace Scene {
 
 // stores content of the struct in provided output stream
 void
@@ -139,7 +139,7 @@ shape_node::deserialize( std::istream &Input ) {
 
 // restores content of the node from provided input stream
 shape_node &
-shape_node::import( cParser &Input, scene::node_data const &Nodedata ) {
+shape_node::import( cParser &Input, Scene::node_data const &Nodedata ) {
 
     // import common data
     m_name = Nodedata.name;
@@ -520,7 +520,7 @@ lines_node::deserialize( std::istream &Input ) {
 
 // restores content of the node from provded input stream
 lines_node &
-lines_node::import( cParser &Input, scene::node_data const &Nodedata ) {
+lines_node::import( cParser &Input, Scene::node_data const &Nodedata ) {
 
     // import common data
     m_name = Nodedata.name;
@@ -684,7 +684,7 @@ memory_node::deserialize( cParser &Input, node_data const &Nodedata ) {
 
 
 
-basic_node::basic_node( scene::node_data const &Nodedata ) :
+basic_node::basic_node( Scene::node_data const &Nodedata ) :
     m_name( Nodedata.name )
 {
     m_rangesquaredmin = Nodedata.range_min * Nodedata.range_min;
@@ -766,6 +766,6 @@ basic_node::radius_() {
     return 0.f;
 }
 
-} // scene
+} // Scene
 
 //---------------------------------------------------------------------------

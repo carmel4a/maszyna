@@ -93,7 +93,7 @@ jawnie nazwę sekcji, ewentualnie nazwę zasilacza (zostanie zastąpiona wskazan
 sekcji z sąsiedniego przęsła).
 */
 
-TTraction::TTraction( scene::node_data const &Nodedata ) : basic_node( Nodedata ) {}
+TTraction::TTraction( Scene::node_data const &Nodedata ) : basic_node( Nodedata ) {}
 
 void
 TTraction::Load( cParser *parser, glm::dvec3 const &pOrigin ) {
@@ -705,7 +705,7 @@ traction_table::InitTraction() {
              && ( traction->asPowerSupplyName != "none" ) ) { // dopuszczamy na razie brak podłączenia?
                 // logowanie błędu i utworzenie zasilacza o domyślnej zawartości
                 ErrorLog( "Bad scenario: traction piece connected to nonexistent power source \"" + traction->asPowerSupplyName + "\"" );
-                scene::node_data nodedata;
+                Scene::node_data nodedata;
                 nodedata.name = traction->asPowerSupplyName;
                 powersource = new TTractionPowerSource( nodedata );
                 powersource->Init( traction->NominalVoltage, traction->MaxCurrent );

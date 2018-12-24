@@ -30,11 +30,11 @@ state_serializer::deserialize( std::string const &Scenariofile ) {
 
     // TODO: move initialization to separate routine so we can reuse it
     SafeDelete( Region );
-    Region = new scene::basic_region();
+    Region = new Scene::basic_region();
 
     // TODO: check first for presence of serialized binary files
     // if this fails, fall back on the legacy text format
-    scene::scratch_data importscratchpad;
+    Scene::scratch_data importscratchpad;
     importscratchpad.name = Scenariofile;
     if( Scenariofile != "$.scn" ) {
         // compilation to binary file isn't supported for rainsted-created overrides
@@ -58,11 +58,11 @@ state_serializer::deserialize( std::string const &Scenariofile ) {
 
 // restores class data from provided stream
 void
-state_serializer::deserialize( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     // prepare deserialization function table
     // since all methods use the same objects, we can have simple, hard-coded binds or lambdas for the task
-    using deserializefunction = void( state_serializer::*)(cParser &, scene::scratch_data &);
+    using deserializefunction = void( state_serializer::*)(cParser &, Scene::scratch_data &);
     std::vector<
         std::pair<
             std::string,
@@ -132,7 +132,7 @@ state_serializer::deserialize( cParser &Input, scene::scratch_data &Scratchpad )
 }
 
 void
-state_serializer::deserialize_area( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_area( cParser &Input, Scene::scratch_data &Scratchpad ) {
     // first parameter specifies name of parent piece...
     auto token { Input.getToken<std::string>() };
     auto *groupowner { TIsolated::Find( token ) };
@@ -146,7 +146,7 @@ state_serializer::deserialize_area( cParser &Input, scene::scratch_data &Scratch
 }
 
 void
-state_serializer::deserialize_atmo( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_atmo( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     // NOTE: parameter system needs some decent replacement, but not worth the effort if we're moving to built-in editor
     // atmosphere color; legacy parameter, no longer used
@@ -186,7 +186,7 @@ state_serializer::deserialize_atmo( cParser &Input, scene::scratch_data &Scratch
 }
 
 void
-state_serializer::deserialize_camera( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_camera( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     glm::dvec3 xyz, abc;
     int i = -1, into = -1; // do której definicji kamery wstawić
@@ -240,21 +240,21 @@ state_serializer::deserialize_camera( cParser &Input, scene::scratch_data &Scrat
 }
 
 void
-state_serializer::deserialize_config( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_config( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     // config parameters (re)definition
     Global.ConfigParse( Input );
 }
 
 void
-state_serializer::deserialize_description( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_description( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     // legacy section, never really used;
     skip_until( Input, "enddescription" );
 }
 
 void
-state_serializer::deserialize_event( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_event( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     // TODO: refactor event class and its de/serialization. do offset and rotation after deserialization is done
     auto *event = make_event( Input, Scratchpad );
@@ -267,14 +267,14 @@ state_serializer::deserialize_event( cParser &Input, scene::scratch_data &Scratc
     event->deserialize( Input, Scratchpad );
 
     if( true == simulation::Events.insert( event ) ) {
-        scene::Groups.insert( scene::Groups.handle(), event );
+        Scene::Groups.insert( Scene::Groups.handle(), event );
     }
     else {
         delete event;
     }
 }
 
-void state_serializer::deserialize_lua( cParser &Input, scene::scratch_data &Scratchpad )
+void state_serializer::deserialize_lua( cParser &Input, Scene::scratch_data &Scratchpad )
 {
        Input.getTokens(1, false);
        std::string file;
@@ -283,7 +283,7 @@ void state_serializer::deserialize_lua( cParser &Input, scene::scratch_data &Scr
 }
 
 void
-state_serializer::deserialize_firstinit( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_firstinit( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     if( true == Scratchpad.initialized ) { return; }
 
@@ -303,30 +303,30 @@ state_serializer::deserialize_firstinit( cParser &Input, scene::scratch_data &Sc
 }
 
 void
-state_serializer::deserialize_group( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_group( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
-    scene::Groups.create();
+    Scene::Groups.create();
 }
 
 void
-state_serializer::deserialize_endgroup( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_endgroup( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
-    scene::Groups.close();
+    Scene::Groups.close();
 }
 
 void
-state_serializer::deserialize_light( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_light( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     // legacy section, no longer used nor supported;
     skip_until( Input, "endlight" );
 }
 
 void
-state_serializer::deserialize_node( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_node( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     auto const inputline = Input.Line(); // cache in case we need to report error
 
-    scene::node_data nodedata;
+    Scene::node_data nodedata;
     // common data and node type indicator
     Input.getTokens( 4 );
     Input
@@ -364,7 +364,7 @@ state_serializer::deserialize_node( cParser &Input, scene::scratch_data &Scratch
             delete pathnode;
 */
         }
-        scene::Groups.insert( scene::Groups.handle(), path );
+        Scene::Groups.insert( Scene::Groups.handle(), path );
         simulation::Region->insert_and_register( path );
     }
     else if( nodedata.type == "traction" ) {
@@ -376,7 +376,7 @@ state_serializer::deserialize_node( cParser &Input, scene::scratch_data &Scratch
         if( false == simulation::Traction.insert( traction ) ) {
             ErrorLog( "Bad scenario: duplicate traction piece name \"" + traction->name() + "\" defined in file \"" + Input.Name() + "\" (line " + std::to_string( inputline ) + ")" );
         }
-        scene::Groups.insert( scene::Groups.handle(), traction );
+        Scene::Groups.insert( Scene::Groups.handle(), traction );
         simulation::Region->insert_and_register( traction );
     }
     else if( nodedata.type == "tractionpowersource" ) {
@@ -407,14 +407,14 @@ state_serializer::deserialize_node( cParser &Input, scene::scratch_data &Scratch
                 for( auto i = 1; i < cellcount; ++i ) {
                     auto *submodel = instance->TerrainSquare( i - 1 );
                     simulation::Region->insert(
-                        scene::shape_node().convert( submodel ),
+                        Scene::shape_node().convert( submodel ),
                         Scratchpad,
                         false );
                     // if there's more than one group of triangles in the cell they're held as children of the primary submodel
                     submodel = submodel->ChildGet();
                     while( submodel != nullptr ) {
                         simulation::Region->insert(
-                            scene::shape_node().convert( submodel ),
+                            Scene::shape_node().convert( submodel ),
                             Scratchpad,
                             false );
                         submodel = submodel->NextGet();
@@ -437,7 +437,7 @@ state_serializer::deserialize_node( cParser &Input, scene::scratch_data &Scratch
             if( false == simulation::Instances.insert( instance ) ) {
                 ErrorLog( "Bad scenario: duplicate 3d model instance name \"" + instance->name() + "\" defined in file \"" + Input.Name() + "\" (line " + std::to_string( inputline ) + ")" );
             }
-            scene::Groups.insert( scene::Groups.handle(), instance );
+            Scene::Groups.insert( Scene::Groups.handle(), instance );
             simulation::Region->insert( instance );
         }
     }
@@ -457,7 +457,7 @@ state_serializer::deserialize_node( cParser &Input, scene::scratch_data &Scratch
         if( false == skip ) {
 
             simulation::Region->insert(
-                scene::shape_node().import(
+                Scene::shape_node().import(
                     Input, nodedata ),
                 Scratchpad,
                 true );
@@ -473,7 +473,7 @@ state_serializer::deserialize_node( cParser &Input, scene::scratch_data &Scratch
         if( false == Scratchpad.binary.terrain ) {
 
             simulation::Region->insert(
-                scene::lines_node().import(
+                Scene::lines_node().import(
                     Input, nodedata ),
                 Scratchpad );
         }
@@ -488,7 +488,7 @@ state_serializer::deserialize_node( cParser &Input, scene::scratch_data &Scratch
         if( false == simulation::Memory.insert( memorycell ) ) {
             ErrorLog( "Bad scenario: duplicate memory cell name \"" + memorycell->name() + "\" defined in file \"" + Input.Name() + "\" (line " + std::to_string( inputline ) + ")" );
         }
-        scene::Groups.insert( scene::Groups.handle(), memorycell );
+        Scene::Groups.insert( Scene::Groups.handle(), memorycell );
         simulation::Region->insert( memorycell );
     }
     else if( nodedata.type == "eventlauncher" ) {
@@ -503,7 +503,7 @@ state_serializer::deserialize_node( cParser &Input, scene::scratch_data &Scratch
             simulation::Events.queue( eventlauncher );
         }
         else {
-            scene::Groups.insert( scene::Groups.handle(), eventlauncher );
+            Scene::Groups.insert( Scene::Groups.handle(), eventlauncher );
             simulation::Region->insert( eventlauncher );
         }
     }
@@ -519,7 +519,7 @@ state_serializer::deserialize_node( cParser &Input, scene::scratch_data &Scratch
 }
 
 void
-state_serializer::deserialize_origin( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_origin( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     glm::dvec3 offset;
     Input.getTokens( 3 );
@@ -536,7 +536,7 @@ state_serializer::deserialize_origin( cParser &Input, scene::scratch_data &Scrat
 }
 
 void
-state_serializer::deserialize_endorigin( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_endorigin( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     if( false == Scratchpad.location.offset.empty() ) {
         Scratchpad.location.offset.pop();
@@ -547,7 +547,7 @@ state_serializer::deserialize_endorigin( cParser &Input, scene::scratch_data &Sc
 }
 
 void
-state_serializer::deserialize_rotate( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_rotate( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     Input.getTokens( 3 );
     Input
@@ -557,7 +557,7 @@ state_serializer::deserialize_rotate( cParser &Input, scene::scratch_data &Scrat
 }
 
 void
-state_serializer::deserialize_sky( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_sky( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     // sky model
     Input.getTokens( 1 );
@@ -568,14 +568,14 @@ state_serializer::deserialize_sky( cParser &Input, scene::scratch_data &Scratchp
 }
 
 void
-state_serializer::deserialize_test( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_test( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     // legacy section, no longer supported;
     skip_until( Input, "endtest" );
 }
 
 void
-state_serializer::deserialize_time( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_time( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     // current scenario time
     cParser timeparser( Input.getToken<std::string>() );
@@ -602,7 +602,7 @@ state_serializer::deserialize_time( cParser &Input, scene::scratch_data &Scratch
 }
 
 void
-state_serializer::deserialize_trainset( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_trainset( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     if( true == Scratchpad.trainset.is_open ) {
         // shouldn't happen but if it does wrap up currently open trainset and report an error
@@ -610,7 +610,7 @@ state_serializer::deserialize_trainset( cParser &Input, scene::scratch_data &Scr
         ErrorLog( "Bad scenario: encountered nested trainset definitions in file \"" + Input.Name() + "\" (line " + std::to_string( Input.Line() ) + ")" );
     }
 
-    Scratchpad.trainset = scene::scratch_data::trainset_data();
+    Scratchpad.trainset = Scene::scratch_data::trainset_data();
     Scratchpad.trainset.is_open = true;
 
     Input.getTokens( 4 );
@@ -622,7 +622,7 @@ state_serializer::deserialize_trainset( cParser &Input, scene::scratch_data &Scr
 }
 
 void
-state_serializer::deserialize_endtrainset( cParser &Input, scene::scratch_data &Scratchpad ) {
+state_serializer::deserialize_endtrainset( cParser &Input, Scene::scratch_data &Scratchpad ) {
 
     if( ( false == Scratchpad.trainset.is_open )
      || ( true == Scratchpad.trainset.vehicles.empty() ) ) {
@@ -670,7 +670,7 @@ state_serializer::deserialize_endtrainset( cParser &Input, scene::scratch_data &
 
 // creates path and its wrapper, restoring class data from provided stream
 TTrack *
-state_serializer::deserialize_path( cParser &Input, scene::scratch_data &Scratchpad, scene::node_data const &Nodedata ) {
+state_serializer::deserialize_path( cParser &Input, Scene::scratch_data &Scratchpad, Scene::node_data const &Nodedata ) {
 
     // TODO: refactor track and wrapper classes and their de/serialization. do offset and rotation after deserialization is done
     auto *track = new TTrack( Nodedata );
@@ -687,7 +687,7 @@ state_serializer::deserialize_path( cParser &Input, scene::scratch_data &Scratch
 }
 
 TTraction *
-state_serializer::deserialize_traction( cParser &Input, scene::scratch_data &Scratchpad, scene::node_data const &Nodedata ) {
+state_serializer::deserialize_traction( cParser &Input, Scene::scratch_data &Scratchpad, Scene::node_data const &Nodedata ) {
 
     if( false == Global.bLoadTraction ) {
         skip_until( Input, "endtraction" );
@@ -705,7 +705,7 @@ state_serializer::deserialize_traction( cParser &Input, scene::scratch_data &Scr
 }
 
 TTractionPowerSource *
-state_serializer::deserialize_tractionpowersource( cParser &Input, scene::scratch_data &Scratchpad, scene::node_data const &Nodedata ) {
+state_serializer::deserialize_tractionpowersource( cParser &Input, Scene::scratch_data &Scratchpad, Scene::node_data const &Nodedata ) {
 
     if( false == Global.bLoadTraction ) {
         skip_until( Input, "end" );
@@ -721,7 +721,7 @@ state_serializer::deserialize_tractionpowersource( cParser &Input, scene::scratc
 }
 
 TMemCell *
-state_serializer::deserialize_memorycell( cParser &Input, scene::scratch_data &Scratchpad, scene::node_data const &Nodedata ) {
+state_serializer::deserialize_memorycell( cParser &Input, Scene::scratch_data &Scratchpad, Scene::node_data const &Nodedata ) {
 
     auto *memorycell = new TMemCell( Nodedata );
     memorycell->Load( &Input );
@@ -732,7 +732,7 @@ state_serializer::deserialize_memorycell( cParser &Input, scene::scratch_data &S
 }
 
 TEventLauncher *
-state_serializer::deserialize_eventlauncher( cParser &Input, scene::scratch_data &Scratchpad, scene::node_data const &Nodedata ) {
+state_serializer::deserialize_eventlauncher( cParser &Input, Scene::scratch_data &Scratchpad, Scene::node_data const &Nodedata ) {
 
     glm::dvec3 location;
     Input.getTokens( 3 );
@@ -749,7 +749,7 @@ state_serializer::deserialize_eventlauncher( cParser &Input, scene::scratch_data
 }
 
 TAnimModel *
-state_serializer::deserialize_model( cParser &Input, scene::scratch_data &Scratchpad, scene::node_data const &Nodedata ) {
+state_serializer::deserialize_model( cParser &Input, Scene::scratch_data &Scratchpad, Scene::node_data const &Nodedata ) {
 
     glm::dvec3 location;
     glm::vec3 rotation;
@@ -775,11 +775,11 @@ state_serializer::deserialize_model( cParser &Input, scene::scratch_data &Scratc
 }
 
 TDynamicObject *
-state_serializer::deserialize_dynamic( cParser &Input, scene::scratch_data &Scratchpad, scene::node_data const &Nodedata ) {
+state_serializer::deserialize_dynamic( cParser &Input, Scene::scratch_data &Scratchpad, Scene::node_data const &Nodedata ) {
 
     if( false == Scratchpad.trainset.is_open ) {
         // part of trainset data is used when loading standalone vehicles, so clear it just in case
-        Scratchpad.trainset = scene::scratch_data::trainset_data();
+        Scratchpad.trainset = Scene::scratch_data::trainset_data();
     }
     auto const inputline { Input.Line() }; // cache in case of errors
     // basic attributes
@@ -905,7 +905,7 @@ state_serializer::deserialize_dynamic( cParser &Input, scene::scratch_data &Scra
 }
 
 sound_source *
-state_serializer::deserialize_sound( cParser &Input, scene::scratch_data &Scratchpad, scene::node_data const &Nodedata ) {
+state_serializer::deserialize_sound( cParser &Input, Scene::scratch_data &Scratchpad, Scene::node_data const &Nodedata ) {
 
     glm::dvec3 location;
     Input.getTokens( 3 );
@@ -940,7 +940,7 @@ state_serializer::skip_until( cParser &Input, std::string const &Token ) {
 
 // transforms provided location by specifed rotation and offset
 glm::dvec3
-state_serializer::transform( glm::dvec3 Location, scene::scratch_data const &Scratchpad ) {
+state_serializer::transform( glm::dvec3 Location, Scene::scratch_data const &Scratchpad ) {
 
     if( Scratchpad.location.rotation != glm::vec3( 0, 0, 0 ) ) {
         auto const rotation = glm::radians( Scratchpad.location.rotation );
@@ -975,7 +975,7 @@ state_serializer::export_as_text( std::string const &Scenariofile ) const {
     std::ofstream scmfile { filename + ".scm" };
     // groups
     scmfile << "// groups\n";
-    scene::Groups.export_as_text( scmfile );
+    Scene::Groups.export_as_text( scmfile );
     // tracks
     scmfile << "// paths\n";
     for( auto const *path : Paths.sequence() ) {

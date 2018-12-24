@@ -50,7 +50,7 @@ editor_ui::update() {
 }
 
 void
-editor_ui::set_node( scene::basic_node * Node ) {
+editor_ui::set_node( Scene::basic_node * Node ) {
 
     m_node = Node;
 }

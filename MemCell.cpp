@@ -23,7 +23,7 @@ http://mozilla.org/MPL/2.0/.
 
 //---------------------------------------------------------------------------
 
-TMemCell::TMemCell( scene::node_data const &Nodedata ) : basic_node( Nodedata ) {}
+TMemCell::TMemCell( Scene::node_data const &Nodedata ) : basic_node( Nodedata ) {}
 
 void TMemCell::UpdateValues( std::string const &szNewText, double const fNewValue1, double const fNewValue2, int const CheckMask )
 {

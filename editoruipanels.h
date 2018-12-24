@@ -19,7 +19,7 @@ public:
         : ui_panel( Name, Isopen )
     {}
 
-    void update( scene::basic_node const *Node );
+    void update( Scene::basic_node const *Node );
     void render() override;
 
 private:
@@ -28,8 +28,8 @@ private:
     bool render_group();
 
 // members
-    scene::basic_node const *m_node { nullptr }; // scene node bound to the panel
-    scene::group_handle m_grouphandle { null_handle }; // scene group bound to the panel
+    Scene::basic_node const *m_node { nullptr }; // scene node bound to the panel
+    Scene::group_handle m_grouphandle { null_handle }; // scene group bound to the panel
     std::string m_groupprefix;
     std::vector<text_line> m_grouplines;
 };

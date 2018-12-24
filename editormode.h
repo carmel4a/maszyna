@@ -79,8 +79,8 @@ private:
     editormode_input m_input;
     TCamera Camera;
     double fTime50Hz { 0.0 }; // bufor czasu dla komunikacji z PoKeys
-    scene::basic_editor m_editor;
-    scene::basic_node *m_node; // currently selected scene node
+    Scene::basic_editor m_editor;
+    Scene::basic_node *m_node; // currently selected scene node
     bool m_takesnapshot { true }; // helper, hints whether snapshot of selected node(s) should be taken before modification
     bool m_dragging = false;
 };

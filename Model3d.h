@@ -47,7 +47,7 @@ enum class TAnimType // rodzaj animacji
 	at_Undefined // animacja chwilowo nieokreślona
 };
 
-namespace scene {
+namespace Scene {
 class shape_node;
 }
 
@@ -60,7 +60,7 @@ class TSubModel
     friend opengl_renderer;
     friend TModel3d; // temporary workaround. TODO: clean up class content/hierarchy
     friend TDynamicObject; // temporary etc
-    friend scene::shape_node; // temporary etc
+    friend Scene::shape_node; // temporary etc
 
 public:
     enum normalization {

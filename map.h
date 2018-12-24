@@ -29,6 +29,6 @@ class map
     cFrustum frustum;
 public:
     bool map_opened = false;
-    void render(scene::basic_region *Region);
+    void render(Scene::basic_region *Region);
     void toggle_window();
 };

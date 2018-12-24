@@ -12,7 +12,7 @@ http://mozilla.org/MPL/2.0/.
 #include "uilayer.h"
 #include "editoruipanels.h"
 
-namespace scene {
+namespace Scene {
 
 class basic_node;
 
@@ -31,10 +31,10 @@ public:
     void
         update() override;
     void
-        set_node( scene::basic_node * Node );
+        set_node( Scene::basic_node * Node );
 
 private:
 // members
     itemproperties_panel m_itempropertiespanel { "Node Properties", true };
-    scene::basic_node * m_node { nullptr }; // currently bound scene node, if any
+    Scene::basic_node * m_node { nullptr }; // currently bound scene node, if any
 };

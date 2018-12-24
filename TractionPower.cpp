@@ -21,7 +21,7 @@ http://mozilla.org/MPL/2.0/.
 
 //---------------------------------------------------------------------------
 
-TTractionPowerSource::TTractionPowerSource( scene::node_data const &Nodedata ) : basic_node( Nodedata ) {}
+TTractionPowerSource::TTractionPowerSource( Scene::node_data const &Nodedata ) : basic_node( Nodedata ) {}
 // legacy constructor
 
 void TTractionPowerSource::Init(double const u, double const i)

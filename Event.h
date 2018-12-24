@@ -42,7 +42,7 @@ public:
     // restores event data from provided stream
     virtual
     void
-        deserialize( cParser &Input, scene::scratch_data &Scratchpad );
+        deserialize( cParser &Input, Scene::scratch_data &Scratchpad );
     // prepares event for use
     virtual
     void
@@ -75,8 +75,8 @@ public:
     virtual TCommandType input_command() const;
     virtual double input_value( int Index ) const;
     virtual glm::dvec3 input_location() const;
-    void group( scene::group_handle Group );
-    scene::group_handle group() const;
+    void group( Scene::group_handle Group );
+    Scene::group_handle group() const;
 // members
     basic_event *m_next { nullptr }; // następny w kolejce // TODO: replace with event list in the manager
     basic_event *m_sibling { nullptr }; // kolejny event z tą samą nazwą - od wersji 378
@@ -91,7 +91,7 @@ public:
 
 protected:
 // types
-    using basic_node = std::tuple<std::string, scene::basic_node *>;
+    using basic_node = std::tuple<std::string, Scene::basic_node *>;
     using node_sequence = std::vector<basic_node>;
 
     struct event_conditions {
@@ -128,13 +128,13 @@ private:
     // deserialization helper, converts provided string to a list of target nodes
     virtual void deserialize_targets( std::string const &Input );
     // deserialize() subclass details
-    virtual void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) = 0;
+    virtual void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) = 0;
     // run() subclass details
     virtual void run_() = 0;
     // export_as_text() subclass details
     virtual void export_as_text_( std::ostream &Output ) const = 0;
 // members
-    scene::group_handle m_group { null_handle }; // group this event belongs to, if any
+    Scene::group_handle m_group { null_handle }; // group this event belongs to, if any
 };
 
 
@@ -143,7 +143,7 @@ private:
 // TBD: replace the generic module with specialized mixins
 class input_event : public basic_event {
 
-    friend basic_event * make_event( cParser &Input, scene::scratch_data &Scratchpad );
+    friend basic_event * make_event( cParser &Input, Scene::scratch_data &Scratchpad );
 
 protected:
 // types
@@ -180,7 +180,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -203,7 +203,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -233,7 +233,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -259,7 +259,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -280,7 +280,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -301,7 +301,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -325,7 +325,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -352,7 +352,7 @@ private:
     // deserialization helper, converts provided string to a list of target nodes
     void deserialize_targets( std::string const &Input ) override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -377,7 +377,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -404,7 +404,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -425,7 +425,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -448,7 +448,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -469,7 +469,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -490,7 +490,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -511,7 +511,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -527,7 +527,7 @@ public:
 
 private:
     std::string type() const override;
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     void run_() override;
     void export_as_text_( std::ostream &Output ) const override;
     bool is_instant() const override;
@@ -547,7 +547,7 @@ private:
     // event type string
     std::string type() const override;
     // deserialize() subclass details
-    void deserialize_( cParser &Input, scene::scratch_data &Scratchpad ) override;
+    void deserialize_( cParser &Input, Scene::scratch_data &Scratchpad ) override;
     // run() subclass details
     void run_() override;
     // export_as_text() subclass details
@@ -559,7 +559,7 @@ private:
 
 
 basic_event *
-make_event( cParser &Input, scene::scratch_data &Scratchpad );
+make_event( cParser &Input, Scene::scratch_data &Scratchpad );
 
 
 
@@ -632,12 +632,12 @@ private:
 
 inline
 void
-basic_event::group( scene::group_handle Group ) {
+basic_event::group( Scene::group_handle Group ) {
     m_group = Group;
 }
 
 inline
-scene::group_handle
+Scene::group_handle
 basic_event::group() const {
     return m_group;
 }
@@ -647,8 +647,8 @@ void
 basic_event::init_targets( TableType_ &Repository, std::string const &Targettype, bool const Logerrors ) {
 
     for( auto &target : m_targets ) {
-        std::get<scene::basic_node *>( target ) = Repository.find( std::get<std::string>( target ) );
-        if( std::get<scene::basic_node *>( target ) == nullptr ) {
+        std::get<Scene::basic_node *>( target ) = Repository.find( std::get<std::string>( target ) );
+        if( std::get<Scene::basic_node *>( target ) == nullptr ) {
             m_ignored = true; // deaktywacja
             if( Logerrors )
                 ErrorLog( "Bad event: \"" + m_name + "\" (type: " + type() + ") can't find " + Targettype +" \"" + std::get<std::string>( target ) + "\"" );

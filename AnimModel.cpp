@@ -413,7 +413,7 @@ void TAnimContainer::EventAssign(basic_event *ev)
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-TAnimModel::TAnimModel( scene::node_data const &Nodedata ) : basic_node( Nodedata ) {
+TAnimModel::TAnimModel( Scene::node_data const &Nodedata ) : basic_node( Nodedata ) {
 
     m_lightcolors.fill( glm::vec3{ -1.f } );
     m_lightopacities.fill( 1.f );
