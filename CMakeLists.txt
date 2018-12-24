@@ -67,7 +67,7 @@ set(SOURCES
 "stdafx.cpp"
 "uart.cpp"
 "messaging.cpp"
-"scene.cpp"
+"Scene/Scene.cpp"
 "scenenode.cpp"
 "simulation.cpp"
 "vertex.cpp"

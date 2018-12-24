@@ -21,7 +21,7 @@ http://mozilla.org/MPL/2.0/.
 #include "AnimModel.h"
 #include "DynObj.h"
 #include "lightarray.h"
-#include "scene.h"
+#include "Scene/Scene.h"
 #include "Train.h"
 
 namespace simulation {

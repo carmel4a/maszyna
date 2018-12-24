@@ -10,7 +10,7 @@ http://mozilla.org/MPL/2.0/.
 #pragma once
 
 #include "parser.h"
-#include "scene.h"
+#include "Scene/Scene.h"
 
 namespace simulation {
 

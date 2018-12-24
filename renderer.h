@@ -17,7 +17,7 @@ http://mozilla.org/MPL/2.0/.
 #include "frustum.h"
 #include "simulationenvironment.h"
 #include "MemCell.h"
-#include "scene.h"
+#include "Scene/Scene.h"
 #include "light.h"
 #include "gl/ubo.h"
 #include "gl/framebuffer.h"
