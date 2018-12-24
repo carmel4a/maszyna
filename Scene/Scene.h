@@ -15,6 +15,7 @@ http://mozilla.org/MPL/2.0/.
 #include <stack>
 #include <unordered_set>
 
+#include "SceneConfig.h"
 #include "parser.h"
 #include "openglgeometrybank.h"
 #include "scenenode.h"
@@ -24,10 +25,6 @@ http://mozilla.org/MPL/2.0/.
 
 class opengl_renderer;
 namespace scene {
-
-int const EU07_CELLSIZE = 250;
-int const EU07_SECTIONSIZE = 1000;
-int const EU07_REGIONSIDESECTIONCOUNT = 500; // number of sections along a side of square region
 
 struct scratch_data {
 
