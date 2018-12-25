@@ -45,11 +45,11 @@ http://mozilla.org/MPL/2.0/.
 #include "Classes.h"
 #include "utilities.h"
 
-#define PyGetFloat(param) PyFloat_FromDouble(param >= 0 ? param : -param)
-#define PyGetFloatS(param) PyFloat_FromDouble(param)
-#define PyGetInt(param) PyInt_FromLong(param)
-#define PyGetBool(param) param ? Py_True : Py_False
-#define PyGetString(param) PyString_FromString(param)
+#define PyGetFloat(param) PyFloat_FromDouble((param) >= 0 ? (param) : -(param))
+#define PyGetFloatS(param) PyFloat_FromDouble((param))
+#define PyGetInt(param) PyInt_FromLong((param))
+#define PyGetBool(param) (param) ? Py_True : Py_False
+#define PyGetString(param) PyString_FromString((param))
 
 // TODO: extract common base and inherit specialization from it
 class render_task {
