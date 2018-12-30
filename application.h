@@ -9,8 +9,10 @@ http://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#include "stdafx.h"
 #include "applicationmode.h"
 #include "PyInt.h"
+#include "ref/taskflow/taskflow.hpp"
 
 class eu07_application {
 
@@ -75,6 +77,9 @@ public:
     GLFWwindow *
         window( int const Windowindex = 0 );
 
+    static inline auto taskflow() -> tf::Taskflow&;
+    static std::mutex taskflow_mutex;
+
 private:
 // types
     using modeptr_array = std::array<std::shared_ptr<application_mode>, static_cast<std::size_t>( mode::count_ )>;
@@ -97,6 +102,13 @@ private:
     mode_stack m_modestack; // current behaviour mode
     python_taskqueue m_taskqueue;
     std::vector<GLFWwindow *> m_windows;
+
+    static tf::Taskflow m_taskflow;
+
+    std::vector<GLFWwindow *> m_windows;    
 };
+
+inline auto eu07_application::taskflow() -> tf::Taskflow&
+{ return  eu07_application::m_taskflow; }
 
 extern eu07_application Application;
