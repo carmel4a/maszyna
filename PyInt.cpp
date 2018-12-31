@@ -103,9 +103,8 @@ void render_task::cancel() {
     delete this;
 }
 
-// initializes the module. returns true on success
-auto python_taskqueue::init() -> bool {
-
+bool python_taskqueue::init()
+{
 #ifdef _WIN32
 	if (sizeof(void*) == 8)
 		Py_SetPythonHome("python64");

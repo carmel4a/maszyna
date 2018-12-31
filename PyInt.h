@@ -89,8 +89,10 @@ public:
 // constructors
     python_taskqueue() = default;
 // methods
-    // initializes the module. returns true on success
-    auto init() -> bool;
+    /// Initializes the module.
+    /** @return true on success. */
+    bool init();
+
     // shuts down the module
     void exit();
     // adds specified task along with provided collection of data to the work queue. returns true on success
