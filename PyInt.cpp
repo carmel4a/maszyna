@@ -105,18 +105,16 @@ void render_task::cancel() {
 
 bool python_taskqueue::init()
 {
-#ifdef _WIN32
-	if (sizeof(void*) == 8)
-		Py_SetPythonHome("python64");
-	else
-		Py_SetPythonHome("python");
-#elif __linux__
-	if (sizeof(void*) == 8)
-		Py_SetPythonHome("linuxpython64");
-	else
-		Py_SetPythonHome("linuxpython");
-#endif
-    Py_Initialize();
+    {
+        constexpr const bool is_64_bit = (bool)( sizeof( void* ) == 8 );
+        #ifdef _WIN32
+            std::string path { is_64_bit ? "python64" : "python" };
+        #elif __linux__
+            std::string path { is_64_bit ? "linuxpython64" : "linuxpython" };
+        #endif
+        Py_SetPythonHome( path.data() );
+    }
+
     PyEval_InitThreads();
 
     m_initialized = true;
