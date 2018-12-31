@@ -119,9 +119,9 @@ bool python_taskqueue::init()
 
     m_initialized = true;
 
-	PyObject *stringiomodule { nullptr };
-	PyObject *stringioclassname { nullptr };
-	PyObject *stringioobject { nullptr };
+	PyObject* string_io_module     = nullptr,
+	        * string_io_class_name = nullptr,
+	        * string_io_object     = nullptr;
 
     // do the setup work while we hold the lock
     m_main = PyImport_ImportModule("__main__");
@@ -130,19 +130,19 @@ bool python_taskqueue::init()
         goto release_and_exit;
     }
 
-    stringiomodule = PyImport_ImportModule( "cStringIO" );
-    stringioclassname = (
-        stringiomodule != nullptr ?
-            PyObject_GetAttrString( stringiomodule, "StringIO" ) :
+    string_io_module = PyImport_ImportModule( "cStringIO" );
+    string_io_class_name = (
+        string_io_module != nullptr ?
+            PyObject_GetAttrString( string_io_module, "StringIO" ) :
             nullptr );
-    stringioobject = (
-        stringioclassname != nullptr ?
-            PyObject_CallObject( stringioclassname, nullptr ) :
+    string_io_object = (
+        string_io_class_name != nullptr ?
+            PyObject_CallObject( string_io_class_name, nullptr ) :
             nullptr );
     m_error = { (
-        stringioobject == nullptr ? nullptr :
-        PySys_SetObject( "stderr", stringioobject ) != 0 ? nullptr :
-        stringioobject ) };
+        string_io_object == nullptr ? nullptr :
+        PySys_SetObject( "stderr", string_io_object ) != 0 ? nullptr :
+        string_io_object ) };
 
     if( m_error == nullptr ) { goto release_and_exit; }
 
