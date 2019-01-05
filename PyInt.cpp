@@ -124,11 +124,9 @@ bool python_taskqueue::init()
 	        * string_io_object     = nullptr;
 
     // do the setup work while we hold the lock
-    m_main = PyImport_ImportModule("__main__");
-    if (m_main == nullptr) {
-        ErrorLog( "Python Interpreter: __main__ module is missing" );
-        goto release_and_exit;
-    }
+    m_main = PyImport_ImportModule( "__main__" );
+    if( !m_main ) return ( release_and_log_error(
+        "Python Interpreter: __main__ module is missing" ), false );
 
     string_io_module = PyImport_ImportModule( "cStringIO" );
     string_io_class_name = (
@@ -144,9 +142,11 @@ bool python_taskqueue::init()
         PySys_SetObject( "stderr", string_io_object ) != 0 ? nullptr :
         string_io_object ) };
 
-    if( m_error == nullptr ) { goto release_and_exit; }
+    if( m_error == nullptr ) return ( release_and_log_error(
+        "Python Interpreter: \\todo" ), false );
 
-    if( false == run_file( "abstractscreenrenderer" ) ) { goto release_and_exit; }
+    if( false == run_file( "abstractscreenrenderer" ) )
+        return ( release(), false );
 
     // release the lock, save the state for future use
     m_mainthread = PyEval_SaveThread();
@@ -167,10 +167,6 @@ bool python_taskqueue::init()
     }
 
     return true;
-
-release_and_exit:
-    PyEval_ReleaseLock();
-    return false;
 }
 
 // shuts down the module
@@ -382,6 +378,12 @@ void python_taskqueue::update()
 		task->upload();
 
 	m_uploadtasks.data.clear();
+}
+
+void python_taskqueue::release_and_log_error( const char* const error )
+{
+    release();
+    ErrorLog( error );
 }
 
 void
