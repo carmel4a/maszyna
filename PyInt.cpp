@@ -14,10 +14,15 @@ http://mozilla.org/MPL/2.0/.
 #include "application.h"
 #include "renderer.h"
 #include "Logs.h"
+#include "Python/PythonConfig.h"
 
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
+
+using python::is_64_bit;
+using python::get_windows_lib_name;
+using python::get_linux_lib_name;
 
 void render_task::run() {
     // call the renderer
@@ -106,11 +111,10 @@ void render_task::cancel() {
 bool python_taskqueue::init()
 {
     {
-        constexpr const bool is_64_bit = (bool)( sizeof( void* ) == 8 );
         #ifdef _WIN32
-            std::string path { is_64_bit ? "python64" : "python" };
+            std::string path { python::get_windows_lib_name() };
         #elif __linux__
-            std::string path { is_64_bit ? "linuxpython64" : "linuxpython" };
+            std::string path { python::get_linux_lib_name() };
         #endif
         Py_SetPythonHome( path.data() );
     }
