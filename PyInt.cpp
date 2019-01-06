@@ -115,8 +115,8 @@ bool python_taskqueue::init()
         Py_SetPythonHome( path.data() );
     }
 
+    Py_Initialize();
     PyEval_InitThreads();
-
     m_initialized = true;
 
 	PyObject* string_io_module     = nullptr,
