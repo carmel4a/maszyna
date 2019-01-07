@@ -108,6 +108,15 @@ void render_task::cancel() {
     delete this;
 }
 
+bool python_taskqueue::set_io_module()
+{
+    return true;
+}
+
+void python_taskqueue::set_home()
+{
+}
+
 bool python_taskqueue::init()
 {
     {

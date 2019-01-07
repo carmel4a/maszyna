@@ -115,6 +115,9 @@ private:
 
     void release_and_log_error( const char* const error );
 
+    void set_home();
+    bool set_io_module();
+
     static int const WORKERCOUNT { 1 };
     using worker_array = std::array<std::thread, WORKERCOUNT >;
     using rendertask_sequence = threading::lockable< std::deque<render_task *> >;
