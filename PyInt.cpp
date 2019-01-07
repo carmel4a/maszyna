@@ -115,18 +115,18 @@ bool python_taskqueue::set_io_module()
 
 void python_taskqueue::set_home()
 {
+    #ifdef _WIN32
+        std::string path { python::get_windows_lib_name() };
+    #elif __linux__
+        std::string path { python::get_linux_lib_name() };
+    #endif
+    // Set root directory for python, depends on platform.
+    Py_SetPythonHome( path.data() );
 }
 
 bool python_taskqueue::init()
 {
-    {
-        #ifdef _WIN32
-            std::string path { python::get_windows_lib_name() };
-        #elif __linux__
-            std::string path { python::get_linux_lib_name() };
-        #endif
-        Py_SetPythonHome( path.data() );
-    }
+    set_home();
 
     Py_Initialize();
     PyEval_InitThreads();
