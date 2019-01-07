@@ -110,6 +110,34 @@ void render_task::cancel() {
 
 bool python_taskqueue::set_io_module()
 {
+    PyObject* string_io_module     = nullptr,
+            * string_io_class_name = nullptr,
+            * string_io_object     = nullptr;
+
+    // do the setup work while we hold the lock
+    m_main = PyImport_ImportModule( "__main__" );
+
+    if( !m_main ) return ( release_and_log_error(
+        "Python Interpreter: __main__ module is missing" ), false );
+
+    string_io_module = PyImport_ImportModule( "cStringIO" );
+    string_io_class_name = string_io_module
+            ? PyObject_GetAttrString( string_io_module, "StringIO" )
+            : nullptr;
+
+    string_io_object = string_io_class_name
+            ? PyObject_CallObject( string_io_class_name, nullptr )
+            : nullptr;
+
+    m_error = string_io_object && PySys_SetObject( "stderr", string_io_object )
+            ? string_io_object
+            : nullptr;
+
+    if( !m_error || !run_file( "abstractscreenrenderer" ) )
+        return ( release(), false );
+
+    // release the lock, save the state for future use
+    m_mainthread = PyEval_SaveThread();
     return true;
 }
 
@@ -132,6 +160,7 @@ bool python_taskqueue::init()
     PyEval_InitThreads();
     m_initialized = true;
 
+    /*
 	PyObject* string_io_module     = nullptr,
 	        * string_io_class_name = nullptr,
 	        * string_io_object     = nullptr;
@@ -160,6 +189,7 @@ bool python_taskqueue::init()
 
     // release the lock, save the state for future use
     m_mainthread = PyEval_SaveThread();
+    */
 
     WriteLog( "Python Interpreter setup complete" );
 
