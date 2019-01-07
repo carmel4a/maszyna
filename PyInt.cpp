@@ -138,27 +138,24 @@ bool python_taskqueue::init()
 
     // do the setup work while we hold the lock
     m_main = PyImport_ImportModule( "__main__" );
+
     if( !m_main ) return ( release_and_log_error(
         "Python Interpreter: __main__ module is missing" ), false );
 
     string_io_module = PyImport_ImportModule( "cStringIO" );
-    string_io_class_name = (
-        string_io_module != nullptr ?
-            PyObject_GetAttrString( string_io_module, "StringIO" ) :
-            nullptr );
-    string_io_object = (
-        string_io_class_name != nullptr ?
-            PyObject_CallObject( string_io_class_name, nullptr ) :
-            nullptr );
-    m_error = { (
-        string_io_object == nullptr ? nullptr :
-        PySys_SetObject( "stderr", string_io_object ) != 0 ? nullptr :
-        string_io_object ) };
+    string_io_class_name = string_io_module
+            ? PyObject_GetAttrString( string_io_module, "StringIO" )
+            : nullptr;
 
-    if( m_error == nullptr ) return ( release_and_log_error(
-        "Python Interpreter: \\todo" ), false );
+    string_io_object = string_io_class_name
+            ? PyObject_CallObject( string_io_class_name, nullptr )
+            : nullptr;
+        
+    m_error = string_io_object && PySys_SetObject( "stderr", string_io_object )
+            ? string_io_object
+            : nullptr;
 
-    if( false == run_file( "abstractscreenrenderer" ) )
+    if( !m_error || !run_file( "abstractscreenrenderer" ) )
         return ( release(), false );
 
     // release the lock, save the state for future use
