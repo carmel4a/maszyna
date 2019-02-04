@@ -20,9 +20,24 @@ http://mozilla.org/MPL/2.0/.
 #endif
 
 void render_task::run() {
+
+    // convert provided input to a python dictionary
+    auto *input = PyDict_New();
+    if( input == nullptr ) {
+		cancel();
+		return;
+	}
+    for( auto const &datapair : m_input->floats )   { PyDict_SetItemString( input, datapair.first.c_str(), PyGetFloat( datapair.second ) ); }
+    for( auto const &datapair : m_input->integers ) { PyDict_SetItemString( input, datapair.first.c_str(), PyGetInt( datapair.second ) ); }
+    for( auto const &datapair : m_input->bools )    { PyDict_SetItemString( input, datapair.first.c_str(), PyGetBool( datapair.second ) ); }
+    for( auto const &datapair : m_input->strings )  { PyDict_SetItemString( input, datapair.first.c_str(), PyGetString( datapair.second.c_str() ) ); }
+
+	delete m_input;
+	m_input = nullptr;
+
     // call the renderer
-    auto *output { PyObject_CallMethod( m_renderer, "render", "O", m_input ) };
-    Py_DECREF( m_input );
+    auto *output { PyObject_CallMethod( m_renderer, "render", "O", input ) };
+    Py_DECREF( input );
 
     if( output != nullptr ) {
         auto *outputwidth { PyObject_CallMethod( m_renderer, "get_width", nullptr ) };
@@ -99,7 +114,7 @@ void render_task::upload()
 
 void render_task::cancel() {
 
-    Py_DECREF( m_input );
+    delete m_input;
     delete this;
 }
 
@@ -142,12 +157,10 @@ auto python_taskqueue::init() -> bool {
         stringioclassname != nullptr ?
             PyObject_CallObject( stringioclassname, nullptr ) :
             nullptr );
-    m_error = { (
+    m_stderr = { (
         stringioobject == nullptr ? nullptr :
         PySys_SetObject( "stderr", stringioobject ) != 0 ? nullptr :
         stringioobject ) };
-
-    if( m_error == nullptr ) { goto release_and_exit; }
 
     if( false == run_file( "abstractscreenrenderer" ) ) { goto release_and_exit; }
 
@@ -217,11 +230,7 @@ auto python_taskqueue::insert( task_request const &Task ) -> bool {
         for( auto &task : m_tasks.data ) {
             if( task->target() == Task.target ) {
                 // replace pending task in the slot with the more recent one
-                acquire_lock();
-                {
-                    task->cancel();
-                }
-                release_lock();
+                task->cancel();
                 task = newtask;
                 newtaskinserted = true;
                 break;
@@ -392,13 +401,13 @@ python_taskqueue::error() {
 
     if( PyErr_Occurred() == nullptr ) { return; }
 
-    if( m_error != nullptr ) {
+    if( m_stderr != nullptr ) {
         // std err pythona jest buforowane
         PyErr_Print();
-        auto *errortext { PyObject_CallMethod( m_error, "getvalue", nullptr ) };
+        auto *errortext { PyObject_CallMethod( m_stderr, "getvalue", nullptr ) };
         ErrorLog( PyString_AsString( errortext ) );
         // czyscimy bufor na kolejne bledy
-        PyObject_CallMethod( m_error, "truncate", "i", 0 );
+        PyObject_CallMethod( m_stderr, "truncate", "i", 0 );
     }
     else {
         // nie dziala buffor pythona
@@ -420,7 +429,7 @@ python_taskqueue::error() {
         }
         auto *tracebacktext { PyObject_Str( traceback ) };
         if( tracebacktext != nullptr ) {
-            WriteLog( PyString_AsString( tracebacktext ) );
+            ErrorLog( PyString_AsString( tracebacktext ) );
         }
         else {
             WriteLog( "Python Interpreter: failed to retrieve the stack traceback" );

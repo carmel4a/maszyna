@@ -840,9 +840,14 @@ void opengl_renderer::Render_pass(rendermode const Mode)
 // creates dynamic environment cubemap
 bool opengl_renderer::Render_reflections()
 {
+	if (Global.ReflectionUpdatesPerSecond == 0)
+		return false;
+
 	auto const &time = simulation::Time.data();
-	auto const timestamp = time.wDay * 24 * 60 + time.wHour * 60 + time.wMinute;
-	if ((timestamp - m_environmentupdatetime < 1) && (glm::length(m_renderpass.camera.position() - m_environmentupdatelocation) < 1000.0))
+	auto const timestamp = time.wMilliseconds + time.wSecond * 1000 + time.wMinute * 1000 * 60 + time.wHour * 1000 * 60 * 60;
+
+	if ((timestamp - m_environmentupdatetime < Global.ReflectionUpdatesPerSecond)
+	        && (glm::length(m_renderpass.camera.position() - m_environmentupdatelocation) < 1000.0))
 	{
 		// run update every 5+ mins of simulation time, or at least 1km from the last location
 		return false;
@@ -2461,6 +2466,7 @@ void opengl_renderer::Render(TSubModel *Submodel)
 					// we're capping how much effect the distance attenuation can have, otherwise the lights get too tiny at regular distances
 					float const distancefactor{std::max(0.5f, (Submodel->fSquareMaxDist - TSubModel::fSquareDist) / Submodel->fSquareMaxDist)};
 					auto const pointsize{std::max(3.f, 5.f * distancefactor * anglefactor)};
+					auto const resolutionratio { Global.iWindowHeight / 1080.f };
 					// additionally reduce light strength for farther sources in rain or snow
 					if (Global.Overcast > 0.75f)
 					{
@@ -2478,7 +2484,8 @@ void opengl_renderer::Render(TSubModel *Submodel)
 
 						// material configuration:
 						// limit impact of dense fog on the lights
-						model_ubs.fog_density = 1.0f / std::min<float>(Global.fFogEnd, m_fogrange * 2);
+						auto const lightrange { std::max<float>( 500, m_fogrange * 2 ) }; // arbitrary, visibility at least 750m
+						model_ubs.fog_density = 1.0 / lightrange;
 
 						// main draw call
 						model_ubs.emission = 1.0f;
@@ -2493,14 +2500,14 @@ void opengl_renderer::Render(TSubModel *Submodel)
 						{
 							// fake fog halo
 							float const fogfactor{interpolate(2.f, 1.f, clamp<float>(Global.fFogEnd / 2000, 0.f, 1.f)) * std::max(1.f, Global.Overcast)};
-							model_ubs.param[1].x = pointsize * fogfactor * 2.0f;
+							model_ubs.param[1].x = pointsize * resolutionratio * fogfactor * 2.0f;
 							model_ubs.param[0] = glm::vec4(glm::vec3(lightcolor), Submodel->fVisible * std::min(1.f, lightlevel) * 0.5f);
 
 							glDepthMask(GL_FALSE);
 							draw(Submodel->m_geometry);
 							glDepthMask(GL_TRUE);
 						}
-						model_ubs.param[1].x = pointsize * 2.0f;
+						model_ubs.param[1].x = pointsize * resolutionratio * 2.0f;
 						model_ubs.param[0] = glm::vec4(glm::vec3(lightcolor), Submodel->fVisible * std::min(1.f, lightlevel));
 
 						draw(Submodel->m_geometry);
@@ -3023,16 +3030,7 @@ void opengl_renderer::Render_Alpha(TTraction *Traction)
 {
 	glDebug("Render_Alpha TTraction");
 
-	double distancesquared;
-	switch (m_renderpass.draw_mode)
-	{
-	case rendermode::shadows:
-	default:
-	{
-		distancesquared = glm::length2((Traction->location() - m_renderpass.camera.position()) / (double)Global.ZoomFactor) / Global.fDistanceFactor;
-		break;
-	}
-	}
+	auto const distancesquared { glm::length2( ( Traction->location() - m_renderpass.camera.position() ) / (double)Global.ZoomFactor ) / Global.fDistanceFactor };
 	if ((distancesquared < Traction->m_rangesquaredmin) || (distancesquared >= Traction->m_rangesquaredmax))
 	{
 		return;
@@ -3076,16 +3074,7 @@ void opengl_renderer::Render_Alpha(scene::lines_node const &Lines)
 
 	auto const &data{Lines.data()};
 
-	double distancesquared;
-	switch (m_renderpass.draw_mode)
-	{
-	case rendermode::shadows:
-	default:
-	{
-		distancesquared = glm::length2((data.area.center - m_renderpass.camera.position()) / (double)Global.ZoomFactor) / Global.fDistanceFactor;
-		break;
-	}
-	}
+	auto const distancesquared { glm::length2( ( data.area.center - m_renderpass.camera.position() ) / (double)Global.ZoomFactor ) / Global.fDistanceFactor };
 	if ((distancesquared < data.rangesquared_min) || (distancesquared >= data.rangesquared_max))
 	{
 		return;

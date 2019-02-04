@@ -619,8 +619,12 @@ void
 TDynamicObject::toggle_lights() {
 
     if( true == SectionLightsActive ) {
-        // switch all lights off
+        // switch all lights off...
         for( auto &section : Sections ) {
+            // ... but skip cab sections, their lighting ignores battery state
+            auto const sectionname { section.compartment->pName };
+            if( sectionname.find( "cab" ) == 0 ) { continue; }
+
             section.light_level = 0.0f;
         }
         SectionLightsActive = false;
@@ -2776,7 +2780,7 @@ TDynamicObject::update_load_visibility() {
     }
 */
     auto loadpercentage { (
-        MoverParameters->MaxLoad == 0.0 ?
+        MoverParameters->MaxLoad == 0.f ?
             0.0 :
             100.0 * MoverParameters->LoadAmount / MoverParameters->MaxLoad ) };
     auto const sectionloadpercentage { (
@@ -2810,7 +2814,7 @@ TDynamicObject::update_load_offset() {
     if( MoverParameters->LoadType.offset_min == 0.f ) { return; }
 
     auto const loadpercentage { (
-        MoverParameters->MaxLoad == 0.0 ?
+        MoverParameters->MaxLoad == 0.f ?
             0.0 :
             100.0 * MoverParameters->LoadAmount / MoverParameters->MaxLoad ) };
 
@@ -4446,7 +4450,7 @@ void TDynamicObject::RenderSounds() {
 
     // youBy: dzwiek ostrych lukow i ciasnych zwrotek
     if( ( ts.R * ts.R > 1 )
-     && ( MoverParameters->Vel > 0 ) ) {
+     && ( MoverParameters->Vel > 5.0 ) ) {
         // scale volume with curve radius and vehicle speed
         volume =
             MoverParameters->AccN * MoverParameters->AccN
@@ -4648,11 +4652,6 @@ void TDynamicObject::LoadMMediaFile( std::string const &TypeName, std::string co
             mdModel = TModelsManager::GetModel(asModel, true);
             if (ReplacableSkin != "none")
             {
-                std::string nowheretexture = TextureTest( "nowhere" ); // na razie prymitywnie
-                if( false == nowheretexture.empty() ) {
-                    m_materialdata.replacable_skins[ 4 ] = GfxRenderer.Fetch_Material( nowheretexture );
-                }
-
                 if (m_materialdata.multi_textures > 0) {
                     // jeśli model ma 4 tekstury
                     // check for the pipe method first
@@ -4690,6 +4689,9 @@ void TDynamicObject::LoadMMediaFile( std::string const &TypeName, std::string co
                 else {
                     m_materialdata.replacable_skins[ 1 ] = GfxRenderer.Fetch_Material( ReplacableSkin );
                 }
+
+                // potentially set blank destination texture
+                DestinationSet( {}, {} );
 
                 if( GfxRenderer.Material( m_materialdata.replacable_skins[ 1 ] ).get_or_guess_opacity() == 0.0f ) {
                     // tekstura -1 z kanałem alfa - nie renderować w cyklu nieprzezroczystych
@@ -4881,8 +4883,6 @@ void TDynamicObject::LoadMMediaFile( std::string const &TypeName, std::string co
                                 sm->WillBeAnimated();
                                 sm->ParentMatrix(&m); // pobranie macierzy transformacji
                                 // m(3)[1]=m[3][1]+0.054; //w górę o wysokość ślizgu (na razie tak)
-                                if ((mdModel->Flags() & 0x8000) == 0) // jeśli wczytano z T3D
-                                    m.InitialRotate(); // może być potrzebny dodatkowy obrót, jeśli wczytano z T3D, tzn. przed wykonaniem Init()
                                 pants[i].fParamPants->vPos.z = m[3][0]; // przesunięcie w bok (asymetria)
                                 pants[i].fParamPants->vPos.y = m[3][1]; // przesunięcie w górę odczytane z modelu
                                 if ((sm = pants[i].smElement[0]->ChildGet()) != NULL)
@@ -4919,8 +4919,6 @@ void TDynamicObject::LoadMMediaFile( std::string const &TypeName, std::string co
                                         pants[i].fParamPants->fAngleU = pants[i].fParamPants->fAngleU0; // początkowy kąt
                                         // Ra: ze względu na to, że niektóre modele pantografów są zrąbane, ich mierzenie ma obecnie ograniczony sens
                                         sm->ParentMatrix(&m); // pobranie macierzy transformacji pivota ślizgu względem wstawienia pojazdu
-                                        if ((mdModel->Flags() & 0x8000) == 0) // jeśli wczytano z T3D
-                                            m.InitialRotate(); // może być potrzebny dodatkowy obrót, jeśli wczytano z T3D, tzn. przed wykonaniem Init()
                                         float det = Det(m);
                                         if (std::fabs(det - 1.0) < 0.001) // dopuszczamy 1 promil błędu na skalowaniu ślizgu
                                         { // skalowanie jest w normie, można pobrać wymiary z modelu

@@ -308,7 +308,17 @@ global_settings::ConfigParse(cParser &Parser) {
         else if( token == "scenario.time.override" ) {
             // shift (in hours) applied to train timetables
             Parser.getTokens( 1, false );
-            Parser >> ScenarioTimeOverride;
+			std::string token;
+			Parser >> token;
+			std::istringstream stream(token);
+			if (token.find(':')) {
+				float a, b;
+				char s;
+				stream >> a >> s >> b;
+				ScenarioTimeOverride = a + b / 60.0;
+			}
+			else
+				stream >> ScenarioTimeOverride;
             ScenarioTimeOverride = clamp( ScenarioTimeOverride, 0.f, 24 * 1439 / 1440.f );
         }
         else if( token == "scenario.time.offset" ) {
@@ -363,6 +373,14 @@ global_settings::ConfigParse(cParser &Parser) {
 
             Parser.getTokens();
             Parser >> ResourceMove;
+        }
+        else if( token == "gfx.reflections.framerate" ) {
+
+            auto const updatespersecond { std::abs( Parser.getToken<double>() ) };
+            ReflectionUpdatesPerSecond = (
+                updatespersecond > 0 ?
+                    1000 / std::min( 30.0, updatespersecond ) :
+                    0 );
         }
         else if (token == "timespeed")
         {

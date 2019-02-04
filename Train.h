@@ -116,7 +116,7 @@ class TTrain
     void SetLights();
     // McZapkie-310302: ladowanie parametrow z pliku
     bool LoadMMediaFile(std::string const &asFileName);
-    PyObject *GetTrainState();
+    dictionary_source *GetTrainState();
     state_t get_state() const;
 
   private:
@@ -507,10 +507,11 @@ public: // reszta może by?publiczna
     TButton btLampkaHamowanie2zes;
     TButton btLampkaOpory;
     TButton btLampkaWysRozr;
+    std::array<TButton, 10> btUniversals; // NOTE: temporary arrangement until we have dynamically built control table
     TButton btInstrumentLight;
     TButton btDashboardLight;
     TButton btTimetableLight;
-    int InstrumentLightType{ 0 }; // ABu 030405 - swiecenie uzaleznione od: 0-nic, 1-obw.gl, 2-przetw.
+    int InstrumentLightType{ 0 }; // ABu 030405 - swiecenie uzaleznione od: 0-nic, 1-obw.gl, 2-przetw., 3-rozrzad
     bool InstrumentLightActive{ false };
     bool DashboardLightActive{ false };
     bool TimetableLightActive{ false };

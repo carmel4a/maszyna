@@ -1003,13 +1003,6 @@ public:
     TRotation Rot { 0.0, 0.0, 0.0 };
 	std::string Name;                       /*nazwa wlasna*/
 	TCoupling Couplers[2];  //urzadzenia zderzno-sprzegowe, polaczenia miedzy wagonami
-#ifdef EU07_USE_OLD_HVCOUPLERS
-    double HVCouplers[ 2 ][ 2 ]; //przewod WN
-    enum hvcoupler {
-        current = 0,
-        voltage
-    };
-#endif
 	bool EventFlag = false;                 /*!o true jesli cos nietypowego sie wydarzy*/
 	int SoundFlag = 0;                    /*!o patrz stale sound_ */
 	double DistCounter = 0.0;                  /*! licznik kilometrow */
@@ -1370,6 +1363,7 @@ public:
     bool MotorBlowersSwitch( bool State, side const Side, range_t const Notify = range_t::consist ); // traction motor fan state toggle
     bool MotorBlowersSwitchOff( bool State, side const Side, range_t const Notify = range_t::consist ); // traction motor fan state toggle
     bool MainSwitch( bool const State, range_t const Notify = range_t::consist );/*! wylacznik glowny*/
+    void MainSwitch_( bool const State );
     bool ConverterSwitch( bool State, range_t const Notify = range_t::consist );/*! wl/wyl przetwornicy*/
     bool CompressorSwitch( bool State, range_t const Notify = range_t::consist );/*! wl/wyl sprezarki*/
 

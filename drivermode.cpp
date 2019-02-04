@@ -746,7 +746,7 @@ driver_mode::OnKeyDown(int cKey) {
             if( DebugModeFlag ) { 
 
                 if( Global.ctrlState ) { Global.fTimeSpeed = ( Global.shiftState ? 60.0 : 20.0 ); }
-                else                   { Global.fTimeSpeed = ( Global.shiftState ? 5.0 : 1.0 ); }
+                else                   { Global.fTimeSpeed = ( Global.shiftState ? 5.0 : Global.fTimeSpeed ); }
             }
             break;
         }
@@ -1122,6 +1122,7 @@ driver_mode::InOutKey()
 
     if( train == nullptr ) {
         FreeFlyModeFlag = true; // nadal poza kabiną
+        Camera.m_owner = nullptr; // detach camera from the vehicle
         return;
     }
 

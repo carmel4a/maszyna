@@ -285,7 +285,7 @@ basic_cell::insert( shape_node Shape ) {
     // re-calculate cell radius, in case shape geometry extends outside the cell's boundaries
     m_area.radius = std::max<float>(
         m_area.radius,
-        glm::length( m_area.center - Shape.get_data().area.center ) + Shape.get_data().area.radius );
+        glm::length( m_area.center - Shape.get_data().area.center ) + Shape.radius() );
 
     auto const& shapedata { Shape.get_data() };
     auto &shapes = (
@@ -797,7 +797,7 @@ basic_section::insert( shape_node Shape ) {
     // re-calculate section radius, in case shape geometry extends outside the section's boundaries
     m_area.radius = std::max<float>(
         m_area.radius,
-        static_cast<float>( glm::length( m_area.center - shapedata.area.center ) + shapedata.area.radius ) );
+	    static_cast<float>( glm::length( m_area.center - shapedata.area.center ) + Shape.radius() ) );
 
     if( ( true == shapedata.translucent )
      || ( shapedata.rangesquared_max <= 90000.0 )
@@ -1275,7 +1275,7 @@ basic_region::insert( shape_node Shape, state_serializer::scratch_data &Scratchp
     // move the data into appropriate section(s)
     for( auto &shape : shapes ) {
         // with the potential splitting done we can calculate each chunk's bounding radius
-        shape.compute_radius();
+		shape.invalidate_radius();
         if( point_inside( shape.m_data.area.center ) ) {
             // NOTE: nodes placed outside of region boundaries are discarded
             section( shape.m_data.area.center ).insert( shape );
