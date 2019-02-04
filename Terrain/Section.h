@@ -32,7 +32,6 @@ namespace Terrain
     {
         TerrainSectionVertex() = delete;
         TerrainSectionVertex(
-                unsigned id,
                 float z,
                 glm::vec3 normal=glm::vec3(0, 1, 0),
                 char tex=0b0 );
@@ -159,6 +158,7 @@ namespace Terrain
 
         void onTerrainBacking()
         {
+            glDebug("Bathing");
             if( m_backed && !recivied_data ) return;
             if( !m_backed )
             {
@@ -166,9 +166,23 @@ namespace Terrain
                     loadTexture( texture );
                 textures_to_load.clear();
             }
+            for( unsigned y = 0; y < max_side_density+1; ++y )
+                for( unsigned x = 0; x < max_side_density+1; ++x )
+                    vertex_textures.push_back( getTexture( "grass" ) );
             moveToVRAM();
             recivied_data = false;
             m_backed = true;
+            glDebug("End of batching");
+        };
+
+        float quadSize() const
+        {
+            return (float) side_size_in_meters / (float) max_side_density;
+        };
+
+        float quadCount() const
+        {
+            return max_side_density;
         };
 
       private:
@@ -200,7 +214,7 @@ namespace Terrain
     };
 
     constexpr auto TerrainSectionVertex::size() -> unsigned
-    { return sizeof( short ) + sizeof( float ) * 4 + sizeof( char ); };
+    { return sizeof( GLuint ) + sizeof( GLfloat ) * 4; };
 
     inline bool Section::operator==( const Section& s )
     { return this->m_id == s.m_id; };
@@ -210,7 +224,7 @@ namespace Terrain
 
 
     auto Section::size() const -> unsigned
-    { return verticies.size() * TerrainSectionVertex::size(); };
+    { return data.size(); };
 }
 
 #endif // !TERRAIN_SECTION_15_11_18

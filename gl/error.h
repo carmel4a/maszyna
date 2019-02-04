@@ -14,16 +14,16 @@ http://mozilla.org/MPL/2.0/.
 #ifndef GL_ERROR_01_02_19
 #define GL_ERROR_01_02_19
 
-#define GlClearErrors()                    \
-        while( glError() != GL_NO_ERROR ); \
+#define GlClearErrors()                       \
+        while( glGetError() != GL_NO_ERROR ); \
 
 #ifndef NDEBUG
-    #define GlCall(x)                  \
-        GlClearErrors()                \
-        (x);                           \
-        if( glError() != GL_NO_ERROR )
+    #define glCall(x)                            \
+        GlClearErrors()                          \
+        x;                                       \
+        if( glGetError() != GL_NO_ERROR ) throw;
 #else
-    #define GlCall(x) \
+    #define glCall(x) \
         (x);
 #endif
 

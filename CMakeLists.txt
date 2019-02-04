@@ -78,6 +78,9 @@ set(SOURCES
 "Terrain/Chunk.cpp"
 "Terrain/GeometryBanksManager.cpp"
 
+"Terrain/Threads/Threads.cpp"
+"Terrain/Threads/Tasks/Batching.cpp"
+
 "simulation.cpp"
 "vertex.cpp"
 "audio.cpp"

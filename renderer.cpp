@@ -1676,14 +1676,16 @@ void opengl_renderer::Render(scene::basic_region *Region)
 	{
 		Update_Lights(simulation::Lights);
 
+		Render(std::begin(m_sectionqueue), std::end(m_sectionqueue));
+/*
         {
             const auto& terrain { Region->terrain() };
-            std::scoped_lock< std::mutex, std::mutex > lock (
+            std::scoped_lock< std::mutex, std::mutex > lock {
                     terrain->mutexes.active_list_swap,
-                    terrain->mutexes.section_unload );
-            Render( terrain->active_sections() );
+                    terrain->mutexes.section_unload };
+            Render( terrain->activeSections() );
         }
-		Render(std::begin(m_sectionqueue), std::end(m_sectionqueue));
+*/
 		// draw queue is filled while rendering sections
 		if (EditorModeFlag)
 		{
@@ -1692,6 +1694,7 @@ void opengl_renderer::Render(scene::basic_region *Region)
 			get_mouse_depth();
 		}
 		Render(std::begin(m_cellqueue), std::end(m_cellqueue));
+
 		break;
 	}
 	case rendermode::shadows:

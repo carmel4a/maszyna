@@ -18,11 +18,14 @@ http://mozilla.org/MPL/2.0/.
 
 namespace Terrain
 {
-    class Section;
+    class Section; class TerrainTask;
 
     /// Stores ID of section, and pointer to it.
     using SectionsContainer =
             std::unordered_map< unsigned, Terrain::Section* >;
+
+    using TaskPtr = std::unique_ptr< TerrainTask >;
+
 }
 
 #endif // !SCENE_TERRAIN_TYPES_24_12_18
